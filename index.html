@@ -60,6 +60,264 @@
             overflow: hidden;
         }
 
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.9em;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            animation: toastSlideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 400px;
+        }
+
+        .toast.hiding {
+            animation: toastSlideOut 0.3s ease-in forwards;
+        }
+
+        @keyframes toastSlideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes toastSlideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        .toast-success { background: linear-gradient(135deg, #00c853 0%, #00a844 100%); }
+        .toast-error { background: linear-gradient(135deg, #ff5252 0%, #d32f2f 100%); }
+        .toast-warning { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #1a1a2e; }
+        .toast-info { background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%); }
+
+        .toast-icon { font-size: 1.2em; }
+
+        /* Keyboard shortcuts modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 8000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.visible {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #16213e;
+            border-radius: 12px;
+            border: 1px solid #4a4a6a;
+            padding: 25px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #4a4a6a;
+        }
+
+        .modal-header h2 {
+            color: #00ff88;
+            margin: 0;
+            font-size: 1.2em;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #8888aa;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .modal-close:hover {
+            color: #ffffff;
+        }
+
+        .shortcut-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #2a2a4a;
+        }
+
+        .shortcut-key {
+            background: #0f0f23;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #00ff88;
+            border: 1px solid #4a4a6a;
+        }
+
+        .shortcut-desc {
+            color: #cccccc;
+        }
+
+        /* Filter chips */
+        .filter-chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 0 15px 10px 15px;
+            min-height: 10px;
+        }
+
+        .filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0,255,136,0.15);
+            border: 1px solid rgba(0,255,136,0.3);
+            color: #00ff88;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            animation: chipFadeIn 0.2s ease-out;
+        }
+
+        @keyframes chipFadeIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .filter-chip-label {
+            color: #8888aa;
+        }
+
+        .filter-chip-remove {
+            background: none;
+            border: none;
+            color: #00ff88;
+            cursor: pointer;
+            padding: 0;
+            font-size: 1.1em;
+            line-height: 1;
+            opacity: 0.7;
+        }
+
+        .filter-chip-remove:hover {
+            opacity: 1;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb-bar {
+            background: rgba(0,0,0,0.3);
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #3a3a5a;
+        }
+
+        .breadcrumb-icon {
+            color: #8888aa;
+        }
+
+        .breadcrumb-text {
+            color: #cccccc;
+            font-size: 0.85em;
+        }
+
+        .breadcrumb-text strong {
+            color: #00ff88;
+        }
+
+        .breadcrumb-reset {
+            background: none;
+            border: 1px solid #4a4a6a;
+            color: #8888aa;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        .breadcrumb-reset:hover {
+            border-color: #00ff88;
+            color: #00ff88;
+        }
+
+        /* Search autocomplete */
+        .search-container {
+            position: relative;
+        }
+
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #0f0f23;
+            border: 1px solid #4a4a6a;
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+        }
+
+        .autocomplete-dropdown.visible {
+            display: block;
+        }
+
+        .autocomplete-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #2a2a4a;
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-item:hover,
+        .autocomplete-item.selected {
+            background: rgba(0,255,136,0.1);
+        }
+
+        .autocomplete-id {
+            color: #00ff88;
+            font-weight: 600;
+        }
+
+        .autocomplete-func {
+            color: #8888aa;
+            font-size: 0.85em;
+            margin-left: 8px;
+        }
+
         /* Main layout */
         .app-container {
             display: flex;
@@ -449,6 +707,30 @@
             max-width: 200px;
         }
 
+        /* Sortable table headers */
+        .data-table th.sortable {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            padding-right: 20px;
+        }
+
+        .data-table th.sortable:hover {
+            background: rgba(0,255,136,0.1);
+        }
+
+        .data-table th .sort-indicator {
+            position: absolute;
+            right: 8px;
+            opacity: 0.5;
+        }
+
+        .data-table th.sort-asc .sort-indicator,
+        .data-table th.sort-desc .sort-indicator {
+            opacity: 1;
+            color: #00ff88;
+        }
+
         .priority-badge {
             display: inline-block;
             padding: 2px 8px;
@@ -470,6 +752,196 @@
         .priority-p2 {
             background: rgba(78,205,196,0.2);
             color: #4ecdc4;
+        }
+
+        /* Statistics panel */
+        .stats-panel {
+            padding: 15px;
+            border-bottom: 1px solid #4a4a6a;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .stats-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .stats-panel-header h3 {
+            color: #00ff88;
+            margin: 0;
+            font-size: 0.95em;
+        }
+
+        .stats-toggle {
+            background: none;
+            border: none;
+            color: #8888aa;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+
+        .stats-toggle:hover {
+            color: #00ff88;
+        }
+
+        .stats-content {
+            display: grid;
+            gap: 15px;
+        }
+
+        .stats-content.collapsed {
+            display: none;
+        }
+
+        .stats-section h4 {
+            color: #8888aa;
+            font-size: 0.8em;
+            margin: 0 0 8px 0;
+            font-weight: 500;
+        }
+
+        .stats-bar-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stats-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75em;
+        }
+
+        .stats-bar-label {
+            width: 80px;
+            color: #cccccc;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .stats-bar-wrapper {
+            flex: 1;
+            background: #0f0f23;
+            height: 16px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .stats-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .stats-bar-value {
+            width: 30px;
+            text-align: right;
+            color: #8888aa;
+        }
+
+        .top-connected-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .top-connected-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75em;
+            padding: 4px 8px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .top-connected-item:hover {
+            background: rgba(0,255,136,0.1);
+        }
+
+        .top-connected-id {
+            color: #00ff88;
+            font-weight: 600;
+        }
+
+        .top-connected-count {
+            color: #8888aa;
+            margin-left: auto;
+        }
+
+        /* Export buttons */
+        .export-section {
+            padding: 10px 15px;
+            border-bottom: 1px solid #3a3a5a;
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-export {
+            flex: 1;
+            background: #2a2a4a;
+            border: 1px solid #4a4a6a;
+            color: #cccccc;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-export:hover {
+            background: #3a3a5a;
+            border-color: #00ff88;
+            color: #00ff88;
+        }
+
+        /* Cycle warning */
+        .cycle-warning {
+            background: rgba(255,107,107,0.1);
+            border: 1px solid rgba(255,107,107,0.3);
+            color: #ff6b6b;
+            padding: 10px 15px;
+            margin: 10px 15px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            display: none;
+        }
+
+        .cycle-warning.visible {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cycle-warning-icon {
+            font-size: 1.2em;
+        }
+
+        .cycle-warning-text {
+            flex: 1;
+        }
+
+        .cycle-warning-btn {
+            background: none;
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            cursor: pointer;
+        }
+
+        .cycle-warning-btn:hover {
+            background: rgba(255,107,107,0.2);
         }
 
         /* Hide pyvis default elements */
@@ -505,19 +977,68 @@
 
 
     <body>
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Keyboard shortcuts modal -->
+    <div class="modal-overlay" id="shortcuts-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⌨️ Atajos de Teclado</h2>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div class="shortcut-row">
+                <span class="shortcut-key">?</span>
+                <span class="shortcut-desc">Mostrar/ocultar esta ayuda</span>
+            </div>
+            <div class="shortcut-row">
+                <span class="shortcut-key">Esc</span>
+                <span class="shortcut-desc">Restablecer vista / cerrar modal</span>
+            </div>
+            <div class="shortcut-row">
+                <span class="shortcut-key">/</span>
+                <span class="shortcut-desc">Enfocar campo de búsqueda</span>
+            </div>
+            <div class="shortcut-row">
+                <span class="shortcut-key">R</span>
+                <span class="shortcut-desc">Restablecer vista</span>
+            </div>
+            <div class="shortcut-row">
+                <span class="shortcut-key">1</span>
+                <span class="shortcut-desc">Disposición de fuerza</span>
+            </div>
+            <div class="shortcut-row">
+                <span class="shortcut-key">2</span>
+                <span class="shortcut-desc">Disposición de árbol</span>
+            </div>
+            <div class="shortcut-row">
+                <span class="shortcut-key">A</span>
+                <span class="shortcut-desc">Mostrar ancestros (nodo seleccionado)</span>
+            </div>
+            <div class="shortcut-row">
+                <span class="shortcut-key">D</span>
+                <span class="shortcut-desc">Mostrar descendientes (nodo seleccionado)</span>
+            </div>
+            <div class="shortcut-row">
+                <span class="shortcut-key">N</span>
+                <span class="shortcut-desc">Mostrar vecindario (nodo seleccionado)</span>
+            </div>
+        </div>
+    </div>
+
     <div class="app-container">
         <!-- Left Panel: Controls -->
         <div class="left-panel">
             <div class="panel-header">
-                <h1 class="app-title">📊 Requirements Dependency Graph - v3.2</h1>
-                <p class="app-subtitle">Grafo interactivo de dependencias</p>
+                <h1 class="app-title">📊 Requirements Dependency Graph</h1>
+                <p class="app-subtitle">Grafo interactivo de dependencias <button id="btn-shortcuts" style="background:none;border:none;color:#8888aa;cursor:pointer;font-size:0.9em;padding:2px 6px;" title="Atajos de teclado">⌨️ ?</button></p>
             </div>
 
             <div class="controls-section">
                 <h3>🔍 Buscar Nodo</h3>
-                <div class="control-row">
-                    <label>ID del Requisito:</label>
-                    <input type="text" id="node-search" placeholder="Ej: RM-001, RM-015">
+                <div class="control-row search-container">
+                    <label>ID o texto del Requisito:</label>
+                    <input type="text" id="node-search" placeholder="Ej: RM-001, autenticación..." autocomplete="off">
+                    <div class="autocomplete-dropdown" id="autocomplete-dropdown"></div>
                 </div>
                 <button class="btn" id="btn-search">Buscar y Enfocar</button>
             </div>
@@ -546,6 +1067,7 @@
                     </select>
                 </div>
             </div>
+            <div class="filter-chips-container" id="filter-chips"></div>
 
             <div class="controls-section">
                 <h3>🔗 Explorar Conexiones</h3>
@@ -569,6 +1091,12 @@
                 <button class="btn btn-secondary" id="btn-reset">🔄 Restablecer Vista</button>
             </div>
 
+            <div class="cycle-warning" id="cycle-warning">
+                <span class="cycle-warning-icon">⚠️</span>
+                <span class="cycle-warning-text">Se detectaron dependencias circulares</span>
+                <button class="cycle-warning-btn" id="btn-show-cycles">Ver ciclos</button>
+            </div>
+
             <div class="stats-grid">
                 <div class="stat-box">
                     <div class="stat-label">Nodos Visibles</div>
@@ -590,11 +1118,46 @@
 
         <!-- Center: Graph -->
         <div class="graph-panel">
+            <div class="breadcrumb-bar" id="breadcrumb-bar">
+                <span class="breadcrumb-icon">📍</span>
+                <span class="breadcrumb-text" id="breadcrumb-text">Todos los requisitos (<strong>55</strong>)</span>
+                <button class="breadcrumb-reset" id="breadcrumb-reset" style="display:none;">Mostrar todos</button>
+            </div>
             <div id="mynetwork"></div>
         </div>
 
         <!-- Right Panel: Data Table -->
         <div class="right-panel">
+            <div class="export-section">
+                <button class="btn-export" id="btn-export-png">
+                    <span>📷</span> Exportar PNG
+                </button>
+                <button class="btn-export" id="btn-export-csv">
+                    <span>📄</span> Exportar CSV
+                </button>
+            </div>
+
+            <div class="stats-panel" id="stats-panel">
+                <div class="stats-panel-header">
+                    <h3>📊 Estadísticas</h3>
+                    <button class="stats-toggle" id="stats-toggle">▼</button>
+                </div>
+                <div class="stats-content" id="stats-content">
+                    <div class="stats-section">
+                        <h4>Por Prioridad</h4>
+                        <div class="stats-bar-container" id="priority-stats"></div>
+                    </div>
+                    <div class="stats-section">
+                        <h4>Top Áreas</h4>
+                        <div class="stats-bar-container" id="area-stats"></div>
+                    </div>
+                    <div class="stats-section">
+                        <h4>Más Conectados</h4>
+                        <div class="top-connected-list" id="top-connected"></div>
+                    </div>
+                </div>
+            </div>
+
             <div class="table-header">
                 <h2>📋 Requisitos Visibles</h2>
                 <span class="table-count" id="table-count">55 requisitos</span>
@@ -603,11 +1166,12 @@
                 <table class="data-table" id="data-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Área</th>
-                            <th>Funcionalidad</th>
-                            <th>Prioridad</th>
-                            <th>Versión</th>
+                            <th class="sortable" data-sort="id">ID <span class="sort-indicator">⇅</span></th>
+                            <th class="sortable" data-sort="area">Área <span class="sort-indicator">⇅</span></th>
+                            <th class="sortable" data-sort="funcionalidad">Funcionalidad <span class="sort-indicator">⇅</span></th>
+                            <th class="sortable" data-sort="prioridad">Prioridad <span class="sort-indicator">⇅</span></th>
+                            <th class="sortable" data-sort="version">Versión <span class="sort-indicator">⇅</span></th>
+                            <th class="sortable" data-sort="connections">Conex. <span class="sort-indicator">⇅</span></th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
@@ -686,16 +1250,36 @@
     <script>
     (function() {
         // Data
-        const nodeData = {"RM-001": {"area": "Ingesta", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Registro de traders y fuentes de desempeño", "requisito": "El sistema deberá permitir cargar y administrar una lista configurable de N traders con metadatos (trader_id, nombre/alias, región/país, etiquetas/estrategia, estatus) y 1..N fuentes de desempeño por trader. Fuentes soportadas: (a) MyFXBook (URL/perfil o identificador), (b) cuentas MetaTrader 4/5 en...", "owner": "Backend", "roles": "Admin; Analista (Gema); Sistema", "estatus": "BACKLOG", "dependencias": "—", "in_degree": 0, "out_degree": 7}, "RM-002": {"area": "Ingesta", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Validación de fuentes y credenciales (URL + MT4/MT5)", "requisito": "Antes de ejecutar extracción/sync, el sistema deberá validar cada fuente: URLs (sintaxis, esquema, dominio, alcanzabilidad) y cuentas MT4/MT5 (handshake/credenciales de inversionista, latencia, ventana histórica disponible). Debe persistir el resultado con código de error, detalle legible y política...", "owner": "Backend", "roles": "Sistema; Admin; Analista (Gema)", "estatus": "BACKLOG", "dependencias": "RM-001", "in_degree": 1, "out_degree": 4}, "RM-003": {"area": "Ingesta", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Políticas de acceso por dominio (robots/ToS)", "requisito": "El sistema deberá registrar políticas por dominio (robots.txt snapshot, rate limit, notas ToS internas) y hacer cumplir dichas políticas durante la extracción. Debe permitir bloquear dominios o pausar scraping.", "owner": "Backend/DevOps", "roles": "Admin; DevOps; Sistema", "estatus": "BACKLOG", "dependencias": "RM-001,RM-002", "in_degree": 2, "out_degree": 3}, "RM-004": {"area": "Ingesta", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Scheduler de syncs", "requisito": "El sistema deberá soportar ejecución programada (frecuencia configurable por fuente) y refresh on-demand por trader/fuente, generando jobs con trazabilidad (run_id, trader_id, source_id, created_by). Debe soportar ventanas de sync diarias/semanales (configurable) y priorizar sincronización increment...", "owner": "Backend/DevOps", "roles": "Admin; Analista; Sistema", "estatus": "BACKLOG", "dependencias": "RM-001", "in_degree": 1, "out_degree": 8}, "RM-005": {"area": "Ingesta", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Rate limiting, retries y circuit breaker", "requisito": "El sistema deberá implementar rate limiting por dominio, retries con exponential backoff y circuit breaker ante fallas repetidas. Debe registrar métricas de requests y errores.", "owner": "Backend/DevOps", "roles": "Sistema; DevOps", "estatus": "BACKLOG", "dependencias": "RM-003", "in_degree": 1, "out_degree": 4}, "RM-006": {"area": "Extracción", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Adaptadores por fuente (MyFXBook / ForexFactory / HTML) y extracción mantenible", "requisito": "El sistema deberá extraer datos crudos usando adaptadores por fuente: MyFXBook (HTML/API), ForexFactory (si se usa), y otros sitios HTML, con selectores/mapeos mantenibles y testeables, versionando el parser/adapter. Para MT4/MT5, la extracción se realizará vía conector dedicado a partir de credenci...", "owner": "Backend", "roles": "Sistema; Backend", "estatus": "BACKLOG", "dependencias": "RM-004,RM-005", "in_degree": 2, "out_degree": 7}, "RM-007": {"area": "Extracción", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Soporte JSON/API cuando exista", "requisito": "Cuando exista una API oficial o feed estructurado, el sistema deberá preferirlo sobre scraping. Debe soportar: API de MyFXBook (si aplica), exportaciones/feeds de brokers cuando existan, y endpoints estructurados de proveedores. Debe registrar limits, versionado y fallbacks.", "owner": "Backend", "roles": "Sistema; Backend", "estatus": "BACKLOG", "dependencias": "RM-006", "in_degree": 1, "out_degree": 1}, "RM-008": {"area": "Extracción", "prioridad": "Baja (P2)", "version": "v0.3", "funcionalidad": "Soporte de reportes de broker (PDF/XLS) y adjuntos", "requisito": "El sistema deberá permitir incorporar reportes de broker asociados a un trader/fuente: (a) detectar y descargar adjuntos/links (PDF u otros permitidos) cuando estén presentes y permitidos por política, y (b) permitir carga manual de reportes (PDF/XLS) cuando el trader no tenga MyFXBook. Debe guardar...", "owner": "Backend", "roles": "Sistema; Backend", "estatus": "BACKLOG", "dependencias": "RM-003,RM-006", "in_degree": 2, "out_degree": 1}, "RM-009": {"area": "Modelo de datos", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Almacenamiento de datos crudos versionados", "requisito": "El sistema deberá guardar registros crudos inmutables con fuente (source_id), timestamp, adapter_version, content_hash y payload (JSON/bytes). No debe sobrescribir datos crudos. Debe soportar snapshots diarios para retener histórico multianual (p.ej. MyFXBook), y registrar explícitamente la ventana ...", "owner": "Backend", "roles": "Sistema; Backend", "estatus": "BACKLOG", "dependencias": "RM-006", "in_degree": 1, "out_degree": 8}, "RM-010": {"area": "Modelo de datos", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Entidades normalizadas y snapshots", "requisito": "El sistema deberá normalizar datos crudos a entidades núcleo (Trader, PerformanceSource, DailySummary, Trade/Deal, MetricDefinition, MetricValue, Run, Experiment) y soportar snapshots temporalmente indexados por trader y por fuente. Debe soportar múltiples fuentes por trader y reconciliación por per...", "owner": "Backend", "roles": "Backend; Quant; Sistema", "estatus": "BACKLOG", "dependencias": "RM-009", "in_degree": 1, "out_degree": 7}, "RM-011": {"area": "Transformación", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Reglas de mapeo configurables", "requisito": "El sistema deberá permitir definir reglas de mapeo (por dominio) desde campos crudos a campos normalizados, con versionado y capacidad de rollback. Idealmente sin despliegue de código para cambios menores.", "owner": "Backend", "roles": "Admin; Backend; Quant", "estatus": "BACKLOG", "dependencias": "RM-010", "in_degree": 1, "out_degree": 5}, "RM-012": {"area": "Transformación", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Limpieza y estandarización de datos", "requisito": "El sistema deberá limpiar y estandarizar formatos (fechas, divisas, porcentajes, locales) a formatos canónicos y registrar errores de parseo por campo.", "owner": "Backend", "roles": "Backend; Sistema", "estatus": "BACKLOG", "dependencias": "RM-011", "in_degree": 1, "out_degree": 1}, "RM-013": {"area": "Métricas", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Catálogo de definiciones de métricas", "requisito": "El sistema deberá mantener un registro versionado de métricas (nombre, fórmula/algoritmo, insumos requeridos, unidad, rango válido, y constraints). Será la fuente única para cómputo y reporteo.", "owner": "Backend/Quant", "roles": "Quant; Backend; Admin", "estatus": "BACKLOG", "dependencias": "RM-010", "in_degree": 1, "out_degree": 10}, "RM-014": {"area": "Métricas", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Cálculo de métricas core", "requisito": "El sistema deberá calcular métricas base por trader, por fuente y por periodo (p.ej. rendimiento, volatilidad, drawdown, win-rate) a partir de los datos disponibles, y manejar explícitamente el caso de “datos insuficientes”. Debe distinguir cobertura temporal (multi-año vs 6–12 meses) y reflejarlo e...", "owner": "Quant", "roles": "Quant; Sistema", "estatus": "BACKLOG", "dependencias": "RM-013", "in_degree": 1, "out_degree": 8}, "RM-015": {"area": "Métricas", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Métricas de costos/fees", "requisito": "El sistema deberá calcular métricas relacionadas a costos/fees/spread cuando existan, documentando supuestos y anexándolos a reportes y exportaciones.", "owner": "Quant", "roles": "Quant; Analista", "estatus": "BACKLOG", "dependencias": "RM-013", "in_degree": 1, "out_degree": 1}, "RM-016": {"area": "Métricas", "prioridad": "Baja (P2)", "version": "v0.3", "funcionalidad": "Flags de riesgo/compliance basados en reglas", "requisito": "El sistema deberá evaluar reglas determinísticas para generar banderas (p.ej. disclosures faltantes, claims anómalos) y adjuntar evidencia (campo crudo + snapshot) para cada flag.", "owner": "Quant/Backend", "roles": "Quant; Analista; Admin", "estatus": "BACKLOG", "dependencias": "RM-013,RM-020", "in_degree": 2, "out_degree": 1}, "RM-017": {"area": "Métricas", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Benchmarks, percentiles y rankings", "requisito": "El sistema deberá calcular benchmarks, percentiles y rankings comparables entre traders (por ventana temporal) e incluir filtros por estrategia/etiquetas. Debe poder generar rankings separados por tipo de fuente y un ranking consolidado (si hay reglas de consolidación).", "owner": "Quant", "roles": "Analista; Viewer", "estatus": "BACKLOG", "dependencias": "RM-014", "in_degree": 1, "out_degree": 4}, "RM-018": {"area": "Calidad de datos", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Score de completitud", "requisito": "El sistema deberá calcular un score de completitud por trader, por fuente y por métrica en [0,1], basado en disponibilidad de insumos y cobertura temporal. Debe mostrarse en dashboard y reportes.", "owner": "Backend/Quant", "roles": "Analista; Viewer", "estatus": "BACKLOG", "dependencias": "RM-013,RM-014", "in_degree": 2, "out_degree": 2}, "RM-019": {"area": "Calidad de datos", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Detección de anomalías", "requisito": "El sistema deberá detectar anomalías (saltos bruscos de métricas, huecos temporales, cambios de parser/mapping) y etiquetar resultados afectados; debe permitir filtrar anomalías en validación del algoritmo.", "owner": "Quant/Backend", "roles": "Analista; Quant; DevOps", "estatus": "BACKLOG", "dependencias": "RM-014,RM-011,RM-009", "in_degree": 3, "out_degree": 3}, "RM-020": {"area": "Auditabilidad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Lineage de métricas a raw data", "requisito": "El sistema deberá proveer trazabilidad desde cualquier valor de métrica/ranking/reporte hasta los raw_records y transformaciones usadas (parser_version, mapping_version, metric_definition_version).", "owner": "Backend", "roles": "Analista; Admin", "estatus": "BACKLOG", "dependencias": "RM-009,RM-013", "in_degree": 2, "out_degree": 5}, "RM-021": {"area": "Validación de algoritmo", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Contrato de integración del algoritmo", "requisito": "El sistema deberá integrar el algoritmo de optimización del cliente mediante una interfaz definida (CLI/API/librería) con versionado (algorithm_build_id) y entradas/salidas determinísticas o con tolerancia definida. El objetivo primario es proponer distribución de capital (weights/allocations) entre...", "owner": "Backend/Quant", "roles": "Quant; Backend; DevOps", "estatus": "BACKLOG", "dependencias": "RM-022", "in_degree": 1, "out_degree": 5}, "RM-022": {"area": "Validación de algoritmo", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Constructor de datasets (feature matrix)", "requisito": "El sistema deberá construir datasets de validación desde datos normalizados (features de desempeño/riesgo por trader, y/o targets si aplica) con ventanas temporales explícitas y metadatos (schema_version, trader_set, feature_list, coverage). Debe poder generar datasets por tipo de cliente (retail/in...", "owner": "Quant/Backend", "roles": "Quant; Analista", "estatus": "BACKLOG", "dependencias": "RM-010", "in_degree": 1, "out_degree": 6}, "RM-023": {"area": "Validación de algoritmo", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Runner de backtests/experimentos", "requisito": "El sistema deberá ejecutar runs de validación sobre datasets seleccionados, guardando parámetros, logs, outputs, y métricas de ejecución. Debe soportar tipos de run (train/validate/test) si aplica y escenarios de “allocation simulation” (recomendar pesos y evaluar desempeño teórico vs real cuando ex...", "owner": "Quant/Backend", "roles": "Quant; Analista", "estatus": "BACKLOG", "dependencias": "RM-021,RM-022", "in_degree": 2, "out_degree": 9}, "RM-024": {"area": "Validación de algoritmo", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Métricas de evaluación y scorecards", "requisito": "El sistema deberá calcular métricas de evaluación y scorecards del algoritmo (p.ej. retorno vs riesgo, drawdown esperado, estabilidad, concentración, turnover) y comparar contra baselines (equal-weight, top-N por Sharpe, etc.). Debe soportar segmentación por tamaño de paquete de capital.", "owner": "Quant", "roles": "Quant; Analista; Viewer", "estatus": "BACKLOG", "dependencias": "RM-023,RM-013", "in_degree": 2, "out_degree": 5}, "RM-025": {"area": "Validación de algoritmo", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Diagnósticos y sensibilidad", "requisito": "El sistema deberá generar diagnósticos para runs (p.ej. análisis de fallos, frecuencia de constraints activas, ablation/feature importance si aplica) y exportarlos en reporte técnico.", "owner": "Quant", "roles": "Quant; Analista", "estatus": "BACKLOG", "dependencias": "RM-023,RM-024", "in_degree": 2, "out_degree": 1}, "RM-026": {"area": "Validación de algoritmo", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "What-if y parameter sweeps", "requisito": "El sistema deberá permitir ejecutar batch de escenarios (fees ±x, imputación, distintos thresholds) y comparar resultados en una tabla/visualización única.", "owner": "Quant/Backend", "roles": "Quant; Analista", "estatus": "BACKLOG", "dependencias": "RM-023", "in_degree": 1, "out_degree": 1}, "RM-027": {"area": "Reportes", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Plantillas y generación de reportes", "requisito": "El sistema deberá generar reportes versionados (PDF/HTML) para uso interno con: resumen de traders (rankings), recomendación de distribución de capital por paquete, tesis/objetivo, evidencia (fuentes y coverage), y anexos (raw/lineage). Debe permitir templates configurables por tipo de cliente (reta...", "owner": "Backend", "roles": "Analista; Viewer; Admin", "estatus": "BACKLOG", "dependencias": "RM-014,RM-024,RM-020", "in_degree": 3, "out_degree": 3}, "RM-028": {"area": "Reportes", "prioridad": "Baja (P2)", "version": "v0.3", "funcionalidad": "Distribución programada", "requisito": "El sistema deberá soportar generación y distribución programada de reportes (link seguro, email y/o webhook), con reintentos y alertas de falla.", "owner": "Backend/DevOps", "roles": "Admin; DevOps; Sistema", "estatus": "BACKLOG", "dependencias": "RM-027,RM-004,RM-034", "in_degree": 3, "out_degree": 1}, "RM-029": {"area": "Dashboard", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Vistas core del dashboard", "requisito": "El sistema deberá proveer dashboard con: lista de traders + filtros (estrategia, fuente, coverage), página detalle trader con charts, y resumen de validación del algoritmo; debe soportar drill-down a lineage y ver estado de fuentes (MyFXBook/MT4/MT5/reportes).", "owner": "Frontend", "roles": "Viewer; Analista; Admin", "estatus": "BACKLOG", "dependencias": "RM-014,RM-017,RM-020,RM-033,RM-034", "in_degree": 5, "out_degree": 3}, "RM-030": {"area": "Dashboard", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Comparaciones y rankings", "requisito": "El sistema deberá permitir comparación side-by-side de traders y tablas de ranking con columnas configurables, ordenamiento y exportación. Debe incluir comparaciones por ventana temporal (6m/12m/24m/total disponible) para evitar sesgos por coverage.", "owner": "Frontend", "roles": "Viewer; Analista", "estatus": "BACKLOG", "dependencias": "RM-017,RM-032,RM-018,RM-019", "in_degree": 4, "out_degree": 1}, "RM-031": {"area": "Dashboard", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Explorador de runs/experimentos", "requisito": "El sistema deberá proveer UI para explorar runs (filtros por versión, parámetros, fecha, estado) y comparar 2+ runs, mostrando diffs y scorecards.", "owner": "Frontend", "roles": "Analista; Quant", "estatus": "BACKLOG", "dependencias": "RM-023,RM-024,RM-034", "in_degree": 3, "out_degree": 1}, "RM-032": {"area": "Exportación", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Exports de datos y resultados", "requisito": "El sistema deberá exportar (CSV/JSON) registro de traders+fuentes, métricas y resultados de runs con metadatos de schema y unidades; exports grandes deben ser asíncronos.", "owner": "Backend", "roles": "Analista; Admin", "estatus": "BACKLOG", "dependencias": "RM-010,RM-013,RM-034", "in_degree": 3, "out_degree": 3}, "RM-033": {"area": "Seguridad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Autenticación", "requisito": "El sistema deberá requerir autenticación para dashboard, reportes y exports (email/password o SSO/OIDC), con sesiones seguras, CSRF donde aplique y políticas de password.", "owner": "Backend/DevOps", "roles": "Admin; Viewer; Analista", "estatus": "BACKLOG", "dependencias": "—", "in_degree": 0, "out_degree": 4}, "RM-034": {"area": "Seguridad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Autorización y roles (RBAC)", "requisito": "El sistema deberá implementar RBAC (Admin, Analista, Viewer) controlando: alta/edición de traders/fuentes, ejecución de runs, exports, cambios de políticas, acceso a auditorías, y (si aplica) gestión de paquetes de capital/tesis.", "owner": "Backend/Frontend", "roles": "Admin; Analista; Viewer", "estatus": "BACKLOG", "dependencias": "RM-033", "in_degree": 1, "out_degree": 7}, "RM-035": {"area": "Seguridad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Gestión de secretos", "requisito": "El sistema deberá gestionar secretos (API keys, SMTP, webhooks) fuera del repositorio (env/secret manager) y activar detección de secretos en CI.", "owner": "DevOps", "roles": "DevOps", "estatus": "BACKLOG", "dependencias": "RM-043", "in_degree": 1, "out_degree": 2}, "RM-036": {"area": "Observabilidad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Logging estructurado con correlación", "requisito": "El sistema deberá emitir logs estructurados (JSON) para ingesta, transformación, métricas y runs con correlation_id (run_id, trader_id, source_id, job_id) y niveles consistentes.", "owner": "DevOps", "roles": "DevOps; Backend", "estatus": "BACKLOG", "dependencias": "RM-004,RM-023", "in_degree": 2, "out_degree": 4}, "RM-037": {"area": "Observabilidad", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Métricas y alertas operativas", "requisito": "El sistema deberá exponer métricas (duración de jobs, tasa de éxito, errores de scraping, latencia API) y alertas por umbrales (p.ej. fallas >X%, retrasos).", "owner": "DevOps", "roles": "DevOps; Admin", "estatus": "BACKLOG", "dependencias": "RM-036", "in_degree": 1, "out_degree": 1}, "RM-038": {"area": "Performance", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Throughput del pipeline", "requisito": "El sistema deberá procesar N traders y sus fuentes dentro de SLAs razonables. Aunque la frecuencia de uso puede ser baja (decisiones por paquetes de capital), la ejecución de sync y cálculo debe ser confiable, idempotente y trazable. Debe soportar incremental updates para no re-procesar histórico co...", "owner": "Backend/DevOps", "roles": "DevOps; Backend", "estatus": "BACKLOG", "dependencias": "RM-005,RM-004", "in_degree": 2, "out_degree": 1}, "RM-039": {"area": "Performance", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Responsividad del dashboard", "requisito": "El sistema deberá mantener interacciones del dashboard con P95 <2s para consultas típicas y <10s para consultas pesadas, mostrando indicador de progreso si aplica.", "owner": "Backend/Frontend", "roles": "Frontend; Backend", "estatus": "BACKLOG", "dependencias": "RM-029,RM-017", "in_degree": 2, "out_degree": 1}, "RM-040": {"area": "Reproducibilidad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Versionado end-to-end de componentes", "requisito": "El sistema deberá versionar y relacionar parsers, mapeos, definiciones de métricas, datasets y builds del algoritmo, y asociarlos a cada run y reporte.", "owner": "Backend/Quant", "roles": "Quant; Backend", "estatus": "BACKLOG", "dependencias": "RM-009,RM-011,RM-013,RM-021,RM-022", "in_degree": 5, "out_degree": 1}, "RM-041": {"area": "Testing", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Suite de unit/integration/E2E", "requisito": "El sistema deberá incluir pruebas automáticas para parsers, transformaciones, métricas y runner del algoritmo. Debe usar fixtures grabadas (no depender de sitios live) y seguir enfoque RED/GREEN.", "owner": "All", "roles": "Backend; Quant; Frontend", "estatus": "BACKLOG", "dependencias": "RM-006,RM-013,RM-023", "in_degree": 3, "out_degree": 3}, "RM-042": {"area": "Testing", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Data contract tests (schemas)", "requisito": "El sistema deberá aplicar data contracts entre extracción→normalización→dataset→algoritmo (schemas versionados) y fallar CI ante cambios rompientes.", "owner": "Backend", "roles": "Backend; Quant", "estatus": "BACKLOG", "dependencias": "RM-010,RM-022,RM-021", "in_degree": 3, "out_degree": 1}, "RM-043": {"area": "DevOps", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "CI/CD + migraciones + rollback", "requisito": "El sistema deberá contar con CI/CD para build, tests, deploy y migraciones DB, con promoción de ambientes (dev/stage/prod) y procedimiento de rollback probado.", "owner": "DevOps", "roles": "DevOps", "estatus": "BACKLOG", "dependencias": "RM-041,RM-035", "in_degree": 2, "out_degree": 3}, "RM-044": {"area": "Gobernanza de datos", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Retención y archivado", "requisito": "El sistema deberá definir políticas de retención para raw_records, snapshots, outputs de runs, logs y reportes (purga/archivado) sin dejar referencias huérfanas.", "owner": "Backend/DevOps", "roles": "Admin; DevOps", "estatus": "BACKLOG", "dependencias": "RM-009,RM-023,RM-027", "in_degree": 3, "out_degree": 1}, "RM-045": {"area": "Gobernanza", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Bitácora de auditoría de acciones críticas", "requisito": "El sistema deberá registrar eventos de auditoría para: cambios de traders/fuentes (URLs/credenciales), ejecuciones de runs, exports, cambios de roles, cambios de políticas, cambios/ejecuciones de tesis/asignación (si aplica), y accesos a reportes/lineage.", "owner": "Backend", "roles": "Admin", "estatus": "BACKLOG", "dependencias": "RM-034", "in_degree": 1, "out_degree": 1}, "RM-046": {"area": "UX", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Transparencia de errores y remediación", "requisito": "El sistema deberá mostrar errores claros y accionables (parser roto, dominio bloqueado, datos insuficientes, run fallido), con pasos sugeridos y links a evidencia (logs/lineage).", "owner": "Frontend", "roles": "Viewer; Analista; Admin", "estatus": "BACKLOG", "dependencias": "RM-019,RM-036,RM-020", "in_degree": 3, "out_degree": 1}, "RM-047": {"area": "Privacidad", "prioridad": "Baja (P2)", "version": "v0.3", "funcionalidad": "Minimización y redacción de datos", "requisito": "El sistema deberá almacenar sólo campos necesarios y permitir redacción/omisión de campos sensibles (si aparecen) en salidas (dash/report/export) según política.", "owner": "Backend/DevOps", "roles": "Admin; DevOps", "estatus": "BACKLOG", "dependencias": "RM-036,RM-032", "in_degree": 2, "out_degree": 1}, "RM-048": {"area": "Documentación", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Docs técnicas y operativas", "requisito": "El sistema deberá incluir documentación: setup local, despliegue, runbooks, catálogo de métricas, cómo agregar un nuevo dominio/adaptador y cómo ejecutar validación del algoritmo.", "owner": "All", "roles": "All", "estatus": "BACKLOG", "dependencias": "RM-043", "in_degree": 1, "out_degree": 1}, "RM-049": {"area": "Extensibilidad", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Onboarding de nuevo dominio/fuente", "requisito": "El sistema deberá ofrecer un proceso estándar (template de adapter + mapping + fixtures + tests) para agregar un nuevo dominio en <=1 día para un sitio típico.", "owner": "Backend", "roles": "Backend; Quant", "estatus": "BACKLOG", "dependencias": "RM-006,RM-011,RM-041", "in_degree": 3, "out_degree": 1}, "RM-050": {"area": "Entregables", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Criterio de aceptación del MVP", "requisito": "El MVP deberá incluir: registro de traders+fuentes (MyFXBook/MT4/MT5/reportes), scheduler, extracción+normalización, métricas core, dashboard básico, construcción de dataset, ejecución de runs, scorecard, y generación de reportes con versionado/lineage. Debe incluir al menos un flujo de “paquete de ...", "owner": "PM/All", "roles": "PM; Admin; Analista", "estatus": "BACKLOG", "dependencias": "RM-001..RM-049", "in_degree": 49, "out_degree": 0}, "RM-051": {"area": "Gestión de capital", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Registro de clientes y paquetes de capital", "requisito": "El sistema deberá permitir registrar clientes/fuentes de capital (retail e institucional/family office), con país/región (p.ej. México/Colombia), moneda, monto, perfil de riesgo y restricciones (mínimos/máximos, concentración, instrumentos prohibidos si aplica). Debe permitir registrar paquetes de c...", "owner": "Backend", "roles": "Admin; Analista (Gema); PM", "estatus": "BACKLOG", "dependencias": "RM-033,RM-034,RM-001", "in_degree": 3, "out_degree": 2}, "RM-052": {"area": "Gestión de riesgos", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Modelo/ecuación de distribución de capital", "requisito": "El sistema deberá permitir a la analista definir y versionar la “tesis”/modelo de asignación por paquete de capital: objetivo (retorno/riesgo), parámetros/ponderaciones (p.ej. 0.2, 0.5, 0.5, 0.55), restricciones (concentración, límites por trader), y ventana histórica a usar. Debe ejecutar el algori...", "owner": "Backend/Quant/Frontend", "roles": "Analista (Gema); Admin; Quant", "estatus": "BACKLOG", "dependencias": "RM-051,RM-014,RM-021,RM-022,RM-023,RM-024", "in_degree": 6, "out_degree": 1}, "RM-053": {"area": "Seguimiento", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Seguimiento post-inversión de tesis de inversión", "requisito": "Una vez que un paquete de capital se marca como “invertido”, el sistema deberá dar seguimiento a la tesis: comparar desempeño real vs esperado (por trader y agregado), calcular desviaciones, y generar checkpoints (diario o semanal configurable). Debe permitir registrar decisiones de continuidad (man...", "owner": "Backend/Frontend", "roles": "Analista (Gema); Admin", "estatus": "BACKLOG", "dependencias": "RM-051,RM-052,RM-004,RM-014,RM-029", "in_degree": 5, "out_degree": 0}, "RM-054": {"area": "Integraciones", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Conector MyFXBook (sync de summaries)", "requisito": "El sistema deberá implementar un conector para MyFXBook que permita obtener historial y resúmenes (preferentemente diarios) por cuenta/perfil, soportando retención multianual al persistir snapshots. Debe manejar autenticación/token si aplica, rate limits, y fallbacks (HTML parsing) con trazabilidad.", "owner": "Backend", "roles": "Backend; DevOps", "estatus": "BACKLOG", "dependencias": "RM-001,RM-002,RM-004,RM-005,RM-006,RM-009", "in_degree": 6, "out_degree": 0}, "RM-055": {"area": "Integraciones", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Conector MetaTrader 4/5 (modo inversionista)", "requisito": "El sistema deberá implementar un conector para MetaTrader 4/5 en modo monitoreo (credenciales de inversionista) para obtener operaciones y equity/statement en la ventana histórica disponible por broker (típicamente 6–12 meses). Debe soportar múltiples brokers/servidores, cuentas demo para pruebas, y...", "owner": "Backend/DevOps", "roles": "Backend; DevOps", "estatus": "BACKLOG", "dependencias": "RM-001,RM-002,RM-004,RM-009,RM-010", "in_degree": 5, "out_degree": 0}};
-        const subgraphData = {"RM-001": {"ancestors": [], "descendants": ["RM-046", "RM-024", "RM-008", "RM-003", "RM-047", "RM-054", "RM-004", "RM-006", "RM-013", "RM-041", "RM-002", "RM-018", "RM-049", "RM-031", "RM-026", "RM-017", "RM-043", "RM-007", "RM-005", "RM-022", "RM-030", "RM-051", "RM-011", "RM-039", "RM-042", "RM-037", "RM-027", "RM-015", "RM-021", "RM-023", "RM-055", "RM-010", "RM-036", "RM-020", "RM-040", "RM-044", "RM-035", "RM-029", "RM-012", "RM-048", "RM-053", "RM-050", "RM-016", "RM-025", "RM-028", "RM-014", "RM-038", "RM-032", "RM-052", "RM-009", "RM-019"]}, "RM-002": {"ancestors": ["RM-001"], "descendants": ["RM-046", "RM-024", "RM-008", "RM-003", "RM-047", "RM-054", "RM-006", "RM-013", "RM-018", "RM-041", "RM-026", "RM-049", "RM-031", "RM-017", "RM-043", "RM-007", "RM-005", "RM-022", "RM-030", "RM-011", "RM-039", "RM-042", "RM-027", "RM-015", "RM-021", "RM-037", "RM-023", "RM-055", "RM-010", "RM-036", "RM-020", "RM-040", "RM-044", "RM-035", "RM-029", "RM-012", "RM-048", "RM-053", "RM-050", "RM-016", "RM-025", "RM-028", "RM-014", "RM-038", "RM-032", "RM-052", "RM-009", "RM-019"]}, "RM-003": {"ancestors": ["RM-001", "RM-002"], "descendants": ["RM-046", "RM-024", "RM-008", "RM-047", "RM-054", "RM-006", "RM-013", "RM-018", "RM-041", "RM-026", "RM-049", "RM-031", "RM-017", "RM-043", "RM-007", "RM-005", "RM-022", "RM-030", "RM-011", "RM-039", "RM-042", "RM-027", "RM-015", "RM-021", "RM-037", "RM-023", "RM-055", "RM-010", "RM-036", "RM-020", "RM-040", "RM-044", "RM-035", "RM-029", "RM-012", "RM-048", "RM-053", "RM-050", "RM-016", "RM-025", "RM-028", "RM-014", "RM-038", "RM-032", "RM-052", "RM-009", "RM-019"]}, "RM-004": {"ancestors": ["RM-001"], "descendants": ["RM-046", "RM-024", "RM-008", "RM-047", "RM-054", "RM-006", "RM-013", "RM-018", "RM-041", "RM-026", "RM-049", "RM-031", "RM-017", "RM-043", "RM-007", "RM-022", "RM-030", "RM-011", "RM-039", "RM-042", "RM-037", "RM-027", "RM-015", "RM-021", "RM-023", "RM-055", "RM-010", "RM-036", "RM-020", "RM-040", "RM-044", "RM-035", "RM-029", "RM-012", "RM-048", "RM-053", "RM-050", "RM-016", "RM-025", "RM-028", "RM-014", "RM-038", "RM-032", "RM-052", "RM-009", "RM-019"]}, "RM-005": {"ancestors": ["RM-001", "RM-003", "RM-002"], "descendants": ["RM-046", "RM-024", "RM-008", "RM-047", "RM-054", "RM-006", "RM-013", "RM-018", "RM-041", "RM-026", "RM-049", "RM-031", "RM-017", "RM-043", "RM-007", "RM-022", "RM-030", "RM-011", "RM-039", "RM-042", "RM-027", "RM-015", "RM-021", "RM-037", "RM-023", "RM-055", "RM-010", "RM-036", "RM-020", "RM-040", "RM-044", "RM-035", "RM-029", "RM-012", "RM-048", "RM-053", "RM-050", "RM-016", "RM-025", "RM-028", "RM-014", "RM-038", "RM-032", "RM-052", "RM-009", "RM-019"]}, "RM-006": {"ancestors": ["RM-001", "RM-003", "RM-005", "RM-004", "RM-002"], "descendants": ["RM-046", "RM-024", "RM-008", "RM-047", "RM-054", "RM-013", "RM-018", "RM-026", "RM-041", "RM-049", "RM-031", "RM-017", "RM-043", "RM-007", "RM-022", "RM-030", "RM-011", "RM-039", "RM-042", "RM-027", "RM-015", "RM-021", "RM-037", "RM-023", "RM-055", "RM-010", "RM-036", "RM-020", "RM-040", "RM-044", "RM-035", "RM-029", "RM-012", "RM-048", "RM-053", "RM-050", "RM-016", "RM-025", "RM-028", "RM-014", "RM-032", "RM-052", "RM-009", "RM-019"]}, "RM-007": {"ancestors": ["RM-001", "RM-003", "RM-005", "RM-006", "RM-004", "RM-002"], "descendants": ["RM-050"]}, "RM-008": {"ancestors": ["RM-001", "RM-003", "RM-005", "RM-006", "RM-004", "RM-002"], "descendants": ["RM-050"]}, "RM-009": {"ancestors": ["RM-001", "RM-003", "RM-005", "RM-006", "RM-004", "RM-002"], "descendants": ["RM-046", "RM-024", "RM-047", "RM-054", "RM-013", "RM-018", "RM-026", "RM-041", "RM-049", "RM-031", "RM-017", "RM-043", "RM-022", "RM-030", "RM-011", "RM-039", "RM-042", "RM-027", "RM-015", "RM-021", "RM-037", "RM-023", "RM-055", "RM-010", "RM-036", "RM-020", "RM-040", "RM-044", "RM-035", "RM-029", "RM-012", "RM-048", "RM-053", "RM-050", "RM-016", "RM-025", "RM-028", "RM-014", "RM-032", "RM-052", "RM-019"]}, "RM-010": {"ancestors": ["RM-001", "RM-003", "RM-005", "RM-006", "RM-004", "RM-002", "RM-009"], "descendants": ["RM-024", "RM-046", "RM-047", "RM-013", "RM-018", "RM-026", "RM-041", "RM-049", "RM-031", "RM-017", "RM-043", "RM-022", "RM-030", "RM-011", "RM-039", "RM-042", "RM-027", "RM-015", "RM-021", "RM-037", "RM-023", "RM-055", "RM-036", "RM-020", "RM-040", "RM-044", "RM-035", "RM-029", "RM-012", "RM-048", "RM-053", "RM-050", "RM-016", "RM-025", "RM-028", "RM-014", "RM-032", "RM-052", "RM-019"]}, "RM-011": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-005", "RM-004", "RM-006", "RM-002", "RM-009"], "descendants": ["RM-046", "RM-050", "RM-030", "RM-040", "RM-049", "RM-019", "RM-012"]}, "RM-012": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-005", "RM-011", "RM-004", "RM-006", "RM-002", "RM-009"], "descendants": ["RM-050"]}, "RM-013": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-005", "RM-004", "RM-006", "RM-002", "RM-009"], "descendants": ["RM-024", "RM-046", "RM-047", "RM-018", "RM-041", "RM-031", "RM-049", "RM-017", "RM-043", "RM-030", "RM-039", "RM-027", "RM-015", "RM-020", "RM-040", "RM-044", "RM-035", "RM-029", "RM-048", "RM-053", "RM-050", "RM-016", "RM-025", "RM-028", "RM-014", "RM-032", "RM-052", "RM-019"]}, "RM-014": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-005", "RM-013", "RM-004", "RM-006", "RM-002", "RM-009"], "descendants": ["RM-046", "RM-053", "RM-017", "RM-050", "RM-030", "RM-039", "RM-028", "RM-044", "RM-018", "RM-027", "RM-052", "RM-019", "RM-029"]}, "RM-015": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-005", "RM-013", "RM-004", "RM-006", "RM-002", "RM-009"], "descendants": ["RM-050"]}, "RM-016": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-005", "RM-020", "RM-013", "RM-006", "RM-004", "RM-002", "RM-009"], "descendants": ["RM-050"]}, "RM-017": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-005", "RM-014", "RM-013", "RM-006", "RM-004", "RM-002", "RM-009"], "descendants": ["RM-053", "RM-050", "RM-030", "RM-039", "RM-029"]}, "RM-018": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-005", "RM-013", "RM-014", "RM-006", "RM-004", "RM-002", "RM-009"], "descendants": ["RM-050", "RM-030"]}, "RM-019": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-005", "RM-011", "RM-013", "RM-014", "RM-006", "RM-004", "RM-002", "RM-009"], "descendants": ["RM-046", "RM-050", "RM-030"]}, "RM-020": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-005", "RM-013", "RM-006", "RM-004", "RM-002", "RM-009"], "descendants": ["RM-046", "RM-053", "RM-050", "RM-016", "RM-028", "RM-039", "RM-044", "RM-027", "RM-029"]}, "RM-021": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-005", "RM-022", "RM-004", "RM-006", "RM-002", "RM-009"], "descendants": ["RM-024", "RM-046", "RM-047", "RM-026", "RM-041", "RM-031", "RM-049", "RM-043", "RM-042", "RM-027", "RM-037", "RM-023", "RM-036", "RM-040", "RM-044", "RM-035", "RM-048", "RM-053", "RM-050", "RM-025", "RM-028", "RM-052"]}, "RM-022": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-005", "RM-004", "RM-006", "RM-002", "RM-009"], "descendants": ["RM-024", "RM-046", "RM-047", "RM-026", "RM-041", "RM-031", "RM-049", "RM-043", "RM-042", "RM-027", "RM-037", "RM-021", "RM-023", "RM-036", "RM-040", "RM-044", "RM-035", "RM-048", "RM-053", "RM-050", "RM-025", "RM-028", "RM-052"]}, "RM-023": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-005", "RM-022", "RM-006", "RM-004", "RM-021", "RM-002", "RM-009"], "descendants": ["RM-024", "RM-046", "RM-047", "RM-026", "RM-041", "RM-049", "RM-031", "RM-043", "RM-027", "RM-037", "RM-036", "RM-044", "RM-035", "RM-048", "RM-053", "RM-050", "RM-025", "RM-028", "RM-052"]}, "RM-024": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-005", "RM-022", "RM-013", "RM-006", "RM-004", "RM-021", "RM-002", "RM-009", "RM-023"], "descendants": ["RM-053", "RM-050", "RM-025", "RM-028", "RM-044", "RM-027", "RM-031", "RM-052"]}, "RM-025": {"ancestors": ["RM-024", "RM-010", "RM-001", "RM-003", "RM-005", "RM-022", "RM-013", "RM-006", "RM-004", "RM-021", "RM-002", "RM-009", "RM-023"], "descendants": ["RM-050"]}, "RM-026": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-005", "RM-022", "RM-006", "RM-004", "RM-021", "RM-002", "RM-009", "RM-023"], "descendants": ["RM-050"]}, "RM-027": {"ancestors": ["RM-024", "RM-010", "RM-001", "RM-003", "RM-005", "RM-020", "RM-022", "RM-014", "RM-013", "RM-006", "RM-004", "RM-021", "RM-002", "RM-009", "RM-023"], "descendants": ["RM-044", "RM-050", "RM-028"]}, "RM-028": {"ancestors": ["RM-024", "RM-033", "RM-001", "RM-010", "RM-003", "RM-005", "RM-034", "RM-020", "RM-022", "RM-014", "RM-004", "RM-027", "RM-013", "RM-021", "RM-006", "RM-002", "RM-009", "RM-023"], "descendants": ["RM-050"]}, "RM-029": {"ancestors": ["RM-033", "RM-017", "RM-010", "RM-001", "RM-003", "RM-005", "RM-034", "RM-020", "RM-014", "RM-013", "RM-006", "RM-004", "RM-002", "RM-009"], "descendants": ["RM-053", "RM-050", "RM-039"]}, "RM-030": {"ancestors": ["RM-017", "RM-010", "RM-033", "RM-001", "RM-003", "RM-005", "RM-034", "RM-011", "RM-014", "RM-032", "RM-018", "RM-013", "RM-006", "RM-004", "RM-002", "RM-009", "RM-019"], "descendants": ["RM-050"]}, "RM-031": {"ancestors": ["RM-024", "RM-033", "RM-010", "RM-001", "RM-003", "RM-005", "RM-034", "RM-022", "RM-013", "RM-006", "RM-004", "RM-021", "RM-002", "RM-009", "RM-023"], "descendants": ["RM-050"]}, "RM-032": {"ancestors": ["RM-033", "RM-010", "RM-001", "RM-003", "RM-005", "RM-034", "RM-013", "RM-006", "RM-004", "RM-002", "RM-009"], "descendants": ["RM-050", "RM-047", "RM-030"]}, "RM-033": {"ancestors": [], "descendants": ["RM-053", "RM-050", "RM-047", "RM-034", "RM-045", "RM-030", "RM-039", "RM-051", "RM-028", "RM-032", "RM-031", "RM-052", "RM-029"]}, "RM-034": {"ancestors": ["RM-033"], "descendants": ["RM-053", "RM-050", "RM-047", "RM-045", "RM-030", "RM-028", "RM-051", "RM-039", "RM-032", "RM-031", "RM-052", "RM-029"]}, "RM-035": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-043", "RM-005", "RM-022", "RM-013", "RM-006", "RM-004", "RM-041", "RM-021", "RM-002", "RM-009", "RM-023"], "descendants": ["RM-048", "RM-050", "RM-043"]}, "RM-036": {"ancestors": ["RM-001", "RM-010", "RM-003", "RM-005", "RM-022", "RM-004", "RM-006", "RM-021", "RM-002", "RM-009", "RM-023"], "descendants": ["RM-046", "RM-037", "RM-047", "RM-050"]}, "RM-037": {"ancestors": ["RM-001", "RM-036", "RM-010", "RM-003", "RM-005", "RM-022", "RM-004", "RM-006", "RM-021", "RM-002", "RM-009", "RM-023"], "descendants": ["RM-050"]}, "RM-038": {"ancestors": ["RM-001", "RM-003", "RM-005", "RM-004", "RM-002"], "descendants": ["RM-050"]}, "RM-039": {"ancestors": ["RM-017", "RM-033", "RM-010", "RM-001", "RM-003", "RM-005", "RM-034", "RM-020", "RM-014", "RM-013", "RM-006", "RM-004", "RM-002", "RM-009", "RM-029"], "descendants": ["RM-050"]}, "RM-040": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-005", "RM-022", "RM-011", "RM-013", "RM-006", "RM-004", "RM-021", "RM-002", "RM-009"], "descendants": ["RM-050"]}, "RM-041": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-005", "RM-022", "RM-013", "RM-006", "RM-004", "RM-021", "RM-002", "RM-009", "RM-023"], "descendants": ["RM-048", "RM-050", "RM-043", "RM-049", "RM-035"]}, "RM-042": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-005", "RM-022", "RM-006", "RM-004", "RM-021", "RM-002", "RM-009"], "descendants": ["RM-050"]}, "RM-043": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-005", "RM-022", "RM-013", "RM-006", "RM-004", "RM-041", "RM-021", "RM-002", "RM-009", "RM-035", "RM-023"], "descendants": ["RM-048", "RM-035", "RM-050"]}, "RM-044": {"ancestors": ["RM-024", "RM-010", "RM-001", "RM-003", "RM-005", "RM-022", "RM-020", "RM-014", "RM-006", "RM-027", "RM-004", "RM-021", "RM-013", "RM-002", "RM-009", "RM-023"], "descendants": ["RM-050"]}, "RM-045": {"ancestors": ["RM-033", "RM-034"], "descendants": ["RM-050"]}, "RM-046": {"ancestors": ["RM-010", "RM-036", "RM-001", "RM-003", "RM-005", "RM-020", "RM-022", "RM-011", "RM-014", "RM-004", "RM-013", "RM-006", "RM-021", "RM-002", "RM-009", "RM-019", "RM-023"], "descendants": ["RM-050"]}, "RM-047": {"ancestors": ["RM-033", "RM-010", "RM-036", "RM-001", "RM-003", "RM-005", "RM-034", "RM-022", "RM-013", "RM-032", "RM-004", "RM-006", "RM-021", "RM-002", "RM-009", "RM-023"], "descendants": ["RM-050"]}, "RM-048": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-043", "RM-005", "RM-022", "RM-013", "RM-006", "RM-004", "RM-041", "RM-021", "RM-002", "RM-009", "RM-035", "RM-023"], "descendants": ["RM-050"]}, "RM-049": {"ancestors": ["RM-010", "RM-001", "RM-003", "RM-005", "RM-022", "RM-011", "RM-013", "RM-006", "RM-004", "RM-041", "RM-021", "RM-002", "RM-009", "RM-023"], "descendants": ["RM-050"]}, "RM-050": {"ancestors": ["RM-024", "RM-046", "RM-008", "RM-001", "RM-003", "RM-047", "RM-013", "RM-004", "RM-006", "RM-018", "RM-026", "RM-002", "RM-041", "RM-031", "RM-049", "RM-017", "RM-033", "RM-043", "RM-007", "RM-005", "RM-034", "RM-022", "RM-030", "RM-011", "RM-039", "RM-045", "RM-042", "RM-027", "RM-015", "RM-021", "RM-037", "RM-023", "RM-010", "RM-036", "RM-020", "RM-040", "RM-044", "RM-035", "RM-029", "RM-012", "RM-048", "RM-016", "RM-025", "RM-028", "RM-014", "RM-032", "RM-038", "RM-009", "RM-019"], "descendants": []}, "RM-051": {"ancestors": ["RM-033", "RM-034", "RM-001"], "descendants": ["RM-052", "RM-053"]}, "RM-052": {"ancestors": ["RM-024", "RM-033", "RM-001", "RM-010", "RM-003", "RM-005", "RM-034", "RM-022", "RM-051", "RM-014", "RM-013", "RM-006", "RM-004", "RM-021", "RM-002", "RM-009", "RM-023"], "descendants": ["RM-053"]}, "RM-053": {"ancestors": ["RM-024", "RM-001", "RM-003", "RM-013", "RM-004", "RM-006", "RM-002", "RM-033", "RM-017", "RM-005", "RM-034", "RM-022", "RM-051", "RM-021", "RM-023", "RM-010", "RM-020", "RM-029", "RM-014", "RM-052", "RM-009"], "descendants": []}, "RM-054": {"ancestors": ["RM-001", "RM-003", "RM-005", "RM-004", "RM-006", "RM-002", "RM-009"], "descendants": []}, "RM-055": {"ancestors": ["RM-001", "RM-010", "RM-003", "RM-005", "RM-004", "RM-006", "RM-002", "RM-009"], "descendants": []}};
+        const nodeData = {"RM-001": {"area": "Ingesta", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Registro de traders y fuentes de desempeño", "requisito": "El sistema deberá permitir cargar y administrar una lista configurable de N traders con metadatos (trader_id, nombre/alias, región/país, etiquetas/estrategia, estatus) y 1..N fuentes de desempeño por trader. Fuentes soportadas: (a) MyFXBook (URL/perfil o identificador), (b) cuentas MetaTrader 4/5 en...", "owner": "Backend", "roles": "Admin; Analista (Gema); Sistema", "estatus": "BACKLOG", "dependencias": "—", "in_degree": 0, "out_degree": 7, "in_cycle": false}, "RM-002": {"area": "Ingesta", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Validación de fuentes y credenciales (URL + MT4/MT5)", "requisito": "Antes de ejecutar extracción/sync, el sistema deberá validar cada fuente: URLs (sintaxis, esquema, dominio, alcanzabilidad) y cuentas MT4/MT5 (handshake/credenciales de inversionista, latencia, ventana histórica disponible). Debe persistir el resultado con código de error, detalle legible y política...", "owner": "Backend", "roles": "Sistema; Admin; Analista (Gema)", "estatus": "BACKLOG", "dependencias": "RM-001", "in_degree": 1, "out_degree": 4, "in_cycle": false}, "RM-003": {"area": "Ingesta", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Políticas de acceso por dominio (robots/ToS)", "requisito": "El sistema deberá registrar políticas por dominio (robots.txt snapshot, rate limit, notas ToS internas) y hacer cumplir dichas políticas durante la extracción. Debe permitir bloquear dominios o pausar scraping.", "owner": "Backend/DevOps", "roles": "Admin; DevOps; Sistema", "estatus": "BACKLOG", "dependencias": "RM-001,RM-002", "in_degree": 2, "out_degree": 3, "in_cycle": false}, "RM-004": {"area": "Ingesta", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Scheduler de syncs", "requisito": "El sistema deberá soportar ejecución programada (frecuencia configurable por fuente) y refresh on-demand por trader/fuente, generando jobs con trazabilidad (run_id, trader_id, source_id, created_by). Debe soportar ventanas de sync diarias/semanales (configurable) y priorizar sincronización increment...", "owner": "Backend/DevOps", "roles": "Admin; Analista; Sistema", "estatus": "BACKLOG", "dependencias": "RM-001", "in_degree": 1, "out_degree": 8, "in_cycle": false}, "RM-005": {"area": "Ingesta", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Rate limiting, retries y circuit breaker", "requisito": "El sistema deberá implementar rate limiting por dominio, retries con exponential backoff y circuit breaker ante fallas repetidas. Debe registrar métricas de requests y errores.", "owner": "Backend/DevOps", "roles": "Sistema; DevOps", "estatus": "BACKLOG", "dependencias": "RM-003", "in_degree": 1, "out_degree": 4, "in_cycle": false}, "RM-006": {"area": "Extracción", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Adaptadores por fuente (MyFXBook / ForexFactory / HTML) y extracción mantenible", "requisito": "El sistema deberá extraer datos crudos usando adaptadores por fuente: MyFXBook (HTML/API), ForexFactory (si se usa), y otros sitios HTML, con selectores/mapeos mantenibles y testeables, versionando el parser/adapter. Para MT4/MT5, la extracción se realizará vía conector dedicado a partir de credenci...", "owner": "Backend", "roles": "Sistema; Backend", "estatus": "BACKLOG", "dependencias": "RM-004,RM-005", "in_degree": 2, "out_degree": 7, "in_cycle": false}, "RM-007": {"area": "Extracción", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Soporte JSON/API cuando exista", "requisito": "Cuando exista una API oficial o feed estructurado, el sistema deberá preferirlo sobre scraping. Debe soportar: API de MyFXBook (si aplica), exportaciones/feeds de brokers cuando existan, y endpoints estructurados de proveedores. Debe registrar limits, versionado y fallbacks.", "owner": "Backend", "roles": "Sistema; Backend", "estatus": "BACKLOG", "dependencias": "RM-006", "in_degree": 1, "out_degree": 1, "in_cycle": false}, "RM-008": {"area": "Extracción", "prioridad": "Baja (P2)", "version": "v0.3", "funcionalidad": "Soporte de reportes de broker (PDF/XLS) y adjuntos", "requisito": "El sistema deberá permitir incorporar reportes de broker asociados a un trader/fuente: (a) detectar y descargar adjuntos/links (PDF u otros permitidos) cuando estén presentes y permitidos por política, y (b) permitir carga manual de reportes (PDF/XLS) cuando el trader no tenga MyFXBook. Debe guardar...", "owner": "Backend", "roles": "Sistema; Backend", "estatus": "BACKLOG", "dependencias": "RM-003,RM-006", "in_degree": 2, "out_degree": 1, "in_cycle": false}, "RM-009": {"area": "Modelo de datos", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Almacenamiento de datos crudos versionados", "requisito": "El sistema deberá guardar registros crudos inmutables con fuente (source_id), timestamp, adapter_version, content_hash y payload (JSON/bytes). No debe sobrescribir datos crudos. Debe soportar snapshots diarios para retener histórico multianual (p.ej. MyFXBook), y registrar explícitamente la ventana ...", "owner": "Backend", "roles": "Sistema; Backend", "estatus": "BACKLOG", "dependencias": "RM-006", "in_degree": 1, "out_degree": 8, "in_cycle": false}, "RM-010": {"area": "Modelo de datos", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Entidades normalizadas y snapshots", "requisito": "El sistema deberá normalizar datos crudos a entidades núcleo (Trader, PerformanceSource, DailySummary, Trade/Deal, MetricDefinition, MetricValue, Run, Experiment) y soportar snapshots temporalmente indexados por trader y por fuente. Debe soportar múltiples fuentes por trader y reconciliación por per...", "owner": "Backend", "roles": "Backend; Quant; Sistema", "estatus": "BACKLOG", "dependencias": "RM-009", "in_degree": 1, "out_degree": 7, "in_cycle": false}, "RM-011": {"area": "Transformación", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Reglas de mapeo configurables", "requisito": "El sistema deberá permitir definir reglas de mapeo (por dominio) desde campos crudos a campos normalizados, con versionado y capacidad de rollback. Idealmente sin despliegue de código para cambios menores.", "owner": "Backend", "roles": "Admin; Backend; Quant", "estatus": "BACKLOG", "dependencias": "RM-010", "in_degree": 1, "out_degree": 5, "in_cycle": false}, "RM-012": {"area": "Transformación", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Limpieza y estandarización de datos", "requisito": "El sistema deberá limpiar y estandarizar formatos (fechas, divisas, porcentajes, locales) a formatos canónicos y registrar errores de parseo por campo.", "owner": "Backend", "roles": "Backend; Sistema", "estatus": "BACKLOG", "dependencias": "RM-011", "in_degree": 1, "out_degree": 1, "in_cycle": false}, "RM-013": {"area": "Métricas", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Catálogo de definiciones de métricas", "requisito": "El sistema deberá mantener un registro versionado de métricas (nombre, fórmula/algoritmo, insumos requeridos, unidad, rango válido, y constraints). Será la fuente única para cómputo y reporteo.", "owner": "Backend/Quant", "roles": "Quant; Backend; Admin", "estatus": "BACKLOG", "dependencias": "RM-010", "in_degree": 1, "out_degree": 10, "in_cycle": false}, "RM-014": {"area": "Métricas", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Cálculo de métricas core", "requisito": "El sistema deberá calcular métricas base por trader, por fuente y por periodo (p.ej. rendimiento, volatilidad, drawdown, win-rate) a partir de los datos disponibles, y manejar explícitamente el caso de “datos insuficientes”. Debe distinguir cobertura temporal (multi-año vs 6–12 meses) y reflejarlo e...", "owner": "Quant", "roles": "Quant; Sistema", "estatus": "BACKLOG", "dependencias": "RM-013", "in_degree": 1, "out_degree": 8, "in_cycle": false}, "RM-015": {"area": "Métricas", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Métricas de costos/fees", "requisito": "El sistema deberá calcular métricas relacionadas a costos/fees/spread cuando existan, documentando supuestos y anexándolos a reportes y exportaciones.", "owner": "Quant", "roles": "Quant; Analista", "estatus": "BACKLOG", "dependencias": "RM-013", "in_degree": 1, "out_degree": 1, "in_cycle": false}, "RM-016": {"area": "Métricas", "prioridad": "Baja (P2)", "version": "v0.3", "funcionalidad": "Flags de riesgo/compliance basados en reglas", "requisito": "El sistema deberá evaluar reglas determinísticas para generar banderas (p.ej. disclosures faltantes, claims anómalos) y adjuntar evidencia (campo crudo + snapshot) para cada flag.", "owner": "Quant/Backend", "roles": "Quant; Analista; Admin", "estatus": "BACKLOG", "dependencias": "RM-013,RM-020", "in_degree": 2, "out_degree": 1, "in_cycle": false}, "RM-017": {"area": "Métricas", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Benchmarks, percentiles y rankings", "requisito": "El sistema deberá calcular benchmarks, percentiles y rankings comparables entre traders (por ventana temporal) e incluir filtros por estrategia/etiquetas. Debe poder generar rankings separados por tipo de fuente y un ranking consolidado (si hay reglas de consolidación).", "owner": "Quant", "roles": "Analista; Viewer", "estatus": "BACKLOG", "dependencias": "RM-014", "in_degree": 1, "out_degree": 4, "in_cycle": false}, "RM-018": {"area": "Calidad de datos", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Score de completitud", "requisito": "El sistema deberá calcular un score de completitud por trader, por fuente y por métrica en [0,1], basado en disponibilidad de insumos y cobertura temporal. Debe mostrarse en dashboard y reportes.", "owner": "Backend/Quant", "roles": "Analista; Viewer", "estatus": "BACKLOG", "dependencias": "RM-013,RM-014", "in_degree": 2, "out_degree": 2, "in_cycle": false}, "RM-019": {"area": "Calidad de datos", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Detección de anomalías", "requisito": "El sistema deberá detectar anomalías (saltos bruscos de métricas, huecos temporales, cambios de parser/mapping) y etiquetar resultados afectados; debe permitir filtrar anomalías en validación del algoritmo.", "owner": "Quant/Backend", "roles": "Analista; Quant; DevOps", "estatus": "BACKLOG", "dependencias": "RM-014,RM-011,RM-009", "in_degree": 3, "out_degree": 3, "in_cycle": false}, "RM-020": {"area": "Auditabilidad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Lineage de métricas a raw data", "requisito": "El sistema deberá proveer trazabilidad desde cualquier valor de métrica/ranking/reporte hasta los raw_records y transformaciones usadas (parser_version, mapping_version, metric_definition_version).", "owner": "Backend", "roles": "Analista; Admin", "estatus": "BACKLOG", "dependencias": "RM-009,RM-013", "in_degree": 2, "out_degree": 5, "in_cycle": false}, "RM-021": {"area": "Validación de algoritmo", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Contrato de integración del algoritmo", "requisito": "El sistema deberá integrar el algoritmo de optimización del cliente mediante una interfaz definida (CLI/API/librería) con versionado (algorithm_build_id) y entradas/salidas determinísticas o con tolerancia definida. El objetivo primario es proponer distribución de capital (weights/allocations) entre...", "owner": "Backend/Quant", "roles": "Quant; Backend; DevOps", "estatus": "BACKLOG", "dependencias": "RM-022", "in_degree": 1, "out_degree": 5, "in_cycle": false}, "RM-022": {"area": "Validación de algoritmo", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Constructor de datasets (feature matrix)", "requisito": "El sistema deberá construir datasets de validación desde datos normalizados (features de desempeño/riesgo por trader, y/o targets si aplica) con ventanas temporales explícitas y metadatos (schema_version, trader_set, feature_list, coverage). Debe poder generar datasets por tipo de cliente (retail/in...", "owner": "Quant/Backend", "roles": "Quant; Analista", "estatus": "BACKLOG", "dependencias": "RM-010", "in_degree": 1, "out_degree": 6, "in_cycle": false}, "RM-023": {"area": "Validación de algoritmo", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Runner de backtests/experimentos", "requisito": "El sistema deberá ejecutar runs de validación sobre datasets seleccionados, guardando parámetros, logs, outputs, y métricas de ejecución. Debe soportar tipos de run (train/validate/test) si aplica y escenarios de “allocation simulation” (recomendar pesos y evaluar desempeño teórico vs real cuando ex...", "owner": "Quant/Backend", "roles": "Quant; Analista", "estatus": "BACKLOG", "dependencias": "RM-021,RM-022", "in_degree": 2, "out_degree": 9, "in_cycle": false}, "RM-024": {"area": "Validación de algoritmo", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Métricas de evaluación y scorecards", "requisito": "El sistema deberá calcular métricas de evaluación y scorecards del algoritmo (p.ej. retorno vs riesgo, drawdown esperado, estabilidad, concentración, turnover) y comparar contra baselines (equal-weight, top-N por Sharpe, etc.). Debe soportar segmentación por tamaño de paquete de capital.", "owner": "Quant", "roles": "Quant; Analista; Viewer", "estatus": "BACKLOG", "dependencias": "RM-023,RM-013", "in_degree": 2, "out_degree": 5, "in_cycle": false}, "RM-025": {"area": "Validación de algoritmo", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Diagnósticos y sensibilidad", "requisito": "El sistema deberá generar diagnósticos para runs (p.ej. análisis de fallos, frecuencia de constraints activas, ablation/feature importance si aplica) y exportarlos en reporte técnico.", "owner": "Quant", "roles": "Quant; Analista", "estatus": "BACKLOG", "dependencias": "RM-023,RM-024", "in_degree": 2, "out_degree": 1, "in_cycle": false}, "RM-026": {"area": "Validación de algoritmo", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "What-if y parameter sweeps", "requisito": "El sistema deberá permitir ejecutar batch de escenarios (fees ±x, imputación, distintos thresholds) y comparar resultados en una tabla/visualización única.", "owner": "Quant/Backend", "roles": "Quant; Analista", "estatus": "BACKLOG", "dependencias": "RM-023", "in_degree": 1, "out_degree": 1, "in_cycle": false}, "RM-027": {"area": "Reportes", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Plantillas y generación de reportes", "requisito": "El sistema deberá generar reportes versionados (PDF/HTML) para uso interno con: resumen de traders (rankings), recomendación de distribución de capital por paquete, tesis/objetivo, evidencia (fuentes y coverage), y anexos (raw/lineage). Debe permitir templates configurables por tipo de cliente (reta...", "owner": "Backend", "roles": "Analista; Viewer; Admin", "estatus": "BACKLOG", "dependencias": "RM-014,RM-024,RM-020", "in_degree": 3, "out_degree": 3, "in_cycle": false}, "RM-028": {"area": "Reportes", "prioridad": "Baja (P2)", "version": "v0.3", "funcionalidad": "Distribución programada", "requisito": "El sistema deberá soportar generación y distribución programada de reportes (link seguro, email y/o webhook), con reintentos y alertas de falla.", "owner": "Backend/DevOps", "roles": "Admin; DevOps; Sistema", "estatus": "BACKLOG", "dependencias": "RM-027,RM-004,RM-034", "in_degree": 3, "out_degree": 1, "in_cycle": false}, "RM-029": {"area": "Dashboard", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Vistas core del dashboard", "requisito": "El sistema deberá proveer dashboard con: lista de traders + filtros (estrategia, fuente, coverage), página detalle trader con charts, y resumen de validación del algoritmo; debe soportar drill-down a lineage y ver estado de fuentes (MyFXBook/MT4/MT5/reportes).", "owner": "Frontend", "roles": "Viewer; Analista; Admin", "estatus": "BACKLOG", "dependencias": "RM-014,RM-017,RM-020,RM-033,RM-034", "in_degree": 5, "out_degree": 3, "in_cycle": false}, "RM-030": {"area": "Dashboard", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Comparaciones y rankings", "requisito": "El sistema deberá permitir comparación side-by-side de traders y tablas de ranking con columnas configurables, ordenamiento y exportación. Debe incluir comparaciones por ventana temporal (6m/12m/24m/total disponible) para evitar sesgos por coverage.", "owner": "Frontend", "roles": "Viewer; Analista", "estatus": "BACKLOG", "dependencias": "RM-017,RM-032,RM-018,RM-019", "in_degree": 4, "out_degree": 1, "in_cycle": false}, "RM-031": {"area": "Dashboard", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Explorador de runs/experimentos", "requisito": "El sistema deberá proveer UI para explorar runs (filtros por versión, parámetros, fecha, estado) y comparar 2+ runs, mostrando diffs y scorecards.", "owner": "Frontend", "roles": "Analista; Quant", "estatus": "BACKLOG", "dependencias": "RM-023,RM-024,RM-034", "in_degree": 3, "out_degree": 1, "in_cycle": false}, "RM-032": {"area": "Exportación", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Exports de datos y resultados", "requisito": "El sistema deberá exportar (CSV/JSON) registro de traders+fuentes, métricas y resultados de runs con metadatos de schema y unidades; exports grandes deben ser asíncronos.", "owner": "Backend", "roles": "Analista; Admin", "estatus": "BACKLOG", "dependencias": "RM-010,RM-013,RM-034", "in_degree": 3, "out_degree": 3, "in_cycle": false}, "RM-033": {"area": "Seguridad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Autenticación", "requisito": "El sistema deberá requerir autenticación para dashboard, reportes y exports (email/password o SSO/OIDC), con sesiones seguras, CSRF donde aplique y políticas de password.", "owner": "Backend/DevOps", "roles": "Admin; Viewer; Analista", "estatus": "BACKLOG", "dependencias": "—", "in_degree": 0, "out_degree": 4, "in_cycle": false}, "RM-034": {"area": "Seguridad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Autorización y roles (RBAC)", "requisito": "El sistema deberá implementar RBAC (Admin, Analista, Viewer) controlando: alta/edición de traders/fuentes, ejecución de runs, exports, cambios de políticas, acceso a auditorías, y (si aplica) gestión de paquetes de capital/tesis.", "owner": "Backend/Frontend", "roles": "Admin; Analista; Viewer", "estatus": "BACKLOG", "dependencias": "RM-033", "in_degree": 1, "out_degree": 7, "in_cycle": false}, "RM-035": {"area": "Seguridad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Gestión de secretos", "requisito": "El sistema deberá gestionar secretos (API keys, SMTP, webhooks) fuera del repositorio (env/secret manager) y activar detección de secretos en CI.", "owner": "DevOps", "roles": "DevOps", "estatus": "BACKLOG", "dependencias": "RM-043", "in_degree": 1, "out_degree": 2, "in_cycle": true}, "RM-036": {"area": "Observabilidad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Logging estructurado con correlación", "requisito": "El sistema deberá emitir logs estructurados (JSON) para ingesta, transformación, métricas y runs con correlation_id (run_id, trader_id, source_id, job_id) y niveles consistentes.", "owner": "DevOps", "roles": "DevOps; Backend", "estatus": "BACKLOG", "dependencias": "RM-004,RM-023", "in_degree": 2, "out_degree": 4, "in_cycle": false}, "RM-037": {"area": "Observabilidad", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Métricas y alertas operativas", "requisito": "El sistema deberá exponer métricas (duración de jobs, tasa de éxito, errores de scraping, latencia API) y alertas por umbrales (p.ej. fallas >X%, retrasos).", "owner": "DevOps", "roles": "DevOps; Admin", "estatus": "BACKLOG", "dependencias": "RM-036", "in_degree": 1, "out_degree": 1, "in_cycle": false}, "RM-038": {"area": "Performance", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Throughput del pipeline", "requisito": "El sistema deberá procesar N traders y sus fuentes dentro de SLAs razonables. Aunque la frecuencia de uso puede ser baja (decisiones por paquetes de capital), la ejecución de sync y cálculo debe ser confiable, idempotente y trazable. Debe soportar incremental updates para no re-procesar histórico co...", "owner": "Backend/DevOps", "roles": "DevOps; Backend", "estatus": "BACKLOG", "dependencias": "RM-005,RM-004", "in_degree": 2, "out_degree": 1, "in_cycle": false}, "RM-039": {"area": "Performance", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Responsividad del dashboard", "requisito": "El sistema deberá mantener interacciones del dashboard con P95 <2s para consultas típicas y <10s para consultas pesadas, mostrando indicador de progreso si aplica.", "owner": "Backend/Frontend", "roles": "Frontend; Backend", "estatus": "BACKLOG", "dependencias": "RM-029,RM-017", "in_degree": 2, "out_degree": 1, "in_cycle": false}, "RM-040": {"area": "Reproducibilidad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Versionado end-to-end de componentes", "requisito": "El sistema deberá versionar y relacionar parsers, mapeos, definiciones de métricas, datasets y builds del algoritmo, y asociarlos a cada run y reporte.", "owner": "Backend/Quant", "roles": "Quant; Backend", "estatus": "BACKLOG", "dependencias": "RM-009,RM-011,RM-013,RM-021,RM-022", "in_degree": 5, "out_degree": 1, "in_cycle": false}, "RM-041": {"area": "Testing", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Suite de unit/integration/E2E", "requisito": "El sistema deberá incluir pruebas automáticas para parsers, transformaciones, métricas y runner del algoritmo. Debe usar fixtures grabadas (no depender de sitios live) y seguir enfoque RED/GREEN.", "owner": "All", "roles": "Backend; Quant; Frontend", "estatus": "BACKLOG", "dependencias": "RM-006,RM-013,RM-023", "in_degree": 3, "out_degree": 3, "in_cycle": false}, "RM-042": {"area": "Testing", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Data contract tests (schemas)", "requisito": "El sistema deberá aplicar data contracts entre extracción→normalización→dataset→algoritmo (schemas versionados) y fallar CI ante cambios rompientes.", "owner": "Backend", "roles": "Backend; Quant", "estatus": "BACKLOG", "dependencias": "RM-010,RM-022,RM-021", "in_degree": 3, "out_degree": 1, "in_cycle": false}, "RM-043": {"area": "DevOps", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "CI/CD + migraciones + rollback", "requisito": "El sistema deberá contar con CI/CD para build, tests, deploy y migraciones DB, con promoción de ambientes (dev/stage/prod) y procedimiento de rollback probado.", "owner": "DevOps", "roles": "DevOps", "estatus": "BACKLOG", "dependencias": "RM-041,RM-035", "in_degree": 2, "out_degree": 3, "in_cycle": true}, "RM-044": {"area": "Gobernanza de datos", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Retención y archivado", "requisito": "El sistema deberá definir políticas de retención para raw_records, snapshots, outputs de runs, logs y reportes (purga/archivado) sin dejar referencias huérfanas.", "owner": "Backend/DevOps", "roles": "Admin; DevOps", "estatus": "BACKLOG", "dependencias": "RM-009,RM-023,RM-027", "in_degree": 3, "out_degree": 1, "in_cycle": false}, "RM-045": {"area": "Gobernanza", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Bitácora de auditoría de acciones críticas", "requisito": "El sistema deberá registrar eventos de auditoría para: cambios de traders/fuentes (URLs/credenciales), ejecuciones de runs, exports, cambios de roles, cambios de políticas, cambios/ejecuciones de tesis/asignación (si aplica), y accesos a reportes/lineage.", "owner": "Backend", "roles": "Admin", "estatus": "BACKLOG", "dependencias": "RM-034", "in_degree": 1, "out_degree": 1, "in_cycle": false}, "RM-046": {"area": "UX", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Transparencia de errores y remediación", "requisito": "El sistema deberá mostrar errores claros y accionables (parser roto, dominio bloqueado, datos insuficientes, run fallido), con pasos sugeridos y links a evidencia (logs/lineage).", "owner": "Frontend", "roles": "Viewer; Analista; Admin", "estatus": "BACKLOG", "dependencias": "RM-019,RM-036,RM-020", "in_degree": 3, "out_degree": 1, "in_cycle": false}, "RM-047": {"area": "Privacidad", "prioridad": "Baja (P2)", "version": "v0.3", "funcionalidad": "Minimización y redacción de datos", "requisito": "El sistema deberá almacenar sólo campos necesarios y permitir redacción/omisión de campos sensibles (si aparecen) en salidas (dash/report/export) según política.", "owner": "Backend/DevOps", "roles": "Admin; DevOps", "estatus": "BACKLOG", "dependencias": "RM-036,RM-032", "in_degree": 2, "out_degree": 1, "in_cycle": false}, "RM-048": {"area": "Documentación", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Docs técnicas y operativas", "requisito": "El sistema deberá incluir documentación: setup local, despliegue, runbooks, catálogo de métricas, cómo agregar un nuevo dominio/adaptador y cómo ejecutar validación del algoritmo.", "owner": "All", "roles": "All", "estatus": "BACKLOG", "dependencias": "RM-043", "in_degree": 1, "out_degree": 1, "in_cycle": false}, "RM-049": {"area": "Extensibilidad", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Onboarding de nuevo dominio/fuente", "requisito": "El sistema deberá ofrecer un proceso estándar (template de adapter + mapping + fixtures + tests) para agregar un nuevo dominio en <=1 día para un sitio típico.", "owner": "Backend", "roles": "Backend; Quant", "estatus": "BACKLOG", "dependencias": "RM-006,RM-011,RM-041", "in_degree": 3, "out_degree": 1, "in_cycle": false}, "RM-050": {"area": "Entregables", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Criterio de aceptación del MVP", "requisito": "El MVP deberá incluir: registro de traders+fuentes (MyFXBook/MT4/MT5/reportes), scheduler, extracción+normalización, métricas core, dashboard básico, construcción de dataset, ejecución de runs, scorecard, y generación de reportes con versionado/lineage. Debe incluir al menos un flujo de “paquete de ...", "owner": "PM/All", "roles": "PM; Admin; Analista", "estatus": "BACKLOG", "dependencias": "RM-001..RM-049", "in_degree": 49, "out_degree": 0, "in_cycle": false}, "RM-051": {"area": "Gestión de capital", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Registro de clientes y paquetes de capital", "requisito": "El sistema deberá permitir registrar clientes/fuentes de capital (retail e institucional/family office), con país/región (p.ej. México/Colombia), moneda, monto, perfil de riesgo y restricciones (mínimos/máximos, concentración, instrumentos prohibidos si aplica). Debe permitir registrar paquetes de c...", "owner": "Backend", "roles": "Admin; Analista (Gema); PM", "estatus": "BACKLOG", "dependencias": "RM-033,RM-034,RM-001", "in_degree": 3, "out_degree": 2, "in_cycle": false}, "RM-052": {"area": "Gestión de riesgos", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Modelo/ecuación de distribución de capital", "requisito": "El sistema deberá permitir a la analista definir y versionar la “tesis”/modelo de asignación por paquete de capital: objetivo (retorno/riesgo), parámetros/ponderaciones (p.ej. 0.2, 0.5, 0.5, 0.55), restricciones (concentración, límites por trader), y ventana histórica a usar. Debe ejecutar el algori...", "owner": "Backend/Quant/Frontend", "roles": "Analista (Gema); Admin; Quant", "estatus": "BACKLOG", "dependencias": "RM-051,RM-014,RM-021,RM-022,RM-023,RM-024", "in_degree": 6, "out_degree": 1, "in_cycle": false}, "RM-053": {"area": "Seguimiento", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Seguimiento post-inversión de tesis de inversión", "requisito": "Una vez que un paquete de capital se marca como “invertido”, el sistema deberá dar seguimiento a la tesis: comparar desempeño real vs esperado (por trader y agregado), calcular desviaciones, y generar checkpoints (diario o semanal configurable). Debe permitir registrar decisiones de continuidad (man...", "owner": "Backend/Frontend", "roles": "Analista (Gema); Admin", "estatus": "BACKLOG", "dependencias": "RM-051,RM-052,RM-004,RM-014,RM-029", "in_degree": 5, "out_degree": 0, "in_cycle": false}, "RM-054": {"area": "Integraciones", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Conector MyFXBook (sync de summaries)", "requisito": "El sistema deberá implementar un conector para MyFXBook que permita obtener historial y resúmenes (preferentemente diarios) por cuenta/perfil, soportando retención multianual al persistir snapshots. Debe manejar autenticación/token si aplica, rate limits, y fallbacks (HTML parsing) con trazabilidad.", "owner": "Backend", "roles": "Backend; DevOps", "estatus": "BACKLOG", "dependencias": "RM-001,RM-002,RM-004,RM-005,RM-006,RM-009", "in_degree": 6, "out_degree": 0, "in_cycle": false}, "RM-055": {"area": "Integraciones", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Conector MetaTrader 4/5 (modo inversionista)", "requisito": "El sistema deberá implementar un conector para MetaTrader 4/5 en modo monitoreo (credenciales de inversionista) para obtener operaciones y equity/statement en la ventana histórica disponible por broker (típicamente 6–12 meses). Debe soportar múltiples brokers/servidores, cuentas demo para pruebas, y...", "owner": "Backend/DevOps", "roles": "Backend; DevOps", "estatus": "BACKLOG", "dependencias": "RM-001,RM-002,RM-004,RM-009,RM-010", "in_degree": 5, "out_degree": 0, "in_cycle": false}};
+        const subgraphData = {"RM-001": {"ancestors": [], "descendants": ["RM-043", "RM-024", "RM-022", "RM-019", "RM-029", "RM-011", "RM-023", "RM-007", "RM-050", "RM-017", "RM-031", "RM-038", "RM-004", "RM-035", "RM-055", "RM-053", "RM-005", "RM-025", "RM-015", "RM-052", "RM-020", "RM-003", "RM-021", "RM-026", "RM-049", "RM-044", "RM-037", "RM-013", "RM-030", "RM-027", "RM-010", "RM-018", "RM-016", "RM-036", "RM-012", "RM-047", "RM-041", "RM-032", "RM-014", "RM-028", "RM-040", "RM-042", "RM-002", "RM-054", "RM-051", "RM-046", "RM-006", "RM-009", "RM-008", "RM-048", "RM-039"]}, "RM-002": {"ancestors": ["RM-001"], "descendants": ["RM-043", "RM-024", "RM-022", "RM-019", "RM-029", "RM-011", "RM-023", "RM-007", "RM-050", "RM-017", "RM-031", "RM-038", "RM-035", "RM-055", "RM-053", "RM-005", "RM-025", "RM-015", "RM-052", "RM-020", "RM-003", "RM-021", "RM-026", "RM-049", "RM-044", "RM-037", "RM-013", "RM-030", "RM-027", "RM-010", "RM-018", "RM-016", "RM-036", "RM-012", "RM-047", "RM-041", "RM-032", "RM-014", "RM-028", "RM-040", "RM-042", "RM-054", "RM-046", "RM-006", "RM-009", "RM-008", "RM-048", "RM-039"]}, "RM-003": {"ancestors": ["RM-002", "RM-001"], "descendants": ["RM-043", "RM-024", "RM-022", "RM-019", "RM-029", "RM-011", "RM-023", "RM-007", "RM-050", "RM-017", "RM-031", "RM-038", "RM-035", "RM-055", "RM-053", "RM-005", "RM-025", "RM-015", "RM-052", "RM-020", "RM-021", "RM-026", "RM-049", "RM-044", "RM-037", "RM-013", "RM-030", "RM-027", "RM-010", "RM-018", "RM-016", "RM-036", "RM-012", "RM-047", "RM-041", "RM-032", "RM-014", "RM-028", "RM-040", "RM-042", "RM-054", "RM-046", "RM-006", "RM-009", "RM-008", "RM-048", "RM-039"]}, "RM-004": {"ancestors": ["RM-001"], "descendants": ["RM-043", "RM-024", "RM-022", "RM-019", "RM-029", "RM-011", "RM-023", "RM-007", "RM-050", "RM-017", "RM-031", "RM-038", "RM-035", "RM-055", "RM-053", "RM-025", "RM-015", "RM-052", "RM-020", "RM-021", "RM-026", "RM-049", "RM-044", "RM-037", "RM-013", "RM-030", "RM-027", "RM-010", "RM-018", "RM-016", "RM-036", "RM-012", "RM-047", "RM-041", "RM-032", "RM-014", "RM-028", "RM-040", "RM-042", "RM-054", "RM-046", "RM-006", "RM-009", "RM-008", "RM-048", "RM-039"]}, "RM-005": {"ancestors": ["RM-002", "RM-001", "RM-003"], "descendants": ["RM-043", "RM-024", "RM-022", "RM-019", "RM-029", "RM-011", "RM-023", "RM-007", "RM-050", "RM-017", "RM-031", "RM-038", "RM-035", "RM-055", "RM-053", "RM-025", "RM-015", "RM-052", "RM-020", "RM-021", "RM-026", "RM-049", "RM-044", "RM-037", "RM-013", "RM-030", "RM-027", "RM-010", "RM-018", "RM-016", "RM-036", "RM-012", "RM-047", "RM-041", "RM-032", "RM-014", "RM-028", "RM-040", "RM-042", "RM-054", "RM-046", "RM-006", "RM-009", "RM-008", "RM-048", "RM-039"]}, "RM-006": {"ancestors": ["RM-002", "RM-005", "RM-001", "RM-004", "RM-003"], "descendants": ["RM-043", "RM-024", "RM-022", "RM-019", "RM-029", "RM-011", "RM-023", "RM-007", "RM-050", "RM-017", "RM-031", "RM-035", "RM-055", "RM-053", "RM-025", "RM-015", "RM-052", "RM-020", "RM-021", "RM-026", "RM-049", "RM-044", "RM-037", "RM-013", "RM-030", "RM-027", "RM-010", "RM-018", "RM-016", "RM-036", "RM-012", "RM-047", "RM-041", "RM-032", "RM-014", "RM-028", "RM-040", "RM-042", "RM-054", "RM-046", "RM-009", "RM-008", "RM-048", "RM-039"]}, "RM-007": {"ancestors": ["RM-002", "RM-005", "RM-006", "RM-001", "RM-004", "RM-003"], "descendants": ["RM-050"]}, "RM-008": {"ancestors": ["RM-002", "RM-006", "RM-005", "RM-001", "RM-004", "RM-003"], "descendants": ["RM-050"]}, "RM-009": {"ancestors": ["RM-002", "RM-005", "RM-006", "RM-001", "RM-004", "RM-003"], "descendants": ["RM-043", "RM-024", "RM-022", "RM-019", "RM-029", "RM-011", "RM-023", "RM-050", "RM-017", "RM-031", "RM-035", "RM-055", "RM-053", "RM-025", "RM-015", "RM-052", "RM-020", "RM-021", "RM-026", "RM-044", "RM-049", "RM-037", "RM-013", "RM-030", "RM-027", "RM-010", "RM-018", "RM-016", "RM-036", "RM-012", "RM-047", "RM-041", "RM-032", "RM-014", "RM-028", "RM-040", "RM-042", "RM-054", "RM-046", "RM-048", "RM-039"]}, "RM-010": {"ancestors": ["RM-002", "RM-005", "RM-006", "RM-009", "RM-001", "RM-004", "RM-003"], "descendants": ["RM-043", "RM-024", "RM-022", "RM-019", "RM-029", "RM-011", "RM-023", "RM-050", "RM-017", "RM-031", "RM-035", "RM-055", "RM-053", "RM-025", "RM-015", "RM-052", "RM-020", "RM-021", "RM-026", "RM-049", "RM-044", "RM-037", "RM-013", "RM-030", "RM-027", "RM-018", "RM-016", "RM-036", "RM-012", "RM-047", "RM-041", "RM-014", "RM-032", "RM-028", "RM-040", "RM-042", "RM-046", "RM-048", "RM-039"]}, "RM-011": {"ancestors": ["RM-002", "RM-005", "RM-006", "RM-009", "RM-001", "RM-010", "RM-004", "RM-003"], "descendants": ["RM-046", "RM-049", "RM-019", "RM-030", "RM-050", "RM-012", "RM-040"]}, "RM-012": {"ancestors": ["RM-002", "RM-006", "RM-009", "RM-005", "RM-011", "RM-001", "RM-010", "RM-004", "RM-003"], "descendants": ["RM-050"]}, "RM-013": {"ancestors": ["RM-002", "RM-005", "RM-006", "RM-009", "RM-001", "RM-010", "RM-004", "RM-003"], "descendants": ["RM-043", "RM-024", "RM-019", "RM-029", "RM-050", "RM-017", "RM-031", "RM-035", "RM-053", "RM-025", "RM-015", "RM-052", "RM-020", "RM-049", "RM-044", "RM-030", "RM-027", "RM-018", "RM-016", "RM-047", "RM-041", "RM-014", "RM-032", "RM-028", "RM-040", "RM-046", "RM-048", "RM-039"]}, "RM-014": {"ancestors": ["RM-002", "RM-006", "RM-009", "RM-005", "RM-013", "RM-001", "RM-010", "RM-004", "RM-003"], "descendants": ["RM-046", "RM-044", "RM-053", "RM-019", "RM-029", "RM-030", "RM-027", "RM-050", "RM-018", "RM-017", "RM-052", "RM-028", "RM-039"]}, "RM-015": {"ancestors": ["RM-002", "RM-006", "RM-009", "RM-005", "RM-013", "RM-001", "RM-010", "RM-004", "RM-003"], "descendants": ["RM-050"]}, "RM-016": {"ancestors": ["RM-002", "RM-006", "RM-009", "RM-005", "RM-013", "RM-001", "RM-010", "RM-020", "RM-004", "RM-003"], "descendants": ["RM-050"]}, "RM-017": {"ancestors": ["RM-002", "RM-006", "RM-009", "RM-005", "RM-013", "RM-001", "RM-010", "RM-014", "RM-004", "RM-003"], "descendants": ["RM-053", "RM-029", "RM-030", "RM-050", "RM-039"]}, "RM-018": {"ancestors": ["RM-002", "RM-006", "RM-009", "RM-005", "RM-013", "RM-001", "RM-010", "RM-014", "RM-004", "RM-003"], "descendants": ["RM-050", "RM-030"]}, "RM-019": {"ancestors": ["RM-002", "RM-006", "RM-009", "RM-005", "RM-013", "RM-011", "RM-001", "RM-010", "RM-014", "RM-004", "RM-003"], "descendants": ["RM-050", "RM-046", "RM-030"]}, "RM-020": {"ancestors": ["RM-002", "RM-006", "RM-009", "RM-005", "RM-013", "RM-001", "RM-010", "RM-004", "RM-003"], "descendants": ["RM-046", "RM-044", "RM-053", "RM-029", "RM-027", "RM-050", "RM-016", "RM-028", "RM-039"]}, "RM-021": {"ancestors": ["RM-002", "RM-022", "RM-006", "RM-009", "RM-005", "RM-001", "RM-010", "RM-004", "RM-003"], "descendants": ["RM-043", "RM-024", "RM-023", "RM-050", "RM-031", "RM-035", "RM-053", "RM-025", "RM-052", "RM-026", "RM-044", "RM-049", "RM-037", "RM-027", "RM-036", "RM-047", "RM-041", "RM-028", "RM-040", "RM-042", "RM-046", "RM-048"]}, "RM-022": {"ancestors": ["RM-002", "RM-005", "RM-006", "RM-009", "RM-001", "RM-010", "RM-004", "RM-003"], "descendants": ["RM-043", "RM-024", "RM-023", "RM-050", "RM-031", "RM-035", "RM-053", "RM-025", "RM-052", "RM-021", "RM-026", "RM-044", "RM-049", "RM-037", "RM-027", "RM-036", "RM-047", "RM-041", "RM-028", "RM-040", "RM-042", "RM-046", "RM-048"]}, "RM-023": {"ancestors": ["RM-002", "RM-021", "RM-022", "RM-006", "RM-009", "RM-005", "RM-001", "RM-010", "RM-004", "RM-003"], "descendants": ["RM-043", "RM-024", "RM-050", "RM-031", "RM-035", "RM-053", "RM-025", "RM-052", "RM-026", "RM-044", "RM-049", "RM-037", "RM-027", "RM-036", "RM-047", "RM-041", "RM-028", "RM-046", "RM-048"]}, "RM-024": {"ancestors": ["RM-002", "RM-021", "RM-022", "RM-006", "RM-009", "RM-005", "RM-013", "RM-023", "RM-001", "RM-010", "RM-004", "RM-003"], "descendants": ["RM-044", "RM-053", "RM-025", "RM-027", "RM-050", "RM-052", "RM-031", "RM-028"]}, "RM-025": {"ancestors": ["RM-002", "RM-021", "RM-024", "RM-022", "RM-006", "RM-009", "RM-005", "RM-013", "RM-023", "RM-001", "RM-010", "RM-004", "RM-003"], "descendants": ["RM-050"]}, "RM-026": {"ancestors": ["RM-002", "RM-021", "RM-022", "RM-006", "RM-009", "RM-005", "RM-023", "RM-001", "RM-010", "RM-004", "RM-003"], "descendants": ["RM-050"]}, "RM-027": {"ancestors": ["RM-002", "RM-021", "RM-024", "RM-022", "RM-006", "RM-009", "RM-005", "RM-013", "RM-023", "RM-001", "RM-010", "RM-020", "RM-014", "RM-004", "RM-003"], "descendants": ["RM-050", "RM-028", "RM-044"]}, "RM-028": {"ancestors": ["RM-002", "RM-021", "RM-024", "RM-033", "RM-022", "RM-009", "RM-006", "RM-005", "RM-013", "RM-001", "RM-023", "RM-027", "RM-010", "RM-020", "RM-034", "RM-014", "RM-004", "RM-003"], "descendants": ["RM-050"]}, "RM-029": {"ancestors": ["RM-002", "RM-033", "RM-006", "RM-009", "RM-005", "RM-013", "RM-001", "RM-010", "RM-017", "RM-020", "RM-034", "RM-014", "RM-004", "RM-003"], "descendants": ["RM-050", "RM-053", "RM-039"]}, "RM-030": {"ancestors": ["RM-002", "RM-033", "RM-019", "RM-009", "RM-006", "RM-005", "RM-013", "RM-011", "RM-001", "RM-010", "RM-018", "RM-017", "RM-004", "RM-034", "RM-014", "RM-032", "RM-003"], "descendants": ["RM-050"]}, "RM-031": {"ancestors": ["RM-002", "RM-021", "RM-024", "RM-022", "RM-033", "RM-009", "RM-006", "RM-005", "RM-013", "RM-023", "RM-001", "RM-010", "RM-034", "RM-004", "RM-003"], "descendants": ["RM-050"]}, "RM-032": {"ancestors": ["RM-002", "RM-033", "RM-006", "RM-009", "RM-005", "RM-013", "RM-001", "RM-010", "RM-034", "RM-004", "RM-003"], "descendants": ["RM-050", "RM-030", "RM-047"]}, "RM-033": {"ancestors": [], "descendants": ["RM-051", "RM-053", "RM-029", "RM-030", "RM-050", "RM-052", "RM-031", "RM-047", "RM-034", "RM-032", "RM-028", "RM-045", "RM-039"]}, "RM-034": {"ancestors": ["RM-033"], "descendants": ["RM-051", "RM-053", "RM-029", "RM-030", "RM-050", "RM-052", "RM-031", "RM-047", "RM-032", "RM-028", "RM-045", "RM-039"]}, "RM-035": {"ancestors": ["RM-002", "RM-021", "RM-043", "RM-022", "RM-006", "RM-005", "RM-009", "RM-013", "RM-023", "RM-001", "RM-010", "RM-041", "RM-004", "RM-003"], "descendants": ["RM-050", "RM-043", "RM-048"]}, "RM-036": {"ancestors": ["RM-002", "RM-021", "RM-022", "RM-006", "RM-009", "RM-005", "RM-023", "RM-001", "RM-010", "RM-004", "RM-003"], "descendants": ["RM-050", "RM-037", "RM-046", "RM-047"]}, "RM-037": {"ancestors": ["RM-002", "RM-021", "RM-022", "RM-006", "RM-009", "RM-005", "RM-023", "RM-001", "RM-010", "RM-036", "RM-004", "RM-003"], "descendants": ["RM-050"]}, "RM-038": {"ancestors": ["RM-002", "RM-005", "RM-001", "RM-004", "RM-003"], "descendants": ["RM-050"]}, "RM-039": {"ancestors": ["RM-002", "RM-033", "RM-006", "RM-009", "RM-005", "RM-029", "RM-013", "RM-001", "RM-010", "RM-017", "RM-020", "RM-034", "RM-014", "RM-004", "RM-003"], "descendants": ["RM-050"]}, "RM-040": {"ancestors": ["RM-002", "RM-021", "RM-022", "RM-006", "RM-009", "RM-005", "RM-013", "RM-011", "RM-001", "RM-010", "RM-004", "RM-003"], "descendants": ["RM-050"]}, "RM-041": {"ancestors": ["RM-002", "RM-021", "RM-022", "RM-005", "RM-006", "RM-009", "RM-013", "RM-023", "RM-001", "RM-010", "RM-004", "RM-003"], "descendants": ["RM-043", "RM-049", "RM-050", "RM-048", "RM-035"]}, "RM-042": {"ancestors": ["RM-002", "RM-021", "RM-022", "RM-006", "RM-009", "RM-005", "RM-001", "RM-010", "RM-004", "RM-003"], "descendants": ["RM-050"]}, "RM-043": {"ancestors": ["RM-002", "RM-021", "RM-022", "RM-006", "RM-005", "RM-009", "RM-003", "RM-013", "RM-023", "RM-001", "RM-010", "RM-041", "RM-004", "RM-035"], "descendants": ["RM-050", "RM-048", "RM-035"]}, "RM-044": {"ancestors": ["RM-002", "RM-021", "RM-024", "RM-022", "RM-006", "RM-009", "RM-005", "RM-013", "RM-023", "RM-001", "RM-027", "RM-010", "RM-020", "RM-014", "RM-004", "RM-003"], "descendants": ["RM-050"]}, "RM-045": {"ancestors": ["RM-034", "RM-033"], "descendants": ["RM-050"]}, "RM-046": {"ancestors": ["RM-002", "RM-021", "RM-022", "RM-019", "RM-009", "RM-006", "RM-005", "RM-011", "RM-023", "RM-013", "RM-001", "RM-010", "RM-036", "RM-020", "RM-014", "RM-004", "RM-003"], "descendants": ["RM-050"]}, "RM-047": {"ancestors": ["RM-002", "RM-021", "RM-022", "RM-033", "RM-009", "RM-006", "RM-005", "RM-013", "RM-023", "RM-001", "RM-010", "RM-036", "RM-034", "RM-032", "RM-004", "RM-003"], "descendants": ["RM-050"]}, "RM-048": {"ancestors": ["RM-002", "RM-021", "RM-043", "RM-022", "RM-006", "RM-005", "RM-009", "RM-003", "RM-013", "RM-023", "RM-001", "RM-010", "RM-041", "RM-004", "RM-035"], "descendants": ["RM-050"]}, "RM-049": {"ancestors": ["RM-002", "RM-021", "RM-022", "RM-005", "RM-006", "RM-009", "RM-011", "RM-013", "RM-023", "RM-001", "RM-010", "RM-041", "RM-004", "RM-003"], "descendants": ["RM-050"]}, "RM-050": {"ancestors": ["RM-043", "RM-024", "RM-022", "RM-019", "RM-029", "RM-011", "RM-001", "RM-023", "RM-007", "RM-017", "RM-031", "RM-004", "RM-038", "RM-035", "RM-005", "RM-025", "RM-015", "RM-020", "RM-045", "RM-003", "RM-021", "RM-026", "RM-044", "RM-033", "RM-049", "RM-037", "RM-013", "RM-030", "RM-027", "RM-010", "RM-018", "RM-016", "RM-036", "RM-012", "RM-047", "RM-034", "RM-014", "RM-032", "RM-028", "RM-041", "RM-040", "RM-042", "RM-002", "RM-046", "RM-006", "RM-009", "RM-008", "RM-048", "RM-039"], "descendants": []}, "RM-051": {"ancestors": ["RM-034", "RM-001", "RM-033"], "descendants": ["RM-052", "RM-053"]}, "RM-052": {"ancestors": ["RM-002", "RM-021", "RM-051", "RM-024", "RM-022", "RM-033", "RM-009", "RM-006", "RM-005", "RM-013", "RM-023", "RM-001", "RM-010", "RM-034", "RM-014", "RM-004", "RM-003"], "descendants": ["RM-053"]}, "RM-053": {"ancestors": ["RM-024", "RM-022", "RM-029", "RM-001", "RM-023", "RM-017", "RM-004", "RM-005", "RM-052", "RM-020", "RM-003", "RM-021", "RM-033", "RM-013", "RM-010", "RM-034", "RM-014", "RM-002", "RM-051", "RM-006", "RM-009"], "descendants": []}, "RM-054": {"ancestors": ["RM-002", "RM-006", "RM-005", "RM-009", "RM-001", "RM-004", "RM-003"], "descendants": []}, "RM-055": {"ancestors": ["RM-002", "RM-006", "RM-009", "RM-005", "RM-001", "RM-010", "RM-004", "RM-003"], "descendants": []}};
         const areaColors = {"Ingesta": "#4ECDC4", "Extracci\u00f3n": "#FF6B6B", "Modelo de datos": "#45B7D1", "Normalizaci\u00f3n": "#96CEB4", "Transformaci\u00f3n": "#96CEB4", "M\u00e9tricas": "#FFD93D", "Dataset": "#DDA0DD", "Algoritmo": "#98D8C8", "Backtest": "#F7DC6F", "Reportes": "#BB8FCE", "UI/UX": "#85C1E9", "Dashboard": "#85C1E9", "Seguridad": "#F1948A", "Observabilidad": "#ABEBC6", "Testing": "#F5B041", "DevOps": "#AED6F1", "Gobernanza de datos": "#D7BDE2", "Gobernanza": "#D7BDE2", "Privacidad": "#FADBD8", "Documentaci\u00f3n": "#D5DBDB", "Extensibilidad": "#A9DFBF", "Entregables": "#FAD7A0", "UX": "#85C1E9", "Calidad de datos": "#82E0AA", "Auditabilidad": "#F9E79F", "Exportaci\u00f3n": "#D2B4DE", "Reproducibilidad": "#AEB6BF", "Performance": "#F5CBA7", "Validaci\u00f3n de algoritmo": "#76D7C4"};
         const totalNodes = 55;
         const totalEdges = 166;
+        const hasCycles = true;
+        const cycles = [["RM-043", "RM-035"]];
+        const cycleNodeCount = 2;
 
         // State
         let selectedNodeId = null;
         let currentLayout = 'force';
         let visibleNodeIds = new Set(Object.keys(nodeData));
+        let currentViewContext = { type: 'all', node: null };
+        let sortState = { column: 'id', direction: 'asc' };
+        let autocompleteIndex = -1;
+
+        // Toast notification system
+        function showToast(message, type = 'info', duration = 3000) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            const icons = { success: '✓', error: '✗', warning: '⚠', info: 'ℹ' };
+            toast.innerHTML = `<span class="toast-icon">${icons[type] || icons.info}</span><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('hiding');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
 
         // Wait for network to be ready
         function waitForNetwork(callback) {
@@ -713,14 +1297,29 @@
         });
 
         function initializeApp() {
-            // Initial table render
+            // Initial renders
             updateTable();
+            updateStatsPanel();
 
             // Bind event handlers
             bindEventHandlers();
 
             // Setup network event handlers
             setupNetworkHandlers();
+
+            // Setup keyboard shortcuts
+            setupKeyboardShortcuts();
+
+            // Setup autocomplete
+            setupAutocomplete();
+
+            // Show cycle warning if cycles detected
+            if (hasCycles) {
+                document.getElementById('cycle-warning').classList.add('visible');
+                showToast(`⚠️ Se detectaron ${cycles.length} ciclos de dependencias`, 'warning', 5000);
+            }
+
+            showToast('Visualización cargada correctamente', 'success');
         }
 
         function bindEventHandlers() {
@@ -729,7 +1328,17 @@
 
             // Search input enter key
             document.getElementById('node-search').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') focusNode();
+                if (e.key === 'Enter') {
+                    const dropdown = document.getElementById('autocomplete-dropdown');
+                    if (dropdown.classList.contains('visible') && autocompleteIndex >= 0) {
+                        const items = dropdown.querySelectorAll('.autocomplete-item');
+                        if (items[autocompleteIndex]) {
+                            items[autocompleteIndex].click();
+                            return;
+                        }
+                    }
+                    focusNode();
+                }
             });
 
             // Filter dropdowns
@@ -749,6 +1358,9 @@
             // Reset button
             document.getElementById('btn-reset').addEventListener('click', resetView);
 
+            // Breadcrumb reset
+            document.getElementById('breadcrumb-reset').addEventListener('click', resetView);
+
             // Legend clicks
             document.querySelectorAll('.legend-item').forEach(item => {
                 item.addEventListener('click', function() {
@@ -757,6 +1369,71 @@
                     applyFilters();
                 });
             });
+
+            // Export buttons
+            document.getElementById('btn-export-png').addEventListener('click', exportPNG);
+            document.getElementById('btn-export-csv').addEventListener('click', exportCSV);
+
+            // Stats panel toggle
+            document.getElementById('stats-toggle').addEventListener('click', function() {
+                const content = document.getElementById('stats-content');
+                const isCollapsed = content.classList.toggle('collapsed');
+                this.textContent = isCollapsed ? '▶' : '▼';
+            });
+
+            // Sortable table headers
+            document.querySelectorAll('.data-table th.sortable').forEach(th => {
+                th.addEventListener('click', function() {
+                    const column = this.dataset.sort;
+                    if (sortState.column === column) {
+                        sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        sortState.column = column;
+                        sortState.direction = 'asc';
+                    }
+                    updateSortIndicators();
+                    updateTable();
+                });
+            });
+
+            // Keyboard shortcuts modal
+            document.getElementById('btn-shortcuts').addEventListener('click', () => {
+                document.getElementById('shortcuts-modal').classList.add('visible');
+            });
+            document.getElementById('modal-close').addEventListener('click', () => {
+                document.getElementById('shortcuts-modal').classList.remove('visible');
+            });
+            document.getElementById('shortcuts-modal').addEventListener('click', function(e) {
+                if (e.target === this) this.classList.remove('visible');
+            });
+
+            // Cycle warning button
+            document.getElementById('btn-show-cycles').addEventListener('click', showCycleNodes);
+        }
+
+        function showCycleNodes() {
+            if (!hasCycles || cycles.length === 0) {
+                showToast('No se encontraron ciclos de dependencias', 'info');
+                return;
+            }
+
+            // Get all nodes involved in cycles
+            const cycleNodeIds = new Set();
+            cycles.forEach(cycle => cycle.forEach(nodeId => cycleNodeIds.add(nodeId)));
+
+            visibleNodeIds = cycleNodeIds;
+            currentViewContext = { type: 'cycles', count: cycles.length };
+            updateVisibility();
+            updateTable();
+            updateStats();
+            updateBreadcrumb();
+            updateStatsPanel();
+
+            // Update breadcrumb manually for cycles
+            document.getElementById('breadcrumb-text').innerHTML = `Nodos en ciclos (<strong>${cycleNodeIds.size}</strong> nodos, ${cycles.length} ciclos)`;
+            document.getElementById('breadcrumb-reset').style.display = 'block';
+
+            showToast(`Mostrando ${cycleNodeIds.size} nodos involucrados en ${cycles.length} ciclos`, 'warning');
         }
 
         function setupNetworkHandlers() {
@@ -869,23 +1546,203 @@
             });
         }
 
-        function focusNode() {
-            const input = document.getElementById('node-search').value.trim().toUpperCase();
-            if (!input) {
-                alert('Por favor ingresa un ID de requisito (ej: RM-001)');
-                return;
-            }
+        // Keyboard shortcuts
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', function(e) {
+                // Don't trigger when typing in input fields
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
+                    if (e.key === 'Escape') {
+                        e.target.blur();
+                        document.getElementById('autocomplete-dropdown').classList.remove('visible');
+                    }
+                    return;
+                }
 
-            if (nodeData[input]) {
-                network.focus(input, {
+                const modal = document.getElementById('shortcuts-modal');
+
+                switch(e.key) {
+                    case '?':
+                        modal.classList.toggle('visible');
+                        break;
+                    case 'Escape':
+                        if (modal.classList.contains('visible')) {
+                            modal.classList.remove('visible');
+                        } else {
+                            resetView();
+                        }
+                        break;
+                    case '/':
+                        e.preventDefault();
+                        document.getElementById('node-search').focus();
+                        break;
+                    case 'r':
+                    case 'R':
+                        resetView();
+                        break;
+                    case '1':
+                        setLayout('force');
+                        showToast('Disposición: Fuerza', 'info', 1500);
+                        break;
+                    case '2':
+                        setLayout('tree');
+                        showToast('Disposición: Árbol', 'info', 1500);
+                        break;
+                    case 'a':
+                    case 'A':
+                        if (selectedNodeId) showAncestors();
+                        break;
+                    case 'd':
+                    case 'D':
+                        if (selectedNodeId) showDescendants();
+                        break;
+                    case 'n':
+                    case 'N':
+                        if (selectedNodeId) showNeighborhood();
+                        break;
+                }
+            });
+        }
+
+        // Autocomplete
+        function setupAutocomplete() {
+            const input = document.getElementById('node-search');
+            const dropdown = document.getElementById('autocomplete-dropdown');
+
+            input.addEventListener('input', function() {
+                const query = this.value.trim().toLowerCase();
+                if (query.length < 2) {
+                    dropdown.classList.remove('visible');
+                    return;
+                }
+
+                const matches = [];
+                Object.keys(nodeData).forEach(id => {
+                    const data = nodeData[id];
+                    const idMatch = id.toLowerCase().includes(query);
+                    const funcMatch = data.funcionalidad.toLowerCase().includes(query);
+                    const reqMatch = data.requisito.toLowerCase().includes(query);
+                    if (idMatch || funcMatch || reqMatch) {
+                        matches.push({ id, data, idMatch, funcMatch, reqMatch });
+                    }
+                });
+
+                if (matches.length === 0) {
+                    dropdown.classList.remove('visible');
+                    return;
+                }
+
+                // Sort: ID matches first, then func matches, then req matches
+                matches.sort((a, b) => {
+                    if (a.idMatch && !b.idMatch) return -1;
+                    if (!a.idMatch && b.idMatch) return 1;
+                    if (a.funcMatch && !b.funcMatch) return -1;
+                    if (!a.funcMatch && b.funcMatch) return 1;
+                    return a.id.localeCompare(b.id);
+                });
+
+                dropdown.innerHTML = matches.slice(0, 10).map((m, i) => `
+                    <div class="autocomplete-item" data-id="${m.id}">
+                        <span class="autocomplete-id">${m.id}</span>
+                        <span class="autocomplete-func">${m.data.funcionalidad.substring(0, 40)}${m.data.funcionalidad.length > 40 ? '...' : ''}</span>
+                    </div>
+                `).join('');
+
+                dropdown.classList.add('visible');
+                autocompleteIndex = -1;
+
+                dropdown.querySelectorAll('.autocomplete-item').forEach(item => {
+                    item.addEventListener('click', function() {
+                        const id = this.dataset.id;
+                        input.value = id;
+                        dropdown.classList.remove('visible');
+                        focusOnNode(id);
+                    });
+                });
+            });
+
+            input.addEventListener('keydown', function(e) {
+                const items = dropdown.querySelectorAll('.autocomplete-item');
+                if (!dropdown.classList.contains('visible') || items.length === 0) return;
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    autocompleteIndex = Math.min(autocompleteIndex + 1, items.length - 1);
+                    updateAutocompleteSelection(items);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    autocompleteIndex = Math.max(autocompleteIndex - 1, 0);
+                    updateAutocompleteSelection(items);
+                }
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.remove('visible');
+                }
+            });
+        }
+
+        function updateAutocompleteSelection(items) {
+            items.forEach((item, i) => {
+                item.classList.toggle('selected', i === autocompleteIndex);
+            });
+        }
+
+        function focusOnNode(nodeId) {
+            if (nodeData[nodeId]) {
+                network.focus(nodeId, {
                     scale: 1.5,
                     animation: { duration: 500, easingFunction: 'easeInOutQuad' }
                 });
-                network.selectNodes([input]);
-                selectedNodeId = input;
-                showSelectedInfo(input);
+                network.selectNodes([nodeId]);
+                selectedNodeId = nodeId;
+                showSelectedInfo(nodeId);
+                showToast(`Enfocando en ${nodeId}`, 'success', 1500);
+            }
+        }
+
+        function focusNode() {
+            const input = document.getElementById('node-search').value.trim();
+            if (!input) {
+                showToast('Por favor ingresa un ID o texto de búsqueda', 'warning');
+                return;
+            }
+
+            const upperInput = input.toUpperCase();
+
+            // First try exact ID match
+            if (nodeData[upperInput]) {
+                focusOnNode(upperInput);
+                return;
+            }
+
+            // Try full-text search
+            const query = input.toLowerCase();
+            const matches = [];
+            Object.keys(nodeData).forEach(id => {
+                const data = nodeData[id];
+                if (id.toLowerCase().includes(query) ||
+                    data.funcionalidad.toLowerCase().includes(query) ||
+                    data.requisito.toLowerCase().includes(query)) {
+                    matches.push(id);
+                }
+            });
+
+            if (matches.length === 1) {
+                focusOnNode(matches[0]);
+            } else if (matches.length > 1) {
+                // Filter to show only matches
+                visibleNodeIds = new Set(matches);
+                currentViewContext = { type: 'search', query: input, count: matches.length };
+                updateVisibility();
+                updateTable();
+                updateStats();
+                updateBreadcrumb();
+                updateStatsPanel();
+                showToast(`Encontrados ${matches.length} resultados para "${input}"`, 'info');
             } else {
-                alert('Nodo no encontrado: ' + input + '\n\nAsegúrate de usar el formato correcto (ej: RM-001)');
+                showToast(`No se encontró: "${input}"`, 'error');
             }
         }
 
@@ -907,9 +1764,13 @@
                 }
             });
 
+            currentViewContext = { type: 'filter', area: areaFilter, priority: priorityFilter, version: versionFilter };
             updateVisibility();
             updateTable();
             updateStats();
+            updateFilterChips();
+            updateBreadcrumb();
+            updateStatsPanel();
         }
 
         function updateVisibility() {
@@ -932,21 +1793,68 @@
 
         function updateTable() {
             const tbody = document.getElementById('table-body');
-            const sortedIds = Array.from(visibleNodeIds).sort();
+
+            // Get sorted IDs based on sortState
+            let sortedData = Array.from(visibleNodeIds).map(id => ({
+                id,
+                ...nodeData[id],
+                connections: nodeData[id].in_degree + nodeData[id].out_degree
+            }));
+
+            sortedData.sort((a, b) => {
+                let aVal, bVal;
+                switch (sortState.column) {
+                    case 'id':
+                        aVal = a.id;
+                        bVal = b.id;
+                        break;
+                    case 'area':
+                        aVal = a.area;
+                        bVal = b.area;
+                        break;
+                    case 'funcionalidad':
+                        aVal = a.funcionalidad;
+                        bVal = b.funcionalidad;
+                        break;
+                    case 'prioridad':
+                        const priorityOrder = { 'Alta (P0)': 0, 'Media (P1)': 1, 'Baja (P2)': 2 };
+                        aVal = priorityOrder[a.prioridad] ?? 1;
+                        bVal = priorityOrder[b.prioridad] ?? 1;
+                        break;
+                    case 'version':
+                        aVal = a.version;
+                        bVal = b.version;
+                        break;
+                    case 'connections':
+                        aVal = a.connections;
+                        bVal = b.connections;
+                        break;
+                    default:
+                        aVal = a.id;
+                        bVal = b.id;
+                }
+
+                if (typeof aVal === 'number') {
+                    return sortState.direction === 'asc' ? aVal - bVal : bVal - aVal;
+                }
+                return sortState.direction === 'asc' ?
+                    String(aVal).localeCompare(String(bVal)) :
+                    String(bVal).localeCompare(String(aVal));
+            });
 
             let html = '';
-            sortedIds.forEach(id => {
-                const data = nodeData[id];
-                const priorityClass = data.prioridad.includes('P0') ? 'priority-p0' :
-                                      data.prioridad.includes('P1') ? 'priority-p1' : 'priority-p2';
+            sortedData.forEach(item => {
+                const priorityClass = item.prioridad.includes('P0') ? 'priority-p0' :
+                                      item.prioridad.includes('P1') ? 'priority-p1' : 'priority-p2';
 
                 html += `
-                    <tr data-id="${id}" style="cursor: pointer;">
-                        <td class="id-cell">${id}</td>
-                        <td class="area-cell">${data.area}</td>
-                        <td class="func-cell">${data.funcionalidad}</td>
-                        <td><span class="priority-badge ${priorityClass}">${data.prioridad}</span></td>
-                        <td>${data.version}</td>
+                    <tr data-id="${item.id}" style="cursor: pointer;">
+                        <td class="id-cell">${item.id}</td>
+                        <td class="area-cell">${item.area}</td>
+                        <td class="func-cell">${item.funcionalidad}</td>
+                        <td><span class="priority-badge ${priorityClass}">${item.prioridad}</span></td>
+                        <td>${item.version}</td>
+                        <td style="text-align:center">${item.connections}</td>
                     </tr>
                 `;
             });
@@ -969,12 +1877,241 @@
             });
         }
 
+        function updateSortIndicators() {
+            document.querySelectorAll('.data-table th.sortable').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+                if (th.dataset.sort === sortState.column) {
+                    th.classList.add(sortState.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+                    th.querySelector('.sort-indicator').textContent = sortState.direction === 'asc' ? '▲' : '▼';
+                } else {
+                    th.querySelector('.sort-indicator').textContent = '⇅';
+                }
+            });
+        }
+
         function updateStats() {
             document.getElementById('visible-nodes').textContent = visibleNodeIds.size;
             const visibleEdgeCount = edges.get().filter(e =>
                 visibleNodeIds.has(e.from) && visibleNodeIds.has(e.to)
             ).length;
             document.getElementById('visible-edges').textContent = visibleEdgeCount;
+        }
+
+        function updateFilterChips() {
+            const container = document.getElementById('filter-chips');
+            const chips = [];
+            const areaFilter = document.getElementById('area-filter').value;
+            const priorityFilter = document.getElementById('priority-filter').value;
+            const versionFilter = document.getElementById('version-filter').value;
+
+            if (areaFilter) {
+                chips.push({ type: 'area', label: 'Área', value: areaFilter });
+            }
+            if (priorityFilter) {
+                chips.push({ type: 'priority', label: 'Prioridad', value: priorityFilter });
+            }
+            if (versionFilter) {
+                chips.push({ type: 'version', label: 'Versión', value: versionFilter });
+            }
+
+            container.innerHTML = chips.map(chip => `
+                <div class="filter-chip" data-type="${chip.type}">
+                    <span class="filter-chip-label">${chip.label}:</span>
+                    <span>${chip.value}</span>
+                    <button class="filter-chip-remove" data-type="${chip.type}">&times;</button>
+                </div>
+            `).join('');
+
+            container.querySelectorAll('.filter-chip-remove').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const type = this.dataset.type;
+                    if (type === 'area') document.getElementById('area-filter').value = '';
+                    if (type === 'priority') document.getElementById('priority-filter').value = '';
+                    if (type === 'version') document.getElementById('version-filter').value = '';
+                    applyFilters();
+                });
+            });
+        }
+
+        function updateBreadcrumb() {
+            const textEl = document.getElementById('breadcrumb-text');
+            const resetBtn = document.getElementById('breadcrumb-reset');
+            const ctx = currentViewContext;
+
+            if (ctx.type === 'all') {
+                textEl.innerHTML = `Todos los requisitos (<strong>${totalNodes}</strong>)`;
+                resetBtn.style.display = 'none';
+            } else if (ctx.type === 'filter') {
+                const parts = [];
+                if (ctx.area) parts.push(ctx.area);
+                if (ctx.priority) parts.push(ctx.priority);
+                if (ctx.version) parts.push(ctx.version);
+                textEl.innerHTML = `Filtrado: ${parts.join(', ')} (<strong>${visibleNodeIds.size}</strong>)`;
+                resetBtn.style.display = 'block';
+            } else if (ctx.type === 'ancestors') {
+                textEl.innerHTML = `Ancestros de <strong>${ctx.node}</strong> (${visibleNodeIds.size})`;
+                resetBtn.style.display = 'block';
+            } else if (ctx.type === 'descendants') {
+                textEl.innerHTML = `Descendientes de <strong>${ctx.node}</strong> (${visibleNodeIds.size})`;
+                resetBtn.style.display = 'block';
+            } else if (ctx.type === 'neighborhood') {
+                textEl.innerHTML = `Vecindario de <strong>${ctx.node}</strong> (${visibleNodeIds.size})`;
+                resetBtn.style.display = 'block';
+            } else if (ctx.type === 'search') {
+                textEl.innerHTML = `Búsqueda: "${ctx.query}" (<strong>${ctx.count}</strong> resultados)`;
+                resetBtn.style.display = 'block';
+            }
+        }
+
+        function updateStatsPanel() {
+            // Priority distribution
+            const priorityCounts = { 'Alta (P0)': 0, 'Media (P1)': 0, 'Baja (P2)': 0 };
+            visibleNodeIds.forEach(id => {
+                const p = nodeData[id].prioridad;
+                if (priorityCounts[p] !== undefined) priorityCounts[p]++;
+            });
+
+            const priorityColors = { 'Alta (P0)': '#ff6b6b', 'Media (P1)': '#ffd93d', 'Baja (P2)': '#4ecdc4' };
+            const maxPriority = Math.max(...Object.values(priorityCounts), 1);
+
+            document.getElementById('priority-stats').innerHTML = Object.entries(priorityCounts).map(([label, count]) => `
+                <div class="stats-bar-row">
+                    <span class="stats-bar-label">${label.replace(' (P0)', '').replace(' (P1)', '').replace(' (P2)', '')}</span>
+                    <div class="stats-bar-wrapper">
+                        <div class="stats-bar" style="width: ${(count / maxPriority) * 100}%; background: ${priorityColors[label]}"></div>
+                    </div>
+                    <span class="stats-bar-value">${count}</span>
+                </div>
+            `).join('');
+
+            // Area distribution (top 5)
+            const areaCounts = {};
+            visibleNodeIds.forEach(id => {
+                const area = nodeData[id].area;
+                areaCounts[area] = (areaCounts[area] || 0) + 1;
+            });
+
+            const topAreas = Object.entries(areaCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+            const maxArea = topAreas.length > 0 ? topAreas[0][1] : 1;
+
+            document.getElementById('area-stats').innerHTML = topAreas.map(([area, count]) => `
+                <div class="stats-bar-row">
+                    <span class="stats-bar-label" title="${area}">${area.substring(0, 12)}</span>
+                    <div class="stats-bar-wrapper">
+                        <div class="stats-bar" style="width: ${(count / maxArea) * 100}%; background: ${areaColors[area] || '#888'}"></div>
+                    </div>
+                    <span class="stats-bar-value">${count}</span>
+                </div>
+            `).join('');
+
+            // Top connected nodes
+            const connections = Array.from(visibleNodeIds).map(id => ({
+                id,
+                total: nodeData[id].in_degree + nodeData[id].out_degree
+            })).sort((a, b) => b.total - a.total).slice(0, 5);
+
+            document.getElementById('top-connected').innerHTML = connections.map(c => `
+                <div class="top-connected-item" data-id="${c.id}">
+                    <span class="top-connected-id">${c.id}</span>
+                    <span>${nodeData[c.id].funcionalidad.substring(0, 20)}...</span>
+                    <span class="top-connected-count">${c.total} conex.</span>
+                </div>
+            `).join('');
+
+            // Click handlers for top connected items
+            document.querySelectorAll('.top-connected-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    focusOnNode(this.dataset.id);
+                });
+            });
+        }
+
+        // Export functions
+        function exportPNG() {
+            showToast('Generando imagen PNG...', 'info', 2000);
+            try {
+                const canvas = document.querySelector('#mynetwork canvas');
+                if (!canvas) {
+                    showToast('No se pudo encontrar el canvas del grafo', 'error');
+                    return;
+                }
+
+                // Create a new canvas with white background and title
+                const exportCanvas = document.createElement('canvas');
+                const ctx = exportCanvas.getContext('2d');
+                const padding = 40;
+
+                exportCanvas.width = canvas.width + padding * 2;
+                exportCanvas.height = canvas.height + padding * 2 + 50;
+
+                // Dark background
+                ctx.fillStyle = '#1a1a2e';
+                ctx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+
+                // Title
+                ctx.fillStyle = '#00ff88';
+                ctx.font = 'bold 24px Segoe UI, Arial, sans-serif';
+                ctx.fillText('Requirements Dependency Graph', padding, 35);
+
+                // Timestamp
+                ctx.fillStyle = '#8888aa';
+                ctx.font = '12px Segoe UI, Arial, sans-serif';
+                ctx.fillText(new Date().toLocaleString(), padding, 55);
+
+                // Draw the original canvas
+                ctx.drawImage(canvas, padding, padding + 50);
+
+                // Create download link
+                const link = document.createElement('a');
+                link.download = `requirements-graph-${Date.now()}.png`;
+                link.href = exportCanvas.toDataURL('image/png');
+                link.click();
+
+                showToast('PNG exportado correctamente', 'success');
+            } catch (err) {
+                showToast('Error al exportar PNG: ' + err.message, 'error');
+            }
+        }
+
+        function exportCSV() {
+            showToast('Generando archivo CSV...', 'info', 1500);
+            try {
+                const headers = ['ID', 'Área', 'Funcionalidad', 'Prioridad', 'Versión', 'Owner', 'Estatus', 'Dependencias', 'In-Degree', 'Out-Degree'];
+                const rows = [headers.join(',')];
+
+                Array.from(visibleNodeIds).sort().forEach(id => {
+                    const d = nodeData[id];
+                    const row = [
+                        id,
+                        `"${d.area}"`,
+                        `"${d.funcionalidad.replace(/"/g, '""')}"`,
+                        `"${d.prioridad}"`,
+                        `"${d.version}"`,
+                        `"${d.owner}"`,
+                        `"${d.estatus}"`,
+                        `"${d.dependencias}"`,
+                        d.in_degree,
+                        d.out_degree
+                    ];
+                    rows.push(row.join(','));
+                });
+
+                // UTF-8 BOM for Excel compatibility
+                const BOM = '\uFEFF';
+                const csvContent = BOM + rows.join('\n');
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `requirements-${visibleNodeIds.size}-${Date.now()}.csv`;
+                link.click();
+
+                showToast(`CSV exportado (${visibleNodeIds.size} requisitos)`, 'success');
+            } catch (err) {
+                showToast('Error al exportar CSV: ' + err.message, 'error');
+            }
         }
 
         function showSelectedInfo(nodeId) {
@@ -987,31 +2124,39 @@
 
         function showAncestors() {
             if (!selectedNodeId) {
-                alert('Primero selecciona un nodo haciendo clic en el grafo');
+                showToast('Primero selecciona un nodo haciendo clic en el grafo', 'warning');
                 return;
             }
             const ancestors = subgraphData[selectedNodeId]?.ancestors || [];
             visibleNodeIds = new Set([selectedNodeId, ...ancestors]);
+            currentViewContext = { type: 'ancestors', node: selectedNodeId };
             updateVisibility();
             updateTable();
             updateStats();
+            updateBreadcrumb();
+            updateStatsPanel();
+            showToast(`Mostrando ${visibleNodeIds.size} ancestros de ${selectedNodeId}`, 'info');
         }
 
         function showDescendants() {
             if (!selectedNodeId) {
-                alert('Primero selecciona un nodo haciendo clic en el grafo');
+                showToast('Primero selecciona un nodo haciendo clic en el grafo', 'warning');
                 return;
             }
             const descendants = subgraphData[selectedNodeId]?.descendants || [];
             visibleNodeIds = new Set([selectedNodeId, ...descendants]);
+            currentViewContext = { type: 'descendants', node: selectedNodeId };
             updateVisibility();
             updateTable();
             updateStats();
+            updateBreadcrumb();
+            updateStatsPanel();
+            showToast(`Mostrando ${visibleNodeIds.size} descendientes de ${selectedNodeId}`, 'info');
         }
 
         function showNeighborhood() {
             if (!selectedNodeId) {
-                alert('Primero selecciona un nodo haciendo clic en el grafo');
+                showToast('Primero selecciona un nodo haciendo clic en el grafo', 'warning');
                 return;
             }
             const neighbors = new Set([selectedNodeId]);
@@ -1020,9 +2165,13 @@
                 if (edge.to === selectedNodeId) neighbors.add(edge.from);
             });
             visibleNodeIds = neighbors;
+            currentViewContext = { type: 'neighborhood', node: selectedNodeId };
             updateVisibility();
             updateTable();
             updateStats();
+            updateBreadcrumb();
+            updateStatsPanel();
+            showToast(`Mostrando vecindario de ${selectedNodeId} (${visibleNodeIds.size} nodos)`, 'info');
         }
 
         function setLayout(layout) {
@@ -1087,6 +2236,7 @@
 
             // Show all nodes
             visibleNodeIds = new Set(Object.keys(nodeData));
+            currentViewContext = { type: 'all', node: null };
             updateVisibility();
             updateTable();
 
@@ -1094,10 +2244,24 @@
             document.getElementById('visible-nodes').textContent = totalNodes;
             document.getElementById('visible-edges').textContent = totalEdges;
 
+            // Clear filter chips
+            document.getElementById('filter-chips').innerHTML = '';
+
+            // Update breadcrumb
+            updateBreadcrumb();
+
+            // Update stats panel
+            updateStatsPanel();
+
             // Deselect
             network.unselectAll();
             selectedNodeId = null;
             hideSelectedInfo();
+
+            // Hide pinned tooltip
+            const tooltip = document.getElementById('hover-tooltip');
+            tooltip.style.display = 'none';
+            tooltip.classList.remove('pinned');
 
             // Reset layout to force
             if (currentLayout === 'tree') {
@@ -1105,6 +2269,7 @@
             }
 
             network.fit({ animation: { duration: 500 } });
+            showToast('Vista restablecida', 'info', 1500);
         }
     })();
     </script>
