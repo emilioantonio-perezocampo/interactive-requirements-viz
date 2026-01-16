@@ -85,26 +85,31 @@ def load_requirements(csv_path: str) -> pd.DataFrame:
 def build_graph(df: pd.DataFrame) -> nx.DiGraph:
     """Build directed graph from requirements dataframe."""
     G = nx.DiGraph()
-    
+
     for _, row in df.iterrows():
+        # Truncate long text for display
+        requisito = str(row['Requisito_detallado']) if pd.notna(row['Requisito_detallado']) else 'N/A'
+        if len(requisito) > 300:
+            requisito = requisito[:300] + '...'
+
         G.add_node(
             row['ID'],
-            area=row['Área'],
-            funcionalidad=row['Funcionalidad'],
-            requisito=row['Requisito_detallado'][:200] + '...' if len(str(row['Requisito_detallado'])) > 200 else row['Requisito_detallado'],
-            prioridad=row['Prioridad'],
-            estatus=row['Estatus'],
-            version=row['Versión_objetivo'],
-            owner=row['Owner'],
-            roles=row['Roles'],
-            dependencias=row['Dependencias'],
+            area=row['Área'] if pd.notna(row['Área']) else 'Unknown',
+            funcionalidad=row['Funcionalidad'] if pd.notna(row['Funcionalidad']) else 'N/A',
+            requisito=requisito,
+            prioridad=row['Prioridad'] if pd.notna(row['Prioridad']) else 'Media (P1)',
+            estatus=row['Estatus'] if pd.notna(row['Estatus']) else 'N/A',
+            version=row['Versión_objetivo'] if pd.notna(row['Versión_objetivo']) else 'N/A',
+            owner=row['Owner'] if pd.notna(row['Owner']) else 'N/A',
+            roles=row['Roles'] if pd.notna(row['Roles']) else 'N/A',
+            dependencias=row['Dependencias'] if pd.notna(row['Dependencias']) else '—',
         )
-    
+
     for _, row in df.iterrows():
         for dep in row['parsed_deps']:
             if dep in G.nodes:
                 G.add_edge(dep, row['ID'])
-    
+
     return G
 
 
@@ -225,21 +230,8 @@ def create_interactive_graph(
             border_color = "#ffffff"
             border_width = 2
         
-        # Create rich tooltip
-        tooltip = f"""
-        <div style='font-family: Arial; padding: 10px; max-width: 400px;'>
-            <h3 style='margin: 0 0 10px 0; color: {color};'>{node_id}</h3>
-            <p style='margin: 5px 0;'><strong>Funcionalidad:</strong> {node_data.get('funcionalidad', 'N/A')}</p>
-            <p style='margin: 5px 0;'><strong>Área:</strong> {area}</p>
-            <p style='margin: 5px 0;'><strong>Prioridad:</strong> {priority}</p>
-            <p style='margin: 5px 0;'><strong>Versión:</strong> {node_data.get('version', 'N/A')}</p>
-            <p style='margin: 5px 0;'><strong>Owner:</strong> {node_data.get('owner', 'N/A')}</p>
-            <p style='margin: 5px 0;'><strong>Roles:</strong> {node_data.get('roles', 'N/A')}</p>
-            <p style='margin: 5px 0;'><strong>Dependencias:</strong> {node_data.get('dependencias', '—')}</p>
-            <hr style='margin: 10px 0;'>
-            <p style='margin: 5px 0; font-size: 0.9em;'><strong>Requisito:</strong><br>{node_data.get('requisito', 'N/A')}</p>
-        </div>
-        """
+        # Create simple text tooltip (HTML will be rendered via custom tooltip div)
+        tooltip = f"{node_id}: {node_data.get('funcionalidad', 'N/A')}"
         
         net.add_node(
             node_id,
@@ -294,7 +286,7 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
     priorities = ['Alta (P0)', 'Media (P1)', 'Baja (P2)']
     versions = sorted(set(G.nodes[n].get('version', 'N/A') for n in G.nodes()))
     
-    # Build node data for JavaScript
+    # Build node data for JavaScript (include all fields for custom tooltip)
     node_data_js = {}
     for n in G.nodes():
         node_data_js[n] = {
@@ -302,6 +294,11 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
             'prioridad': G.nodes[n].get('prioridad', 'Media (P1)'),
             'version': G.nodes[n].get('version', 'N/A'),
             'funcionalidad': G.nodes[n].get('funcionalidad', ''),
+            'requisito': G.nodes[n].get('requisito', 'N/A'),
+            'owner': G.nodes[n].get('owner', 'N/A'),
+            'roles': G.nodes[n].get('roles', 'N/A'),
+            'estatus': G.nodes[n].get('estatus', 'N/A'),
+            'dependencias': G.nodes[n].get('dependencias', '—'),
             'in_degree': G.in_degree(n),
             'out_degree': G.out_degree(n),
         }
@@ -525,6 +522,97 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
             font-size: 0.8em;
             margin-left: auto;
         }
+
+        /* Custom hover tooltip */
+        #hover-tooltip {
+            position: fixed;
+            background: rgba(22, 33, 62, 0.98);
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 0.85em;
+            z-index: 2000;
+            border: 1px solid #4a4a6a;
+            max-width: 420px;
+            pointer-events: none;
+            display: none;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+
+        #hover-tooltip h4 {
+            margin: 0 0 12px 0;
+            color: #00ff88;
+            font-size: 1.1em;
+            border-bottom: 1px solid #4a4a6a;
+            padding-bottom: 8px;
+        }
+
+        #hover-tooltip .tooltip-row {
+            display: flex;
+            margin: 6px 0;
+            line-height: 1.4;
+        }
+
+        #hover-tooltip .tooltip-label {
+            color: #8888aa;
+            min-width: 100px;
+            font-weight: 500;
+        }
+
+        #hover-tooltip .tooltip-value {
+            color: #ffffff;
+            flex: 1;
+        }
+
+        #hover-tooltip .tooltip-requisito {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #4a4a6a;
+            line-height: 1.5;
+            color: #ccccdd;
+            font-size: 0.95em;
+        }
+
+        #hover-tooltip .tooltip-requisito-label {
+            color: #8888aa;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        /* Layout toggle button styles */
+        .layout-toggle {
+            display: flex;
+            gap: 0;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid #4a4a6a;
+        }
+
+        .layout-btn {
+            background: #0f0f23;
+            border: none;
+            color: #8888aa;
+            padding: 8px 14px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .layout-btn:hover {
+            background: #1a1a3e;
+            color: #ffffff;
+        }
+
+        .layout-btn.active {
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+            color: #1a1a2e;
+            font-weight: 600;
+        }
+
+        .layout-btn:first-child {
+            border-right: 1px solid #4a4a6a;
+        }
     </style>
     """
     
@@ -567,7 +655,15 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
             <button onclick="showDescendants()">Dependientes →</button>
             <button onclick="showNeighborhood()">Vecindario</button>
         </div>
-        
+
+        <div class="control-group">
+            <label>Layout:</label>
+            <div class="layout-toggle">
+                <button class="layout-btn active" id="layout-force" onclick="setLayout('force')">Fuerza</button>
+                <button class="layout-btn" id="layout-tree" onclick="setLayout('tree')">Árbol</button>
+            </div>
+        </div>
+
         <button class="secondary" onclick="resetView()">Reset</button>
         
         <span class="help-text">Click en nodo para seleccionar • Doble click para fijar • Scroll para zoom</span>
@@ -596,6 +692,8 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
             <button onclick="showDescendantsOf(selectedNodeId)">Ver dependientes</button>
         </div>
     </div>
+
+    <div id="hover-tooltip"></div>
     """
     
     custom_js = f"""
@@ -603,17 +701,19 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
         const nodeData = {json.dumps(node_data_js)};
         const subgraphData = {json.dumps(subgraph_data)};
         const areaColors = {json.dumps(AREA_COLORS)};
-        
+
         let selectedNodeId = null;
         let allNodes = null;
         let allEdges = null;
-        
+        let currentLayout = 'force';
+        const hoverTooltip = document.getElementById('hover-tooltip');
+
         // Store original data after network is ready
         network.once('stabilizationIterationsDone', function() {{
             allNodes = nodes.get();
             allEdges = edges.get();
         }});
-        
+
         // Node click handler
         network.on('click', function(params) {{
             if (params.nodes.length > 0) {{
@@ -626,7 +726,72 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
                 closeNodeInfo();
             }}
         }});
-        
+
+        // Hover tooltip handlers
+        network.on('hoverNode', function(params) {{
+            const nodeId = params.node;
+            const data = nodeData[nodeId];
+            if (!data) return;
+
+            const color = areaColors[data.area] || '#888888';
+            hoverTooltip.innerHTML = `
+                <h4 style="color: ${{color}}">${{nodeId}}: ${{data.funcionalidad}}</h4>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Área:</span>
+                    <span class="tooltip-value">${{data.area}}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Prioridad:</span>
+                    <span class="tooltip-value">${{data.prioridad}}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Versión:</span>
+                    <span class="tooltip-value">${{data.version}}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Estatus:</span>
+                    <span class="tooltip-value">${{data.estatus}}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Owner:</span>
+                    <span class="tooltip-value">${{data.owner}}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Roles:</span>
+                    <span class="tooltip-value">${{data.roles}}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Dependencias:</span>
+                    <span class="tooltip-value">${{data.dependencias}}</span>
+                </div>
+                <div class="tooltip-requisito">
+                    <span class="tooltip-requisito-label">Requisito:</span>
+                    ${{data.requisito}}
+                </div>
+            `;
+            hoverTooltip.style.display = 'block';
+        }});
+
+        network.on('blurNode', function() {{
+            hoverTooltip.style.display = 'none';
+        }});
+
+        // Update tooltip position on mouse move
+        document.getElementById('mynetwork').addEventListener('mousemove', function(e) {{
+            if (hoverTooltip.style.display === 'block') {{
+                const x = e.clientX + 15;
+                const y = e.clientY + 15;
+                const tooltipRect = hoverTooltip.getBoundingClientRect();
+
+                // Keep tooltip within viewport
+                const maxX = window.innerWidth - tooltipRect.width - 20;
+                const maxY = window.innerHeight - tooltipRect.height - 20;
+
+                hoverTooltip.style.left = Math.min(x, maxX) + 'px';
+                hoverTooltip.style.top = Math.min(y, maxY) + 'px';
+            }}
+        }});
+
         function updateStats(nodeId) {{
             document.getElementById('selected-node').textContent = nodeId || '—';
             if (nodeId && nodeData[nodeId]) {{
@@ -637,17 +802,20 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
                 document.getElementById('out-degree').textContent = '—';
             }}
         }}
-        
+
         function showNodeInfo(nodeId) {{
             const data = nodeData[nodeId];
             const subgraph = subgraphData[nodeId];
             if (!data) return;
-            
+
             document.getElementById('info-title').textContent = nodeId + ': ' + data.funcionalidad;
             document.getElementById('info-content').innerHTML = `
                 <p><strong>Área:</strong> ${{data.area}}</p>
                 <p><strong>Prioridad:</strong> ${{data.prioridad}}</p>
                 <p><strong>Versión:</strong> ${{data.version}}</p>
+                <p><strong>Estatus:</strong> ${{data.estatus}}</p>
+                <p><strong>Owner:</strong> ${{data.owner}}</p>
+                <hr style="border-color: #4a4a6a; margin: 10px 0;">
                 <p><strong>Dependencias directas:</strong> ${{data.in_degree}}</p>
                 <p><strong>Dependientes directos:</strong> ${{data.out_degree}}</p>
                 <p><strong>Total ancestros:</strong> ${{subgraph.ancestors.length}}</p>
@@ -655,11 +823,73 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
             `;
             document.getElementById('node-info').style.display = 'block';
         }}
-        
+
         function closeNodeInfo() {{
             document.getElementById('node-info').style.display = 'none';
         }}
-        
+
+        // Layout switching
+        function setLayout(layout) {{
+            currentLayout = layout;
+
+            // Update button states
+            document.getElementById('layout-force').classList.toggle('active', layout === 'force');
+            document.getElementById('layout-tree').classList.toggle('active', layout === 'tree');
+
+            if (layout === 'tree') {{
+                // Hierarchical layout
+                network.setOptions({{
+                    layout: {{
+                        hierarchical: {{
+                            enabled: true,
+                            direction: 'UD',
+                            sortMethod: 'directed',
+                            levelSeparation: 120,
+                            nodeSpacing: 150,
+                            treeSpacing: 200,
+                            blockShifting: true,
+                            edgeMinimization: true,
+                            parentCentralization: true
+                        }}
+                    }},
+                    physics: {{
+                        enabled: false
+                    }}
+                }});
+            }} else {{
+                // Force-directed layout
+                network.setOptions({{
+                    layout: {{
+                        hierarchical: {{
+                            enabled: false
+                        }}
+                    }},
+                    physics: {{
+                        enabled: true,
+                        solver: 'forceAtlas2Based',
+                        forceAtlas2Based: {{
+                            gravitationalConstant: -80,
+                            centralGravity: 0.01,
+                            springLength: 150,
+                            springConstant: 0.08,
+                            damping: 0.4,
+                            avoidOverlap: 0.8
+                        }},
+                        stabilization: {{
+                            enabled: true,
+                            iterations: 200,
+                            updateInterval: 25
+                        }}
+                    }}
+                }});
+            }}
+
+            // Fit view after layout change
+            setTimeout(() => {{
+                network.fit({{ animation: {{ duration: 500 }} }});
+            }}, 300);
+        }}
+
         function focusNode() {{
             const nodeId = document.getElementById('node-search').value.toUpperCase();
             if (nodes.get(nodeId)) {{
@@ -675,58 +905,58 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
                 alert('Nodo no encontrado: ' + nodeId);
             }}
         }}
-        
+
         function filterByArea(area) {{
             document.getElementById('area-filter').value = area;
             applyFilters();
         }}
-        
+
         function applyFilters() {{
             const areaFilter = document.getElementById('area-filter').value;
             const priorityFilter = document.getElementById('priority-filter').value;
             const versionFilter = document.getElementById('version-filter').value;
-            
+
             if (!allNodes) allNodes = nodes.get();
             if (!allEdges) allEdges = edges.get();
-            
+
             // Filter nodes
             const visibleNodeIds = new Set();
             allNodes.forEach(node => {{
                 const data = nodeData[node.id];
                 if (!data) return;
-                
+
                 const matchArea = !areaFilter || data.area === areaFilter;
                 const matchPriority = !priorityFilter || data.prioridad === priorityFilter;
                 const matchVersion = !versionFilter || data.version === versionFilter;
-                
+
                 if (matchArea && matchPriority && matchVersion) {{
                     visibleNodeIds.add(node.id);
                 }}
             }});
-            
+
             // Update node visibility
             const updates = allNodes.map(node => ({{
                 id: node.id,
                 hidden: !visibleNodeIds.has(node.id)
             }}));
             nodes.update(updates);
-            
+
             // Update edge visibility
             const edgeUpdates = allEdges.map(edge => ({{
                 id: edge.id,
                 hidden: !visibleNodeIds.has(edge.from) || !visibleNodeIds.has(edge.to)
             }}));
             edges.update(edgeUpdates);
-            
+
             // Update stats
-            const visibleEdges = allEdges.filter(e => 
+            const visibleEdges = allEdges.filter(e =>
                 visibleNodeIds.has(e.from) && visibleNodeIds.has(e.to)
             ).length;
-            
+
             document.getElementById('visible-nodes').textContent = visibleNodeIds.size;
             document.getElementById('visible-edges').textContent = visibleEdges;
         }}
-        
+
         function showAncestors() {{
             if (!selectedNodeId) {{
                 alert('Selecciona un nodo primero');
@@ -734,13 +964,13 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
             }}
             showAncestorsOf(selectedNodeId);
         }}
-        
+
         function showAncestorsOf(nodeId) {{
             const ancestors = subgraphData[nodeId]?.ancestors || [];
             const visibleIds = new Set([nodeId, ...ancestors]);
             showSubgraph(visibleIds, 'Dependencias de ' + nodeId);
         }}
-        
+
         function showDescendants() {{
             if (!selectedNodeId) {{
                 alert('Selecciona un nodo primero');
@@ -748,98 +978,99 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
             }}
             showDescendantsOf(selectedNodeId);
         }}
-        
+
         function showDescendantsOf(nodeId) {{
             const descendants = subgraphData[nodeId]?.descendants || [];
             const visibleIds = new Set([nodeId, ...descendants]);
             showSubgraph(visibleIds, 'Dependientes de ' + nodeId);
         }}
-        
+
         function showNeighborhood() {{
             if (!selectedNodeId) {{
                 alert('Selecciona un nodo primero');
                 return;
             }}
-            const ancestors = subgraphData[selectedNodeId]?.ancestors || [];
-            const descendants = subgraphData[selectedNodeId]?.descendants || [];
-            
+
             // Get immediate neighbors only (depth 1)
             const neighbors = new Set([selectedNodeId]);
             allEdges.forEach(edge => {{
                 if (edge.from === selectedNodeId) neighbors.add(edge.to);
                 if (edge.to === selectedNodeId) neighbors.add(edge.from);
             }});
-            
+
             showSubgraph(neighbors, 'Vecindario de ' + selectedNodeId);
         }}
-        
+
         function showSubgraph(visibleIds, title) {{
             if (!allNodes) allNodes = nodes.get();
             if (!allEdges) allEdges = edges.get();
-            
+
             // Update nodes
             const updates = allNodes.map(node => ({{
                 id: node.id,
                 hidden: !visibleIds.has(node.id)
             }}));
             nodes.update(updates);
-            
+
             // Update edges
             const edgeUpdates = allEdges.map(edge => ({{
                 id: edge.id,
                 hidden: !visibleIds.has(edge.from) || !visibleIds.has(edge.to)
             }}));
             edges.update(edgeUpdates);
-            
+
             // Update stats
-            const visibleEdges = allEdges.filter(e => 
+            const visibleEdges = allEdges.filter(e =>
                 visibleIds.has(e.from) && visibleIds.has(e.to)
             ).length;
-            
+
             document.getElementById('visible-nodes').textContent = visibleIds.size;
             document.getElementById('visible-edges').textContent = visibleEdges;
-            
+
             // Fit view
             network.fit({{ animation: {{ duration: 500 }} }});
         }}
-        
+
         function resetView() {{
             // Clear filters
             document.getElementById('area-filter').value = '';
             document.getElementById('priority-filter').value = '';
             document.getElementById('version-filter').value = '';
             document.getElementById('node-search').value = '';
-            
+
             if (!allNodes) allNodes = nodes.get();
             if (!allEdges) allEdges = edges.get();
-            
+
             // Show all nodes
             const updates = allNodes.map(node => ({{ id: node.id, hidden: false }}));
             nodes.update(updates);
-            
+
             // Show all edges
             const edgeUpdates = allEdges.map(edge => ({{ id: edge.id, hidden: false }}));
             edges.update(edgeUpdates);
-            
+
             // Update stats
             document.getElementById('visible-nodes').textContent = allNodes.length;
             document.getElementById('visible-edges').textContent = allEdges.length;
-            
+
             // Deselect
             network.unselectAll();
             selectedNodeId = null;
             updateStats(null);
             closeNodeInfo();
-            
-            // Fit view
+
+            // Reset layout to force if needed and fit view
+            if (currentLayout === 'force') {{
+                network.stabilize();
+            }}
             network.fit({{ animation: {{ duration: 500 }} }});
         }}
-        
+
         // Add event listeners to filters
         document.getElementById('area-filter').addEventListener('change', applyFilters);
         document.getElementById('priority-filter').addEventListener('change', applyFilters);
         document.getElementById('version-filter').addEventListener('change', applyFilters);
-        
+
         // Enter key for search
         document.getElementById('node-search').addEventListener('keypress', function(e) {{
             if (e.key === 'Enter') focusNode();
