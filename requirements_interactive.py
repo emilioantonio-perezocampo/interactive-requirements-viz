@@ -635,6 +635,20 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
             font-size: 0.9em;
         }
 
+        .tooltip-pinned-badge {
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid #4a4a6a;
+            color: #00ff88;
+            font-size: 0.75em;
+            text-align: center;
+        }
+
+        #hover-tooltip.pinned {
+            border: 2px solid #00ff88;
+            box-shadow: 0 8px 32px rgba(0,255,136,0.3);
+        }
+
         /* Data table */
         .table-header {
             padding: 15px;
@@ -724,58 +738,6 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
         .priority-p2 {
             background: rgba(78,205,196,0.2);
             color: #4ecdc4;
-        }
-
-        /* Selected node info */
-        .selected-info {
-            padding: 15px;
-            background: rgba(0,255,136,0.05);
-            border-bottom: 1px solid #4a4a6a;
-        }
-
-        .selected-info h3 {
-            color: #00ff88;
-            margin: 0 0 12px 0;
-            font-size: 1em;
-            font-weight: 600;
-        }
-
-        .sel-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px 16px;
-            margin-bottom: 12px;
-        }
-
-        .sel-meta-item {
-            color: #cccccc;
-            font-size: 0.8em;
-        }
-
-        .sel-meta-item strong {
-            color: #8888aa;
-        }
-
-        .sel-description {
-            background: rgba(0,0,0,0.2);
-            border-radius: 8px;
-            padding: 12px;
-            border: 1px solid #3a3a5a;
-        }
-
-        .sel-description-label {
-            color: #00ff88;
-            font-size: 0.85em;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .sel-description-text {
-            color: #cccccc;
-            font-size: 0.85em;
-            line-height: 1.6;
-            max-height: 150px;
-            overflow-y: auto;
         }
 
         /* Hide pyvis default elements */
@@ -905,21 +867,6 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
 
         <!-- Right Panel: Data Table -->
         <div class="right-panel">
-            <div class="selected-info" id="selected-info">
-                <h3 id="selected-title">Nodo Seleccionado</h3>
-                <div class="sel-meta">
-                    <span class="sel-meta-item"><strong>ID:</strong> <span id="sel-id">—</span></span>
-                    <span class="sel-meta-item"><strong>Área:</strong> <span id="sel-area">—</span></span>
-                    <span class="sel-meta-item"><strong>Prioridad:</strong> <span id="sel-priority">—</span></span>
-                    <span class="sel-meta-item"><strong>Versión:</strong> <span id="sel-version">—</span></span>
-                    <span class="sel-meta-item"><strong>Owner:</strong> <span id="sel-owner">—</span></span>
-                    <span class="sel-meta-item"><strong>Deps:</strong> <span id="sel-deps">—</span></span>
-                </div>
-                <div class="sel-description">
-                    <div class="sel-description-label">📝 Descripción del Requisito:</div>
-                    <div class="sel-description-text" id="sel-requisito">Selecciona un nodo en el grafo para ver su descripción completa.</div>
-                </div>
-            </div>
             <div class="table-header">
                 <h2>📋 Requisitos Visibles</h2>
                 <span class="table-count" id="table-count">{len(G.nodes())} requisitos</span>
@@ -1023,21 +970,63 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
         }}
 
         function setupNetworkHandlers() {{
-            // Click handler
+            // Tooltip element
+            const tooltip = document.getElementById('hover-tooltip');
+            let tooltipPinned = false;
+
+            // Click handler - pins the tooltip
             network.on('click', function(params) {{
                 if (params.nodes.length > 0) {{
                     selectedNodeId = params.nodes[0];
                     showSelectedInfo(selectedNodeId);
+
+                    // Pin the tooltip for clicked node
+                    const data = nodeData[selectedNodeId];
+                    if (data) {{
+                        const color = areaColors[data.area] || '#888888';
+                        tooltip.innerHTML = `
+                            <h4 style="color: ${{color}}">${{selectedNodeId}}: ${{data.funcionalidad}}</h4>
+                            <div class="tooltip-row">
+                                <span class="tooltip-label">Área:</span>
+                                <span class="tooltip-value">${{data.area}}</span>
+                            </div>
+                            <div class="tooltip-row">
+                                <span class="tooltip-label">Prioridad:</span>
+                                <span class="tooltip-value">${{data.prioridad}}</span>
+                            </div>
+                            <div class="tooltip-row">
+                                <span class="tooltip-label">Versión:</span>
+                                <span class="tooltip-value">${{data.version}}</span>
+                            </div>
+                            <div class="tooltip-row">
+                                <span class="tooltip-label">Owner:</span>
+                                <span class="tooltip-value">${{data.owner}}</span>
+                            </div>
+                            <div class="tooltip-row">
+                                <span class="tooltip-label">Dependencias:</span>
+                                <span class="tooltip-value">${{data.dependencias}}</span>
+                            </div>
+                            <div class="tooltip-requisito">${{data.requisito}}</div>
+                            <div class="tooltip-pinned-badge">📌 Fijado (clic en vacío para cerrar)</div>
+                        `;
+                        tooltip.style.display = 'block';
+                        tooltip.classList.add('pinned');
+                        tooltipPinned = true;
+                    }}
                 }} else {{
+                    // Clicked on empty space - unpin and hide
                     selectedNodeId = null;
                     hideSelectedInfo();
+                    tooltipPinned = false;
+                    tooltip.classList.remove('pinned');
+                    tooltip.style.display = 'none';
                 }}
             }});
 
             // Hover tooltip
-            const tooltip = document.getElementById('hover-tooltip');
-
             network.on('hoverNode', function(params) {{
+                if (tooltipPinned) return; // Don't update if pinned
+
                 const nodeId = params.node;
                 const data = nodeData[nodeId];
                 if (!data) return;
@@ -1071,12 +1060,14 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
             }});
 
             network.on('blurNode', function() {{
-                tooltip.style.display = 'none';
+                if (!tooltipPinned) {{
+                    tooltip.style.display = 'none';
+                }}
             }});
 
-            // Tooltip follows mouse
+            // Tooltip follows mouse only when not pinned
             document.querySelector('.graph-panel').addEventListener('mousemove', function(e) {{
-                if (tooltip.style.display === 'block') {{
+                if (tooltip.style.display === 'block' && !tooltipPinned) {{
                     const x = e.clientX + 15;
                     const y = e.clientY + 15;
                     const rect = tooltip.getBoundingClientRect();
@@ -1197,21 +1188,11 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
         }}
 
         function showSelectedInfo(nodeId) {{
-            const data = nodeData[nodeId];
-            if (!data) return;
-
-            document.getElementById('sel-id').textContent = nodeId;
-            document.getElementById('sel-area').textContent = data.area;
-            document.getElementById('sel-priority').textContent = data.prioridad;
-            document.getElementById('sel-version').textContent = data.version;
-            document.getElementById('sel-owner').textContent = data.owner;
-            document.getElementById('sel-deps').textContent = data.dependencias;
-            document.getElementById('sel-requisito').textContent = data.requisito;
-            document.getElementById('selected-title').textContent = data.funcionalidad;
+            // Info is now shown in the pinned tooltip
         }}
 
         function hideSelectedInfo() {{
-            document.getElementById('selected-info').classList.remove('visible');
+            // Info is now hidden via the pinned tooltip
         }}
 
         function showAncestors() {{
