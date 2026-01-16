@@ -23,3 +23,4 @@ Thumbs.db
 
 # Data files (uncomment if you don't want to track CSV files)
 # *.csv
+.claude/
