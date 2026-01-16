@@ -83,6 +83,45 @@ def load_requirements(csv_path: str) -> pd.DataFrame:
     return df
 
 
+def load_gantt_timelines(csv_path: str) -> tuple:
+    """Load Gantt timeline data from CSV with version support.
+
+    Expected CSV columns:
+    - requirement_id: Links to existing requirement IDs
+    - version: Scenario name (e.g., "Optimistic", "Realistic", "Pessimistic")
+    - start_date: Start date (YYYY-MM-DD format)
+    - end_date: End date (YYYY-MM-DD format)
+    - progress: Optional percentage complete (0-100)
+
+    Returns: (gantt_data_by_version, list_of_versions)
+    """
+    df = pd.read_csv(csv_path)
+
+    # Determine versions available
+    if 'version' in df.columns:
+        versions = df['version'].unique().tolist()
+    else:
+        versions = ['Default']
+
+    gantt_data = {}
+    for version in versions:
+        gantt_data[version] = {}
+        if 'version' in df.columns:
+            version_df = df[df['version'] == version]
+        else:
+            version_df = df
+
+        for _, row in version_df.iterrows():
+            req_id = row['requirement_id']
+            gantt_data[version][req_id] = {
+                'start_date': row['start_date'],
+                'end_date': row['end_date'],
+                'progress': int(row['progress']) if 'progress' in row and pd.notna(row['progress']) else 0
+            }
+
+    return gantt_data, versions
+
+
 def build_graph(df: pd.DataFrame) -> nx.DiGraph:
     """Build directed graph from requirements dataframe."""
     G = nx.DiGraph()
@@ -165,6 +204,8 @@ def create_interactive_graph(
     width: str = "100%",
     output_path: str = "requirements_graph.html",
     highlight_node: Optional[str] = None,
+    gantt_data: dict = None,
+    gantt_versions: list = None,
 ):
     """Create interactive Pyvis network visualization."""
 
@@ -305,7 +346,7 @@ def create_interactive_graph(
     net.save_graph(output_path)
 
     # Inject custom CSS and controls
-    inject_custom_controls(output_path, G, title)
+    inject_custom_controls(output_path, G, title, gantt_data or {}, gantt_versions or [])
 
     print(f"Interactive graph saved to: {output_path}")
     return output_path
@@ -323,7 +364,7 @@ def generate_legend_items(areas):
     return ''.join(items)
 
 
-def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
+def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str, gantt_data: dict, gantt_versions: list):
     """Inject custom filtering controls and styles into the HTML."""
 
     with open(html_path, 'r', encoding='utf-8') as f:
@@ -1300,6 +1341,105 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
         ::-webkit-scrollbar-thumb:hover {
             background: #5a5a7a;
         }
+
+        /* Gantt chart container */
+        #gantt-container {
+            background: #1a1a2e;
+            padding: 20px;
+            height: calc(100vh - 80px);
+            overflow: auto;
+        }
+
+        /* Frappe Gantt dark theme overrides */
+        .gantt .grid-background {
+            fill: #1a1a2e;
+        }
+
+        .gantt .grid-header {
+            fill: #16213e;
+            stroke: #4a4a6a;
+        }
+
+        .gantt .grid-row {
+            fill: #1a1a2e;
+        }
+
+        .gantt .grid-row:nth-child(even) {
+            fill: #16213e;
+        }
+
+        .gantt .row-line {
+            stroke: #4a4a6a;
+        }
+
+        .gantt .tick {
+            stroke: #4a4a6a;
+        }
+
+        .gantt .tick.thick {
+            stroke: #5a5a7a;
+        }
+
+        .gantt .today-highlight {
+            fill: rgba(0, 255, 136, 0.1);
+        }
+
+        .gantt .bar {
+            fill: #00ff88;
+            stroke: #00cc6a;
+            stroke-width: 0;
+        }
+
+        .gantt .bar-progress {
+            fill: #00cc6a;
+        }
+
+        .gantt .bar-invalid {
+            fill: transparent;
+            stroke: #ff6b6b;
+            stroke-width: 1;
+            stroke-dasharray: 5;
+        }
+
+        .gantt .bar-label {
+            fill: #1a1a2e;
+            font-weight: 500;
+            font-size: 11px;
+        }
+
+        .gantt .bar-label.big {
+            fill: #ffffff;
+        }
+
+        .gantt .handle {
+            fill: #00ff88;
+        }
+
+        .gantt .arrow {
+            stroke: #8888aa;
+            stroke-width: 1.5;
+        }
+
+        .gantt .lower-text, .gantt .upper-text {
+            fill: #8888aa;
+            font-size: 11px;
+        }
+
+        .gantt-container .popup-wrapper {
+            background: #16213e;
+            border: 1px solid #4a4a6a;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        .gantt-container .popup-wrapper .title {
+            color: #00ff88;
+            border-bottom: 1px solid #4a4a6a;
+        }
+
+        .gantt-container .popup-wrapper .subtitle {
+            color: #8888aa;
+        }
     </style>
     """
 
@@ -1307,6 +1447,21 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
     area_options = ''.join(f'<option value="{a}">{a}</option>' for a in areas)
     priority_options = ''.join(f'<option value="{p}">{p}</option>' for p in priorities)
     version_options = ''.join(f'<option value="{v}">{v}</option>' for v in versions)
+
+    # Generate Gantt UI elements (conditional on gantt data)
+    has_gantt = len(gantt_versions) > 0
+    gantt_button = '<button class="layout-btn" id="layout-gantt">📅 Gantt</button>' if has_gantt else ''
+    gantt_version_options = ''.join(f'<option value="{v}">{v}</option>' for v in gantt_versions)
+    gantt_version_section = f'''
+            <div class="controls-section" id="gantt-version-section" style="display: none;">
+                <h3>📅 Versión del Timeline</h3>
+                <div class="control-row">
+                    <select id="gantt-version-select" class="filter-select">
+                        {gantt_version_options}
+                    </select>
+                </div>
+            </div>
+    ''' if has_gantt else ''
 
     custom_html = f"""
     <div class="toast-container" id="toast-container"></div>
@@ -1416,8 +1571,11 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
                 <div class="layout-toggle">
                     <button class="layout-btn active" id="layout-force">Fuerza</button>
                     <button class="layout-btn" id="layout-tree">Árbol</button>
+                    {gantt_button}
                 </div>
             </div>
+
+            {gantt_version_section}
 
             <div class="controls-section">
                 <button class="btn btn-secondary" id="btn-reset">🔄 Restablecer Vista</button>
@@ -1456,6 +1614,7 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
                 <button class="breadcrumb-reset" id="breadcrumb-reset" style="display:none;">Mostrar todos</button>
             </div>
             <div id="mynetwork"></div>
+            <div id="gantt-container" style="display: none;"></div>
         </div>
 
         <!-- Right Panel: Data Table -->
@@ -1531,10 +1690,15 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
         const hasCycles = {str(has_cycles).lower()};
         const cycles = {json.dumps(cycles_js)};
         const cycleNodeCount = {len(cycle_nodes)};
+        const ganttData = {json.dumps(gantt_data, ensure_ascii=False)};
+        const ganttVersions = {json.dumps(gantt_versions)};
+        const hasGanttData = ganttVersions.length > 0;
 
         // State
         let selectedNodeId = null;
         let currentLayout = 'force';
+        let currentGanttVersion = ganttVersions[0] || 'Default';
+        let ganttChart = null;
         let visibleNodeIds = new Set(Object.keys(nodeData));
         let currentViewContext = {{ type: 'all', node: null }};
         let sortState = {{ column: 'id', direction: 'asc' }};
@@ -1627,6 +1791,12 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
             // Layout buttons
             document.getElementById('layout-force').addEventListener('click', () => setLayout('force'));
             document.getElementById('layout-tree').addEventListener('click', () => setLayout('tree'));
+            if (hasGanttData && document.getElementById('layout-gantt')) {{
+                document.getElementById('layout-gantt').addEventListener('click', () => setLayout('gantt'));
+            }}
+
+            // Initialize Gantt version selector
+            initGanttVersions();
 
             // Reset button
             document.getElementById('btn-reset').addEventListener('click', resetView);
@@ -2447,58 +2617,139 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
             showToast(`Mostrando vecindario de ${{selectedNodeId}} (${{visibleNodeIds.size}} nodos)`, 'info');
         }}
 
+        function initGantt() {{
+            if (!hasGanttData) return;
+
+            const versionData = ganttData[currentGanttVersion] || {{}};
+            const container = document.getElementById('gantt-container');
+
+            // Build tasks from visible nodes that have gantt data
+            const tasks = Array.from(visibleNodeIds)
+                .filter(id => versionData[id])
+                .map(id => {{
+                    const node = nodeData[id];
+                    const gantt = versionData[id];
+                    return {{
+                        id: id,
+                        name: `${{id}}: ${{node.funcionalidad.substring(0, 40)}}${{node.funcionalidad.length > 40 ? '...' : ''}}`,
+                        start: gantt.start_date,
+                        end: gantt.end_date,
+                        progress: gantt.progress || 0,
+                        dependencies: node.dependencias !== '—' ? node.dependencias.replace(/\\s+/g, '') : ''
+                    }};
+                }});
+
+            container.innerHTML = '';
+
+            if (tasks.length === 0) {{
+                container.innerHTML = '<div style="padding:40px;text-align:center;color:#8888aa;font-size:1.1em;">No hay datos de timeline para esta versión o filtro</div>';
+                return;
+            }}
+
+            try {{
+                ganttChart = new Gantt("#gantt-container", tasks, {{
+                    view_mode: 'Week',
+                    bar_height: 25,
+                    padding: 18,
+                    view_modes: ['Day', 'Week', 'Month'],
+                    on_click: function(task) {{
+                        setLayout('force');
+                        setTimeout(() => focusOnNode(task.id), 300);
+                    }},
+                    on_view_change: function(mode) {{
+                        showToast(`Vista: ${{mode}}`, 'info', 1500);
+                    }}
+                }});
+            }} catch (e) {{
+                console.error('Error initializing Gantt:', e);
+                container.innerHTML = '<div style="padding:40px;text-align:center;color:#ff6b6b;">Error al inicializar el diagrama Gantt</div>';
+            }}
+        }}
+
+        function initGanttVersions() {{
+            if (!hasGanttData) return;
+
+            const select = document.getElementById('gantt-version-select');
+            if (!select) return;
+
+            select.addEventListener('change', function() {{
+                currentGanttVersion = this.value;
+                initGantt();
+                showToast(`Timeline: ${{currentGanttVersion}}`, 'info', 2000);
+            }});
+        }}
+
         function setLayout(layout) {{
             currentLayout = layout;
 
             // Update button states
             document.getElementById('layout-force').classList.toggle('active', layout === 'force');
             document.getElementById('layout-tree').classList.toggle('active', layout === 'tree');
-
-            if (layout === 'tree') {{
-                network.setOptions({{
-                    layout: {{
-                        hierarchical: {{
-                            enabled: true,
-                            direction: 'UD',
-                            sortMethod: 'directed',
-                            levelSeparation: 150,
-                            nodeSpacing: 180,
-                            treeSpacing: 220,
-                            blockShifting: true,
-                            edgeMinimization: true,
-                            parentCentralization: true,
-                            shakeTowards: 'roots'
-                        }}
-                    }},
-                    physics: {{
-                        enabled: false
-                    }}
-                }});
-            }} else {{
-                network.setOptions({{
-                    layout: {{
-                        hierarchical: {{
-                            enabled: false
-                        }}
-                    }},
-                    physics: {{
-                        enabled: true,
-                        solver: 'forceAtlas2Based',
-                        forceAtlas2Based: {{
-                            gravitationalConstant: -80,
-                            centralGravity: 0.01,
-                            springLength: 150,
-                            springConstant: 0.08,
-                            damping: 0.4,
-                            avoidOverlap: 0.8
-                        }}
-                    }}
-                }});
+            if (hasGanttData && document.getElementById('layout-gantt')) {{
+                document.getElementById('layout-gantt').classList.toggle('active', layout === 'gantt');
             }}
 
-            setTimeout(() => {{
-                network.fit({{ animation: {{ duration: 500 }} }});
-            }}, 300);
+            // Toggle visibility of containers
+            const networkEl = document.getElementById('mynetwork');
+            const ganttEl = document.getElementById('gantt-container');
+            const ganttVersionSection = document.getElementById('gantt-version-section');
+
+            if (layout === 'gantt') {{
+                networkEl.style.display = 'none';
+                ganttEl.style.display = 'block';
+                if (ganttVersionSection) ganttVersionSection.style.display = 'block';
+                initGantt();
+            }} else {{
+                networkEl.style.display = 'block';
+                ganttEl.style.display = 'none';
+                if (ganttVersionSection) ganttVersionSection.style.display = 'none';
+
+                if (layout === 'tree') {{
+                    network.setOptions({{
+                        layout: {{
+                            hierarchical: {{
+                                enabled: true,
+                                direction: 'UD',
+                                sortMethod: 'directed',
+                                levelSeparation: 150,
+                                nodeSpacing: 180,
+                                treeSpacing: 220,
+                                blockShifting: true,
+                                edgeMinimization: true,
+                                parentCentralization: true,
+                                shakeTowards: 'roots'
+                            }}
+                        }},
+                        physics: {{
+                            enabled: false
+                        }}
+                    }});
+                }} else {{
+                    network.setOptions({{
+                        layout: {{
+                            hierarchical: {{
+                                enabled: false
+                            }}
+                        }},
+                        physics: {{
+                            enabled: true,
+                            solver: 'forceAtlas2Based',
+                            forceAtlas2Based: {{
+                                gravitationalConstant: -80,
+                                centralGravity: 0.01,
+                                springLength: 150,
+                                springConstant: 0.08,
+                                damping: 0.4,
+                                avoidOverlap: 0.8
+                            }}
+                        }}
+                    }});
+                }}
+
+                setTimeout(() => {{
+                    network.fit({{ animation: {{ duration: 500 }} }});
+                }}, 300);
+            }}
         }}
 
         function resetView() {{
@@ -2549,8 +2800,16 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
     </script>
     """
 
+    # Frappe Gantt CDN links (only include if gantt data is present)
+    gantt_cdn = ""
+    if gantt_versions:
+        gantt_cdn = """
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.umd.min.js"></script>
+    """
+
     # Remove pyvis default card structure and replace body content
-    html_content = html_content.replace('</head>', custom_css + '</head>')
+    html_content = html_content.replace('</head>', gantt_cdn + custom_css + '</head>')
 
     # Find the body tag and insert our HTML
     body_start = html_content.find('<body>')
@@ -2576,12 +2835,21 @@ def main():
     parser.add_argument('--output', '-o', default='requirements_interactive.html', help='Output HTML file')
     parser.add_argument('--title', '-t', default='Requirements Dependency Graph', help='Graph title')
     parser.add_argument('--highlight', help='Node ID to highlight')
+    parser.add_argument('--gantt', '-g', help='Optional Gantt timeline CSV file with start/end dates')
 
     args = parser.parse_args()
 
     print(f"Loading requirements from: {args.csv_file}")
     df = load_requirements(args.csv_file)
     print(f"Loaded {len(df)} requirements")
+
+    # Load Gantt data if provided
+    gantt_data = {}
+    gantt_versions = []
+    if args.gantt:
+        print(f"Loading Gantt timeline from: {args.gantt}")
+        gantt_data, gantt_versions = load_gantt_timelines(args.gantt)
+        print(f"Loaded {len(gantt_versions)} timeline version(s): {', '.join(gantt_versions)}")
 
     G = build_graph(df)
     print(f"Built graph with {G.number_of_nodes()} nodes and {G.number_of_edges()} edges")
@@ -2591,6 +2859,8 @@ def main():
         title=args.title,
         output_path=args.output,
         highlight_node=args.highlight,
+        gantt_data=gantt_data,
+        gantt_versions=gantt_versions,
     )
 
 
