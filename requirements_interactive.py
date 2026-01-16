@@ -114,6 +114,50 @@ def build_graph(df: pd.DataFrame) -> nx.DiGraph:
     return G
 
 
+def calculate_hierarchical_levels(G: nx.DiGraph) -> dict:
+    """Calculate proper hierarchical levels for tree layout.
+
+    Root nodes (no incoming edges) get level=0.
+    Each child gets level = max(parent_levels) + 1.
+    This ensures proper top-down hierarchy in tree visualization.
+    """
+    levels = {}
+
+    # Handle cycles gracefully - use try/except for topological sort
+    try:
+        for node in nx.topological_sort(G):
+            predecessors = list(G.predecessors(node))
+            if not predecessors:
+                levels[node] = 0  # Root nodes at level 0 (top)
+            else:
+                levels[node] = max(levels.get(pred, 0) for pred in predecessors) + 1
+    except nx.NetworkXUnfeasible:
+        # Graph has cycles - fall back to BFS from roots
+        roots = [n for n in G.nodes() if G.in_degree(n) == 0]
+        if not roots:
+            # No roots found, pick node with lowest in_degree
+            roots = [min(G.nodes(), key=lambda n: G.in_degree(n))]
+
+        visited = set()
+        queue = [(r, 0) for r in roots]
+        while queue:
+            node, level = queue.pop(0)
+            if node in visited:
+                continue
+            visited.add(node)
+            levels[node] = max(levels.get(node, 0), level)
+            for successor in G.successors(node):
+                if successor not in visited:
+                    queue.append((successor, level + 1))
+
+        # Assign level 0 to any unvisited nodes
+        for node in G.nodes():
+            if node not in levels:
+                levels[node] = 0
+
+    return levels
+
+
 def create_interactive_graph(
     G: nx.DiGraph,
     title: str = "Requirements Dependency Graph",
@@ -214,6 +258,9 @@ def create_interactive_graph(
     }
     """)
 
+    # Calculate proper hierarchical levels for tree layout
+    node_levels = calculate_hierarchical_levels(G)
+
     # Add nodes
     for node_id in G.nodes():
         node_data = G.nodes[node_id]
@@ -247,7 +294,7 @@ def create_interactive_graph(
             size=size,
             borderWidth=border_width,
             group=area,
-            level=G.in_degree(node_id),
+            level=node_levels.get(node_id, 0),
         )
 
     # Add edges
@@ -2414,12 +2461,13 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
                             enabled: true,
                             direction: 'UD',
                             sortMethod: 'directed',
-                            levelSeparation: 100,
-                            nodeSpacing: 120,
-                            treeSpacing: 150,
+                            levelSeparation: 150,
+                            nodeSpacing: 180,
+                            treeSpacing: 220,
                             blockShifting: true,
                             edgeMinimization: true,
-                            parentCentralization: true
+                            parentCentralization: true,
+                            shakeTowards: 'roots'
                         }}
                     }},
                     physics: {{
