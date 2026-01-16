@@ -6,9 +6,6 @@
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
             <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
             
-                <link href="lib/tom-select/tom-select.css" rel="stylesheet">
-                <script src="lib/tom-select/tom-select.complete.min.js"></script>
-            
         
 <center>
 <h1></h1>
@@ -51,6 +48,10 @@
         </style>
     
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             padding: 0;
@@ -58,265 +59,160 @@
             background: #1a1a2e;
             overflow: hidden;
         }
-        
-        #controls {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(180deg, #16213e 0%, #1a1a2e 100%);
-            padding: 15px 20px;
-            z-index: 1000;
+
+        /* Main layout */
+        .app-container {
             display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            border-bottom: 1px solid #4a4a6a;
+            height: 100vh;
+            width: 100vw;
         }
-        
-        #controls h1 {
+
+        .left-panel {
+            width: 320px;
+            min-width: 320px;
+            background: linear-gradient(180deg, #16213e 0%, #1a1a2e 100%);
+            border-right: 1px solid #4a4a6a;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .graph-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .right-panel {
+            width: 400px;
+            min-width: 400px;
+            background: linear-gradient(180deg, #16213e 0%, #1a1a2e 100%);
+            border-left: 1px solid #4a4a6a;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .panel-header {
+            padding: 15px;
+            border-bottom: 1px solid #4a4a6a;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .panel-header h2 {
             color: #00ff88;
             margin: 0;
-            font-size: 1.3em;
+            font-size: 1.1em;
             font-weight: 600;
-            margin-right: 20px;
         }
-        
-        .control-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+
+        .app-title {
+            color: #00ff88;
+            margin: 0 0 5px 0;
+            font-size: 1.2em;
+            font-weight: 600;
         }
-        
-        .control-group label {
+
+        .app-subtitle {
             color: #8888aa;
-            font-size: 0.85em;
+            margin: 0;
+            font-size: 0.8em;
+        }
+
+        /* Controls section */
+        .controls-section {
+            padding: 15px;
+            border-bottom: 1px solid #3a3a5a;
+        }
+
+        .controls-section h3 {
+            color: #00ff88;
+            margin: 0 0 12px 0;
+            font-size: 0.95em;
+            font-weight: 600;
+        }
+
+        .control-row {
+            margin-bottom: 12px;
+        }
+
+        .control-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .control-row label {
+            display: block;
+            color: #8888aa;
+            font-size: 0.8em;
+            margin-bottom: 5px;
             font-weight: 500;
         }
-        
-        .control-group select, .control-group input {
+
+        .control-row select,
+        .control-row input[type="text"] {
+            width: 100%;
             background: #0f0f23;
             border: 1px solid #4a4a6a;
             color: #ffffff;
             padding: 8px 12px;
             border-radius: 6px;
             font-size: 0.9em;
-            cursor: pointer;
-            transition: all 0.2s;
         }
-        
-        .control-group select:hover, .control-group input:hover {
+
+        .control-row select:hover,
+        .control-row input:hover {
             border-color: #00ff88;
         }
-        
-        .control-group select:focus, .control-group input:focus {
+
+        .control-row select:focus,
+        .control-row input:focus {
             outline: none;
             border-color: #00ff88;
             box-shadow: 0 0 10px rgba(0,255,136,0.3);
         }
-        
-        button {
+
+        /* Buttons */
+        .btn {
             background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
             border: none;
             color: #1a1a2e;
-            padding: 8px 16px;
+            padding: 10px 16px;
             border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.9em;
+            font-size: 0.85em;
+            width: 100%;
         }
-        
-        button:hover {
-            transform: translateY(-2px);
+
+        .btn:hover {
+            transform: translateY(-1px);
             box-shadow: 0 4px 15px rgba(0,255,136,0.4);
         }
-        
-        button.secondary {
+
+        .btn-secondary {
             background: #4a4a6a;
             color: #ffffff;
         }
-        
-        button.secondary:hover {
+
+        .btn-secondary:hover {
             background: #5a5a7a;
+            box-shadow: none;
         }
-        
-        #stats {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(22, 33, 62, 0.95);
-            padding: 15px 20px;
-            border-radius: 10px;
-            color: #ffffff;
-            font-size: 0.85em;
-            z-index: 1000;
-            border: 1px solid #4a4a6a;
-            max-width: 280px;
-        }
-        
-        #stats h3 {
-            margin: 0 0 10px 0;
-            color: #00ff88;
-            font-size: 1em;
-        }
-        
-        #stats p {
-            margin: 5px 0;
-            color: #aaaacc;
-        }
-        
-        #stats span {
-            color: #ffffff;
-            font-weight: 600;
-        }
-        
-        #legend {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(22, 33, 62, 0.95);
-            padding: 15px 20px;
-            border-radius: 10px;
-            color: #ffffff;
-            font-size: 0.8em;
-            z-index: 1000;
-            border: 1px solid #4a4a6a;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        
-        #legend h3 {
-            margin: 0 0 10px 0;
-            color: #00ff88;
-            font-size: 1em;
-        }
-        
-        .legend-item {
+
+        .btn-group {
             display: flex;
-            align-items: center;
             gap: 8px;
-            margin: 5px 0;
-            cursor: pointer;
-            padding: 3px 5px;
-            border-radius: 4px;
-            transition: background 0.2s;
-        }
-        
-        .legend-item:hover {
-            background: rgba(255,255,255,0.1);
-        }
-        
-        .legend-color {
-            width: 16px;
-            height: 16px;
-            border-radius: 4px;
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-        
-        #mynetwork {
-            margin-top: 70px;
-            height: calc(100vh - 70px) !important;
-        }
-        
-        #node-info {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            background: rgba(22, 33, 62, 0.95);
-            padding: 15px 20px;
-            border-radius: 10px;
-            color: #ffffff;
-            font-size: 0.85em;
-            z-index: 1000;
-            border: 1px solid #4a4a6a;
-            max-width: 350px;
-            display: none;
-        }
-        
-        #node-info h3 {
-            margin: 0 0 10px 0;
-            color: #00ff88;
-        }
-        
-        #node-info .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            cursor: pointer;
-            color: #888;
-            font-size: 1.2em;
-        }
-        
-        #node-info .close-btn:hover {
-            color: #fff;
-        }
-        
-        .help-text {
-            color: #6a6a8a;
-            font-size: 0.8em;
-            margin-left: auto;
+            margin-top: 10px;
         }
 
-        /* Custom hover tooltip */
-        #hover-tooltip {
-            position: fixed;
-            background: rgba(22, 33, 62, 0.98);
-            padding: 15px 20px;
-            border-radius: 10px;
-            color: #ffffff;
-            font-size: 0.85em;
-            z-index: 2000;
-            border: 1px solid #4a4a6a;
-            max-width: 420px;
-            pointer-events: none;
-            display: none;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-        }
-
-        #hover-tooltip h4 {
-            margin: 0 0 12px 0;
-            color: #00ff88;
-            font-size: 1.1em;
-            border-bottom: 1px solid #4a4a6a;
-            padding-bottom: 8px;
-        }
-
-        #hover-tooltip .tooltip-row {
-            display: flex;
-            margin: 6px 0;
-            line-height: 1.4;
-        }
-
-        #hover-tooltip .tooltip-label {
-            color: #8888aa;
-            min-width: 100px;
-            font-weight: 500;
-        }
-
-        #hover-tooltip .tooltip-value {
-            color: #ffffff;
+        .btn-group .btn {
             flex: 1;
         }
 
-        #hover-tooltip .tooltip-requisito {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid #4a4a6a;
-            line-height: 1.5;
-            color: #ccccdd;
-            font-size: 0.95em;
-        }
-
-        #hover-tooltip .tooltip-requisito-label {
-            color: #8888aa;
-            font-weight: 500;
-            display: block;
-            margin-bottom: 6px;
-        }
-
-        /* Layout toggle button styles */
+        /* Layout toggle */
         .layout-toggle {
             display: flex;
             gap: 0;
@@ -326,13 +222,18 @@
         }
 
         .layout-btn {
+            flex: 1;
             background: #0f0f23;
             border: none;
             color: #8888aa;
-            padding: 8px 14px;
+            padding: 10px 14px;
             font-size: 0.85em;
             cursor: pointer;
             transition: all 0.2s;
+        }
+
+        .layout-btn:first-child {
+            border-right: 1px solid #4a4a6a;
         }
 
         .layout-btn:hover {
@@ -346,264 +247,395 @@
             font-weight: 600;
         }
 
-        .layout-btn:first-child {
-            border-right: 1px solid #4a4a6a;
+        /* Stats panel */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 15px;
+        }
+
+        .stat-box {
+            background: rgba(0,0,0,0.2);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #3a3a5a;
+        }
+
+        .stat-label {
+            color: #8888aa;
+            font-size: 0.75em;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            color: #ffffff;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        /* Legend */
+        .legend-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 4px 0;
+            cursor: pointer;
+            padding: 6px 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .legend-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            border: 1px solid rgba(255,255,255,0.3);
+            flex-shrink: 0;
+        }
+
+        .legend-item span {
+            color: #cccccc;
+            font-size: 0.8em;
+        }
+
+        /* Graph container */
+        #mynetwork {
+            flex: 1;
+            background-color: #1a1a2e;
+            border: none !important;
+        }
+
+        /* Hover tooltip */
+        #hover-tooltip {
+            position: fixed;
+            background: rgba(22, 33, 62, 0.98);
+            padding: 15px 18px;
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 0.85em;
+            z-index: 2000;
+            border: 1px solid #4a4a6a;
+            max-width: 380px;
+            pointer-events: none;
+            display: none;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+
+        #hover-tooltip h4 {
+            margin: 0 0 10px 0;
+            color: #00ff88;
+            font-size: 1em;
+            border-bottom: 1px solid #4a4a6a;
+            padding-bottom: 8px;
+        }
+
+        .tooltip-row {
+            display: flex;
+            margin: 5px 0;
+            line-height: 1.4;
+        }
+
+        .tooltip-label {
+            color: #8888aa;
+            min-width: 90px;
+            font-weight: 500;
+            font-size: 0.9em;
+        }
+
+        .tooltip-value {
+            color: #ffffff;
+            flex: 1;
+        }
+
+        .tooltip-requisito {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #4a4a6a;
+            line-height: 1.5;
+            color: #ccccdd;
+            font-size: 0.9em;
+        }
+
+        /* Data table */
+        .table-header {
+            padding: 15px;
+            border-bottom: 1px solid #4a4a6a;
+            background: rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h2 {
+            color: #00ff88;
+            margin: 0;
+            font-size: 1em;
+        }
+
+        .table-count {
+            color: #8888aa;
+            font-size: 0.85em;
+        }
+
+        .table-container {
+            flex: 1;
+            overflow: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8em;
+        }
+
+        .data-table th {
+            background: rgba(0,0,0,0.3);
+            color: #8888aa;
+            padding: 10px 8px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            border-bottom: 1px solid #4a4a6a;
+        }
+
+        .data-table td {
+            padding: 8px;
+            border-bottom: 1px solid #2a2a4a;
+            color: #cccccc;
+            vertical-align: top;
+        }
+
+        .data-table tr:hover td {
+            background: rgba(0,255,136,0.05);
+        }
+
+        .data-table .id-cell {
+            color: #00ff88;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .data-table .area-cell {
+            white-space: nowrap;
+        }
+
+        .data-table .func-cell {
+            max-width: 200px;
+        }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        .priority-p0 {
+            background: rgba(255,107,107,0.2);
+            color: #ff6b6b;
+        }
+
+        .priority-p1 {
+            background: rgba(255,217,61,0.2);
+            color: #ffd93d;
+        }
+
+        .priority-p2 {
+            background: rgba(78,205,196,0.2);
+            color: #4ecdc4;
+        }
+
+        /* Selected node info */
+        .selected-info {
+            padding: 15px;
+            background: rgba(0,255,136,0.05);
+            border-bottom: 1px solid #4a4a6a;
+            display: none;
+        }
+
+        .selected-info.visible {
+            display: block;
+        }
+
+        .selected-info h3 {
+            color: #00ff88;
+            margin: 0 0 8px 0;
+            font-size: 0.95em;
+        }
+
+        .selected-info p {
+            color: #cccccc;
+            margin: 4px 0;
+            font-size: 0.85em;
+        }
+
+        /* Hide pyvis default elements */
+        center, h1:empty {
+            display: none !important;
+        }
+
+        .card {
+            border: none !important;
+            background: transparent !important;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a2e;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4a4a6a;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5a5a7a;
         }
     </style>
     </head>
 
 
     <body>
-    <div id="controls">
-        <h1>📊 Requirements Dependency Graph - GIS Project</h1>
-        
-        <div class="control-group">
-            <label>Área:</label>
-            <select id="area-filter">
-                <option value="">Todas</option>
-                <option value="Auditabilidad">Auditabilidad</option><option value="Calidad de datos">Calidad de datos</option><option value="Dashboard">Dashboard</option><option value="DevOps">DevOps</option><option value="Documentación">Documentación</option><option value="Entregables">Entregables</option><option value="Exportación">Exportación</option><option value="Extensibilidad">Extensibilidad</option><option value="Extracción">Extracción</option><option value="Gobernanza">Gobernanza</option><option value="Gobernanza de datos">Gobernanza de datos</option><option value="Ingesta">Ingesta</option><option value="Modelo de datos">Modelo de datos</option><option value="Métricas">Métricas</option><option value="Observabilidad">Observabilidad</option><option value="Performance">Performance</option><option value="Privacidad">Privacidad</option><option value="Reportes">Reportes</option><option value="Reproducibilidad">Reproducibilidad</option><option value="Seguridad">Seguridad</option><option value="Testing">Testing</option><option value="Transformación">Transformación</option><option value="UX">UX</option><option value="Validación de algoritmo">Validación de algoritmo</option>
-            </select>
-        </div>
-        
-        <div class="control-group">
-            <label>Prioridad:</label>
-            <select id="priority-filter">
-                <option value="">Todas</option>
-                <option value="Alta (P0)">Alta (P0)</option><option value="Media (P1)">Media (P1)</option><option value="Baja (P2)">Baja (P2)</option>
-            </select>
-        </div>
-        
-        <div class="control-group">
-            <label>Versión:</label>
-            <select id="version-filter">
-                <option value="">Todas</option>
-                <option value="MVP v0.1">MVP v0.1</option><option value="v0.2">v0.2</option><option value="v0.3">v0.3</option>
-            </select>
-        </div>
-        
-        <div class="control-group">
-            <label>Nodo:</label>
-            <input type="text" id="node-search" placeholder="RM-001" style="width: 80px;">
-            <button onclick="focusNode()">Buscar</button>
-        </div>
-        
-        <div class="control-group">
-            <button onclick="showAncestors()">← Dependencias</button>
-            <button onclick="showDescendants()">Dependientes →</button>
-            <button onclick="showNeighborhood()">Vecindario</button>
-        </div>
+    <div class="app-container">
+        <!-- Left Panel: Controls -->
+        <div class="left-panel">
+            <div class="panel-header">
+                <h1 class="app-title">📊 Requirements Dependency Graph</h1>
+                <p class="app-subtitle">Grafo interactivo de dependencias</p>
+            </div>
 
-        <div class="control-group">
-            <label>Layout:</label>
-            <div class="layout-toggle">
-                <button class="layout-btn active" id="layout-force" onclick="setLayout('force')">Fuerza</button>
-                <button class="layout-btn" id="layout-tree" onclick="setLayout('tree')">Árbol</button>
+            <div class="controls-section">
+                <h3>🔍 Buscar Nodo</h3>
+                <div class="control-row">
+                    <label>ID del Requisito:</label>
+                    <input type="text" id="node-search" placeholder="Ej: RM-001, RM-015">
+                </div>
+                <button class="btn" id="btn-search">Buscar y Enfocar</button>
+            </div>
+
+            <div class="controls-section">
+                <h3>🎛️ Filtros</h3>
+                <div class="control-row">
+                    <label>Área:</label>
+                    <select id="area-filter">
+                        <option value="">— Todas las áreas —</option>
+                        <option value="Auditabilidad">Auditabilidad</option><option value="Calidad de datos">Calidad de datos</option><option value="Dashboard">Dashboard</option><option value="DevOps">DevOps</option><option value="Documentación">Documentación</option><option value="Entregables">Entregables</option><option value="Exportación">Exportación</option><option value="Extensibilidad">Extensibilidad</option><option value="Extracción">Extracción</option><option value="Gobernanza">Gobernanza</option><option value="Gobernanza de datos">Gobernanza de datos</option><option value="Ingesta">Ingesta</option><option value="Modelo de datos">Modelo de datos</option><option value="Métricas">Métricas</option><option value="Observabilidad">Observabilidad</option><option value="Performance">Performance</option><option value="Privacidad">Privacidad</option><option value="Reportes">Reportes</option><option value="Reproducibilidad">Reproducibilidad</option><option value="Seguridad">Seguridad</option><option value="Testing">Testing</option><option value="Transformación">Transformación</option><option value="UX">UX</option><option value="Validación de algoritmo">Validación de algoritmo</option>
+                    </select>
+                </div>
+                <div class="control-row">
+                    <label>Prioridad:</label>
+                    <select id="priority-filter">
+                        <option value="">— Todas las prioridades —</option>
+                        <option value="Alta (P0)">Alta (P0)</option><option value="Media (P1)">Media (P1)</option><option value="Baja (P2)">Baja (P2)</option>
+                    </select>
+                </div>
+                <div class="control-row">
+                    <label>Versión:</label>
+                    <select id="version-filter">
+                        <option value="">— Todas las versiones —</option>
+                        <option value="MVP v0.1">MVP v0.1</option><option value="v0.2">v0.2</option><option value="v0.3">v0.3</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="controls-section">
+                <h3>🔗 Explorar Conexiones</h3>
+                <p style="color: #8888aa; font-size: 0.8em; margin: 0 0 10px 0;">Primero selecciona un nodo en el grafo</p>
+                <div class="btn-group">
+                    <button class="btn btn-secondary" id="btn-ancestors">← Dependencias</button>
+                    <button class="btn btn-secondary" id="btn-descendants">Dependientes →</button>
+                </div>
+                <button class="btn btn-secondary" id="btn-neighborhood" style="margin-top: 8px;">Vecindario Completo</button>
+            </div>
+
+            <div class="controls-section">
+                <h3>📐 Disposición</h3>
+                <div class="layout-toggle">
+                    <button class="layout-btn active" id="layout-force">Fuerza</button>
+                    <button class="layout-btn" id="layout-tree">Árbol</button>
+                </div>
+            </div>
+
+            <div class="controls-section">
+                <button class="btn btn-secondary" id="btn-reset">🔄 Restablecer Vista</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-label">Nodos Visibles</div>
+                    <div class="stat-value" id="visible-nodes">50</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Conexiones</div>
+                    <div class="stat-value" id="visible-edges">141</div>
+                </div>
+            </div>
+
+            <div class="panel-header">
+                <h2>🎨 Leyenda de Áreas</h2>
+            </div>
+            <div class="legend-container">
+                <div class="legend-item" data-area="Auditabilidad"><div class="legend-color" style="background: #F9E79F"></div><span>Auditabilidad</span></div><div class="legend-item" data-area="Calidad de datos"><div class="legend-color" style="background: #82E0AA"></div><span>Calidad de datos</span></div><div class="legend-item" data-area="Dashboard"><div class="legend-color" style="background: #85C1E9"></div><span>Dashboard</span></div><div class="legend-item" data-area="DevOps"><div class="legend-color" style="background: #AED6F1"></div><span>DevOps</span></div><div class="legend-item" data-area="Documentación"><div class="legend-color" style="background: #D5DBDB"></div><span>Documentación</span></div><div class="legend-item" data-area="Entregables"><div class="legend-color" style="background: #FAD7A0"></div><span>Entregables</span></div><div class="legend-item" data-area="Exportación"><div class="legend-color" style="background: #D2B4DE"></div><span>Exportación</span></div><div class="legend-item" data-area="Extensibilidad"><div class="legend-color" style="background: #A9DFBF"></div><span>Extensibilidad</span></div><div class="legend-item" data-area="Extracción"><div class="legend-color" style="background: #FF6B6B"></div><span>Extracción</span></div><div class="legend-item" data-area="Gobernanza"><div class="legend-color" style="background: #D7BDE2"></div><span>Gobernanza</span></div><div class="legend-item" data-area="Gobernanza de datos"><div class="legend-color" style="background: #D7BDE2"></div><span>Gobernanza de datos</span></div><div class="legend-item" data-area="Ingesta"><div class="legend-color" style="background: #4ECDC4"></div><span>Ingesta</span></div><div class="legend-item" data-area="Modelo de datos"><div class="legend-color" style="background: #45B7D1"></div><span>Modelo de datos</span></div><div class="legend-item" data-area="Métricas"><div class="legend-color" style="background: #FFD93D"></div><span>Métricas</span></div><div class="legend-item" data-area="Observabilidad"><div class="legend-color" style="background: #ABEBC6"></div><span>Observabilidad</span></div><div class="legend-item" data-area="Performance"><div class="legend-color" style="background: #F5CBA7"></div><span>Performance</span></div><div class="legend-item" data-area="Privacidad"><div class="legend-color" style="background: #FADBD8"></div><span>Privacidad</span></div><div class="legend-item" data-area="Reportes"><div class="legend-color" style="background: #BB8FCE"></div><span>Reportes</span></div><div class="legend-item" data-area="Reproducibilidad"><div class="legend-color" style="background: #AEB6BF"></div><span>Reproducibilidad</span></div><div class="legend-item" data-area="Seguridad"><div class="legend-color" style="background: #F1948A"></div><span>Seguridad</span></div><div class="legend-item" data-area="Testing"><div class="legend-color" style="background: #F5B041"></div><span>Testing</span></div><div class="legend-item" data-area="Transformación"><div class="legend-color" style="background: #96CEB4"></div><span>Transformación</span></div><div class="legend-item" data-area="UX"><div class="legend-color" style="background: #85C1E9"></div><span>UX</span></div><div class="legend-item" data-area="Validación de algoritmo"><div class="legend-color" style="background: #76D7C4"></div><span>Validación de algoritmo</span></div>
             </div>
         </div>
 
-        <button class="secondary" onclick="resetView()">Reset</button>
-        
-        <span class="help-text">Click en nodo para seleccionar • Doble click para fijar • Scroll para zoom</span>
-    </div>
-    
-    <div id="stats">
-        <h3>📈 Estadísticas</h3>
-        <p>Nodos visibles: <span id="visible-nodes">50</span></p>
-        <p>Aristas visibles: <span id="visible-edges">141</span></p>
-        <p>Nodo seleccionado: <span id="selected-node">—</span></p>
-        <p>In-degree: <span id="in-degree">—</span></p>
-        <p>Out-degree: <span id="out-degree">—</span></p>
-    </div>
-    
-    <div id="legend">
-        <h3>🎨 Áreas</h3>
-        <div class="legend-item" onclick="filterByArea('Auditabilidad')"><div class="legend-color" style="background: #F9E79F"></div><span>Auditabilidad</span></div><div class="legend-item" onclick="filterByArea('Calidad de datos')"><div class="legend-color" style="background: #82E0AA"></div><span>Calidad de datos</span></div><div class="legend-item" onclick="filterByArea('Dashboard')"><div class="legend-color" style="background: #85C1E9"></div><span>Dashboard</span></div><div class="legend-item" onclick="filterByArea('DevOps')"><div class="legend-color" style="background: #AED6F1"></div><span>DevOps</span></div><div class="legend-item" onclick="filterByArea('Documentación')"><div class="legend-color" style="background: #D5DBDB"></div><span>Documentación</span></div><div class="legend-item" onclick="filterByArea('Entregables')"><div class="legend-color" style="background: #FAD7A0"></div><span>Entregables</span></div><div class="legend-item" onclick="filterByArea('Exportación')"><div class="legend-color" style="background: #D2B4DE"></div><span>Exportación</span></div><div class="legend-item" onclick="filterByArea('Extensibilidad')"><div class="legend-color" style="background: #A9DFBF"></div><span>Extensibilidad</span></div><div class="legend-item" onclick="filterByArea('Extracción')"><div class="legend-color" style="background: #FF6B6B"></div><span>Extracción</span></div><div class="legend-item" onclick="filterByArea('Gobernanza')"><div class="legend-color" style="background: #D7BDE2"></div><span>Gobernanza</span></div><div class="legend-item" onclick="filterByArea('Gobernanza de datos')"><div class="legend-color" style="background: #D7BDE2"></div><span>Gobernanza de datos</span></div><div class="legend-item" onclick="filterByArea('Ingesta')"><div class="legend-color" style="background: #4ECDC4"></div><span>Ingesta</span></div><div class="legend-item" onclick="filterByArea('Modelo de datos')"><div class="legend-color" style="background: #45B7D1"></div><span>Modelo de datos</span></div><div class="legend-item" onclick="filterByArea('Métricas')"><div class="legend-color" style="background: #FFD93D"></div><span>Métricas</span></div><div class="legend-item" onclick="filterByArea('Observabilidad')"><div class="legend-color" style="background: #ABEBC6"></div><span>Observabilidad</span></div><div class="legend-item" onclick="filterByArea('Performance')"><div class="legend-color" style="background: #F5CBA7"></div><span>Performance</span></div><div class="legend-item" onclick="filterByArea('Privacidad')"><div class="legend-color" style="background: #FADBD8"></div><span>Privacidad</span></div><div class="legend-item" onclick="filterByArea('Reportes')"><div class="legend-color" style="background: #BB8FCE"></div><span>Reportes</span></div><div class="legend-item" onclick="filterByArea('Reproducibilidad')"><div class="legend-color" style="background: #AEB6BF"></div><span>Reproducibilidad</span></div><div class="legend-item" onclick="filterByArea('Seguridad')"><div class="legend-color" style="background: #F1948A"></div><span>Seguridad</span></div><div class="legend-item" onclick="filterByArea('Testing')"><div class="legend-color" style="background: #F5B041"></div><span>Testing</span></div><div class="legend-item" onclick="filterByArea('Transformación')"><div class="legend-color" style="background: #96CEB4"></div><span>Transformación</span></div><div class="legend-item" onclick="filterByArea('UX')"><div class="legend-color" style="background: #85C1E9"></div><span>UX</span></div><div class="legend-item" onclick="filterByArea('Validación de algoritmo')"><div class="legend-color" style="background: #76D7C4"></div><span>Validación de algoritmo</span></div>
-    </div>
-    
-    <div id="node-info">
-        <span class="close-btn" onclick="closeNodeInfo()">×</span>
-        <h3 id="info-title">—</h3>
-        <div id="info-content"></div>
-        <div style="margin-top: 15px; display: flex; gap: 10px;">
-            <button onclick="showAncestorsOf(selectedNodeId)">Ver dependencias</button>
-            <button onclick="showDescendantsOf(selectedNodeId)">Ver dependientes</button>
+        <!-- Center: Graph -->
+        <div class="graph-panel">
+            <div id="mynetwork"></div>
+        </div>
+
+        <!-- Right Panel: Data Table -->
+        <div class="right-panel">
+            <div class="selected-info" id="selected-info">
+                <h3 id="selected-title">Nodo Seleccionado</h3>
+                <p><strong>ID:</strong> <span id="sel-id">—</span></p>
+                <p><strong>Área:</strong> <span id="sel-area">—</span></p>
+                <p><strong>Prioridad:</strong> <span id="sel-priority">—</span></p>
+                <p><strong>Dependencias:</strong> <span id="sel-deps">—</span></p>
+            </div>
+            <div class="table-header">
+                <h2>📋 Requisitos Visibles</h2>
+                <span class="table-count" id="table-count">50 requisitos</span>
+            </div>
+            <div class="table-container">
+                <table class="data-table" id="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Área</th>
+                            <th>Funcionalidad</th>
+                            <th>Prioridad</th>
+                            <th>Versión</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <div id="hover-tooltip"></div>
-    
-        <div class="card" style="width: 100%">
-            
-                <div id="select-menu" class="card-header">
-                    <div class="row no-gutters">
-                        <div class="col-10 pb-2">
-                            <select
-                            class="form-select"
-                            aria-label="Default select example"
-                            onchange="selectNode([value]);"
-                            id="select-node"
-                            placeholder="Select node..."
-                            >
-                                <option selected>Select a Node by ID</option>
-                                
-                                    <option value="RM-001">RM-001</option>
-                                
-                                    <option value="RM-002">RM-002</option>
-                                
-                                    <option value="RM-003">RM-003</option>
-                                
-                                    <option value="RM-004">RM-004</option>
-                                
-                                    <option value="RM-005">RM-005</option>
-                                
-                                    <option value="RM-006">RM-006</option>
-                                
-                                    <option value="RM-007">RM-007</option>
-                                
-                                    <option value="RM-008">RM-008</option>
-                                
-                                    <option value="RM-009">RM-009</option>
-                                
-                                    <option value="RM-010">RM-010</option>
-                                
-                                    <option value="RM-011">RM-011</option>
-                                
-                                    <option value="RM-012">RM-012</option>
-                                
-                                    <option value="RM-013">RM-013</option>
-                                
-                                    <option value="RM-014">RM-014</option>
-                                
-                                    <option value="RM-015">RM-015</option>
-                                
-                                    <option value="RM-016">RM-016</option>
-                                
-                                    <option value="RM-017">RM-017</option>
-                                
-                                    <option value="RM-018">RM-018</option>
-                                
-                                    <option value="RM-019">RM-019</option>
-                                
-                                    <option value="RM-020">RM-020</option>
-                                
-                                    <option value="RM-021">RM-021</option>
-                                
-                                    <option value="RM-022">RM-022</option>
-                                
-                                    <option value="RM-023">RM-023</option>
-                                
-                                    <option value="RM-024">RM-024</option>
-                                
-                                    <option value="RM-025">RM-025</option>
-                                
-                                    <option value="RM-026">RM-026</option>
-                                
-                                    <option value="RM-027">RM-027</option>
-                                
-                                    <option value="RM-028">RM-028</option>
-                                
-                                    <option value="RM-029">RM-029</option>
-                                
-                                    <option value="RM-030">RM-030</option>
-                                
-                                    <option value="RM-031">RM-031</option>
-                                
-                                    <option value="RM-032">RM-032</option>
-                                
-                                    <option value="RM-033">RM-033</option>
-                                
-                                    <option value="RM-034">RM-034</option>
-                                
-                                    <option value="RM-035">RM-035</option>
-                                
-                                    <option value="RM-036">RM-036</option>
-                                
-                                    <option value="RM-037">RM-037</option>
-                                
-                                    <option value="RM-038">RM-038</option>
-                                
-                                    <option value="RM-039">RM-039</option>
-                                
-                                    <option value="RM-040">RM-040</option>
-                                
-                                    <option value="RM-041">RM-041</option>
-                                
-                                    <option value="RM-042">RM-042</option>
-                                
-                                    <option value="RM-043">RM-043</option>
-                                
-                                    <option value="RM-044">RM-044</option>
-                                
-                                    <option value="RM-045">RM-045</option>
-                                
-                                    <option value="RM-046">RM-046</option>
-                                
-                                    <option value="RM-047">RM-047</option>
-                                
-                                    <option value="RM-048">RM-048</option>
-                                
-                                    <option value="RM-049">RM-049</option>
-                                
-                                    <option value="RM-050">RM-050</option>
-                                
-                            </select>
-                        </div>
-                        <div class="col-2 pb-2">
-                            <button type="button" class="btn btn-primary btn-block" onclick="neighbourhoodHighlight({nodes: []});">Reset Selection</button>
-                        </div>
-                    </div>
-                </div>
-            
-            
-              <div id="filter-menu" class="card-header">
-                <div class="row no-gutters">
-                  <div class="col-3 pb-2">
-                    <select
-                            class="form-select"
-                            aria-label="Default select example"
-                            onchange="updateFilter(value, 'item')"
-                            id="select-item"
-                        >
-                        <option value="">Select a network item</option>
-                        <option value="edge">edge</option>
-                        <option value="node">node</option>
-                    </select>
-                  </div>
-                  <div class="col-3 pb-2">
-                    <select
-                            class="form-select"
-                            aria-label="Default select example"
-                            onchange="updateFilter(value, 'property')"
-                            id="select-property"
-                        >
-                        <option value="">Select a property...</option>
-                    </select>
-                  </div>
-                  <div class="col-3 pb-2">
-                    <select
-                            class="form-select"
-                            aria-label="Default select example"
-                            id="select-value"
-                        >
-                        <option value="">Select value(s)...</option>
-                    </select>
-                  </div>
-                  <div class="col-1 pb-2">
-                    <button type="button" class="btn btn-primary btn-block" onclick="highlightFilter(filter);">Filter</button>
-                  </div>
-                  <div class="col-2 pb-2">
-                    <button type="button" class="btn btn-primary btn-block" onclick="clearFilter(true)">Reset Selection</button>
-                  </div>
-                </div>
-              </div>
-            
-            <div id="mynetwork" class="card-body"></div>
-        </div>
-
-        
-        
-
-        <script type="text/javascript">
+    <script type="text/javascript">
 
               // initialize global variables.
               var edges;
@@ -622,140 +654,6 @@
               };
 
               
-                  new TomSelect("#select-node",{
-                      create: false,
-                      sortField: {
-                          field: "text",
-                          direction: "asc"
-                      }
-                  });
-              
-
-              
-                  // explicitly using onItemAdd and this function as we need to save multiple values
-                  let updateValueFilter = function() {
-                      return function () {
-                      filter['value'].push(arguments[0])
-                      }
-                  }
-
-                  let valueControl = new TomSelect("#select-value",{
-                      maxItems: null,
-                      valueField: 'id',
-                      labelField: 'title',
-                      searchField: 'title',
-                      create: false,
-                      sortField: {
-                          field: "text",
-                          direction: "asc"
-                      },
-                      onItemAdd: updateValueFilter()
-                  });
-
-                  let addValues = function() {
-                      return function () {
-                          // clear the current value options and add the selected attribute values
-                          // tom-select handles duplicates
-                          let selectedProperty = arguments[0];
-                          valueControl.clear();
-                          valueControl.clearOptions();
-                          filter['value'] = []
-                          if (filter['item'] === 'node') {
-                              for (let each in allNodes) {
-                                  valueControl.addOption({
-                                      id:allNodes[each][selectedProperty],
-                                      title:allNodes[each][selectedProperty]
-                                  })
-                              }
-                          }
-                          else if (filter['item'] === 'edge') {
-                              for (let each in allEdges) {
-                                  valueControl.addOption({
-                                      id:allEdges[each][selectedProperty],
-                                      title:allEdges[each][selectedProperty]
-                                  })
-                              }
-                          }
-                      }
-                  };
-
-                  let propControl = new TomSelect("#select-property",{
-                      valueField: 'id',
-                      labelField: 'title',
-                      searchField: 'title',
-                      create: false,
-                      sortField: {
-                          field: "text",
-                          direction: "asc"
-                      },
-                      onItemAdd: addValues()
-                  });
-
-                  let addProperties = function() {
-                      return function () {
-                          // loops through the selected network item and adds the attributes to dropdown
-                          // tom-select handles duplicates
-                          clearFilter(false)
-                          if (arguments[0] === 'edge') {
-                              for (let each in allEdges) {
-                                  if (allEdges.hasOwnProperty(each)) {
-                                      for (let eachProp in allEdges[each]) {
-                                          if (allEdges[each].hasOwnProperty(eachProp)) {
-                                              propControl.addOption({id: eachProp, title: eachProp})
-                                          }
-                                      }
-                                  }
-                              }
-                          }
-                          else if (arguments[0] === 'node') {
-                              for (let each in allNodes) {
-                                  if (allNodes.hasOwnProperty(each)) {
-                                      for (let eachProp in allNodes[each]) {
-                                          if (allNodes[each].hasOwnProperty(eachProp)
-                                              && (eachProp !== 'hidden' && eachProp !== 'savedLabel'
-                                                  && eachProp !== 'hiddenLabel')) {
-                                              propControl.addOption({id: eachProp, title: eachProp})
-
-                                          }
-                                      }
-                                  }
-                              }
-                          }
-                      }
-                  };
-
-                  let itemControl = new TomSelect("#select-item",{
-                      create: false,
-                      sortField:{
-                          field: "text",
-                          direction: "asc"
-                      },
-                      onItemAdd: addProperties()
-                  });
-
-                  function clearFilter(reset) {
-                      // utility function to clear all the selected filter options
-                      // if reset is set to true, the existing filter will be removed
-                      // else, only the dropdown options are cleared
-                      propControl.clear();
-                      propControl.clearOptions();
-                      valueControl.clear();
-                      valueControl.clearOptions();
-                      filter = {
-                          item : '',
-                          property : '',
-                          value : []
-                      }
-                      if (reset) {
-                          itemControl.clear();
-                          filterHighlight({nodes: []})
-                      }
-                  }
-
-                  function updateFilter(value, key) {
-                      // key could be 'item' or 'property' and value is as selected in dropdown
-                      filter[key] = value
-                  }
 
               
 
@@ -790,8 +688,6 @@
                   
 
                   
-                    network.on("selectNode", neighbourhoodHighlight);
-                  
 
                   
 
@@ -805,137 +701,311 @@
         </script>
     
     <script>
-        const nodeData = {"RM-001": {"area": "Ingesta", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Registro de brokers", "requisito": "El sistema deber\u00e1 permitir cargar y administrar una lista configurable de N brokers con 1..N URLs de perfil por broker y metadatos (broker_id, nombre, regi\u00f3n, etiquetas/estrategia). Debe soportar importaci\u00f3n masiva (CSV) y edici\u00f3n incremental.", "owner": "Backend", "roles": "Admin; Sistema", "estatus": "BACKLOG", "dependencias": "\u2014", "in_degree": 0, "out_degree": 4}, "RM-002": {"area": "Ingesta", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Validaci\u00f3n de URL", "requisito": "Antes de ejecutar extracci\u00f3n, el sistema deber\u00e1 validar cada URL (sintaxis, esquema, dominio permitido, alcanzabilidad HTTP/DNS) y persistir el resultado con c\u00f3digo de error y pol\u00edtica de reintento.", "owner": "Backend", "roles": "Sistema; Admin", "estatus": "BACKLOG", "dependencias": "RM-001", "in_degree": 1, "out_degree": 2}, "RM-003": {"area": "Ingesta", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Pol\u00edticas de acceso por dominio (robots/ToS)", "requisito": "El sistema deber\u00e1 registrar pol\u00edticas por dominio (robots.txt snapshot, rate limit, notas ToS internas) y hacer cumplir dichas pol\u00edticas durante la extracci\u00f3n. Debe permitir bloquear dominios o pausar scraping.", "owner": "Backend/DevOps", "roles": "Admin; DevOps; Sistema", "estatus": "BACKLOG", "dependencias": "RM-001,RM-002", "in_degree": 2, "out_degree": 3}, "RM-004": {"area": "Ingesta", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Scheduler de crawls", "requisito": "El sistema deber\u00e1 soportar ejecuci\u00f3n programada (horario configurable por proyecto y/o por broker) y refresh on-demand por broker, generando jobs con trazabilidad (run_id, broker_id, created_by).", "owner": "Backend/DevOps", "roles": "Admin; Analista; Sistema", "estatus": "BACKLOG", "dependencias": "RM-001", "in_degree": 1, "out_degree": 5}, "RM-005": {"area": "Ingesta", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Rate limiting, retries y circuit breaker", "requisito": "El sistema deber\u00e1 implementar rate limiting por dominio, retries con exponential backoff y circuit breaker ante fallas repetidas. Debe registrar m\u00e9tricas de requests y errores.", "owner": "Backend/DevOps", "roles": "Sistema; DevOps", "estatus": "BACKLOG", "dependencias": "RM-003", "in_degree": 1, "out_degree": 3}, "RM-006": {"area": "Extracci\u00f3n", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Parser HTML por dominio", "requisito": "El sistema deber\u00e1 extraer datos crudos desde HTML usando adaptadores por dominio (selectores/mapeos) mantenibles y testeables, versionando el parser.", "owner": "Backend", "roles": "Sistema; Backend", "estatus": "BACKLOG", "dependencias": "RM-004,RM-005", "in_degree": 2, "out_degree": 6}, "RM-007": {"area": "Extracci\u00f3n", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Soporte JSON/API cuando exista", "requisito": "Si el perfil expone datos v\u00eda JSON/API (directo o embebido), el adaptador deber\u00e1 preferir esa fuente por estabilidad y registrar el endpoint utilizado.", "owner": "Backend", "roles": "Sistema; Backend", "estatus": "BACKLOG", "dependencias": "RM-006", "in_degree": 1, "out_degree": 1}, "RM-008": {"area": "Extracci\u00f3n", "prioridad": "Baja (P2)", "version": "v0.3", "funcionalidad": "Descarga de adjuntos relevantes", "requisito": "El sistema deber\u00e1 detectar y descargar adjuntos/links (PDF u otros permitidos) asociados al perfil cuando est\u00e9n presentes y permitidos por pol\u00edtica, guardando checksum y metadatos.", "owner": "Backend", "roles": "Sistema; Backend", "estatus": "BACKLOG", "dependencias": "RM-003,RM-006", "in_degree": 2, "out_degree": 1}, "RM-009": {"area": "Modelo de datos", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Almacenamiento de datos crudos versionados", "requisito": "El sistema deber\u00e1 guardar registros crudos inmutables con URL fuente, timestamp, parser_version, content_hash y payload (JSON). No debe sobrescribir datos crudos.", "owner": "Backend", "roles": "Sistema; Backend", "estatus": "BACKLOG", "dependencias": "RM-006", "in_degree": 1, "out_degree": 6}, "RM-010": {"area": "Modelo de datos", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Entidades normalizadas y snapshots", "requisito": "El sistema deber\u00e1 normalizar datos crudos a entidades n\u00facleo (Broker, ProfileSnapshot, MetricDefinition, MetricValue, Run, Experiment) y soportar snapshots temporalmente indexados.", "owner": "Backend", "roles": "Backend; Quant; Sistema", "estatus": "BACKLOG", "dependencias": "RM-009", "in_degree": 1, "out_degree": 6}, "RM-011": {"area": "Transformaci\u00f3n", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Reglas de mapeo configurables", "requisito": "El sistema deber\u00e1 permitir definir reglas de mapeo (por dominio) desde campos crudos a campos normalizados, con versionado y capacidad de rollback. Idealmente sin despliegue de c\u00f3digo para cambios menores.", "owner": "Backend", "roles": "Admin; Backend; Quant", "estatus": "BACKLOG", "dependencias": "RM-010", "in_degree": 1, "out_degree": 5}, "RM-012": {"area": "Transformaci\u00f3n", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Limpieza y estandarizaci\u00f3n de datos", "requisito": "El sistema deber\u00e1 limpiar y estandarizar formatos (fechas, divisas, porcentajes, locales) a formatos can\u00f3nicos y registrar errores de parseo por campo.", "owner": "Backend", "roles": "Backend; Sistema", "estatus": "BACKLOG", "dependencias": "RM-011", "in_degree": 1, "out_degree": 1}, "RM-013": {"area": "M\u00e9tricas", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Cat\u00e1logo de definiciones de m\u00e9tricas", "requisito": "El sistema deber\u00e1 mantener un registro versionado de m\u00e9tricas (nombre, f\u00f3rmula/algoritmo, insumos requeridos, unidad, rango v\u00e1lido, y constraints). Ser\u00e1 la fuente \u00fanica para c\u00f3mputo y reporteo.", "owner": "Backend/Quant", "roles": "Quant; Backend; Admin", "estatus": "BACKLOG", "dependencias": "RM-010", "in_degree": 1, "out_degree": 10}, "RM-014": {"area": "M\u00e9tricas", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "C\u00e1lculo de m\u00e9tricas core", "requisito": "El sistema deber\u00e1 calcular m\u00e9tricas base por broker y por periodo (p.ej. rendimiento, volatilidad, drawdown, win-rate) a partir de los datos disponibles, y manejar expl\u00edcitamente el caso de 'datos insuficientes'.", "owner": "Quant", "roles": "Quant; Sistema", "estatus": "BACKLOG", "dependencias": "RM-013", "in_degree": 1, "out_degree": 6}, "RM-015": {"area": "M\u00e9tricas", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "M\u00e9tricas de costos/fees", "requisito": "El sistema deber\u00e1 calcular m\u00e9tricas relacionadas a costos/fees/spread cuando existan, documentando supuestos y anex\u00e1ndolos a reportes y exportaciones.", "owner": "Quant", "roles": "Quant; Analista", "estatus": "BACKLOG", "dependencias": "RM-013", "in_degree": 1, "out_degree": 1}, "RM-016": {"area": "M\u00e9tricas", "prioridad": "Baja (P2)", "version": "v0.3", "funcionalidad": "Flags de riesgo/compliance basados en reglas", "requisito": "El sistema deber\u00e1 evaluar reglas determin\u00edsticas para generar banderas (p.ej. disclosures faltantes, claims an\u00f3malos) y adjuntar evidencia (campo crudo + snapshot) para cada flag.", "owner": "Quant/Backend", "roles": "Quant; Analista; Admin", "estatus": "BACKLOG", "dependencias": "RM-013,RM-020", "in_degree": 2, "out_degree": 1}, "RM-017": {"area": "M\u00e9tricas", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Benchmarks, percentiles y rankings", "requisito": "El sistema deber\u00e1 generar agregados cross-broker (percentiles, rankings, peer groups) con definiciones versionadas de peer group y desempate determin\u00edstico.", "owner": "Quant", "roles": "Analista; Viewer", "estatus": "BACKLOG", "dependencias": "RM-014", "in_degree": 1, "out_degree": 4}, "RM-018": {"area": "Calidad de datos", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Score de completitud", "requisito": "El sistema deber\u00e1 calcular un score de completitud por broker y por m\u00e9trica en [0,1], basado en disponibilidad de insumos y cobertura temporal. Debe mostrarse en dashboard y reportes.", "owner": "Backend/Quant", "roles": "Analista; Viewer", "estatus": "BACKLOG", "dependencias": "RM-013,RM-014", "in_degree": 2, "out_degree": 2}, "RM-019": {"area": "Calidad de datos", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Detecci\u00f3n de anomal\u00edas", "requisito": "El sistema deber\u00e1 detectar anomal\u00edas (saltos bruscos de m\u00e9tricas, huecos temporales, cambios de parser/mapping) y etiquetar resultados afectados; debe permitir filtrar anomal\u00edas en validaci\u00f3n del algoritmo.", "owner": "Quant/Backend", "roles": "Analista; Quant; DevOps", "estatus": "BACKLOG", "dependencias": "RM-014,RM-011,RM-009", "in_degree": 3, "out_degree": 3}, "RM-020": {"area": "Auditabilidad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Lineage de m\u00e9tricas a raw data", "requisito": "El sistema deber\u00e1 proveer trazabilidad desde cualquier valor de m\u00e9trica/ranking/reporte hasta los raw_records y transformaciones usadas (parser_version, mapping_version, metric_definition_version).", "owner": "Backend", "roles": "Analista; Admin", "estatus": "BACKLOG", "dependencias": "RM-009,RM-013", "in_degree": 2, "out_degree": 5}, "RM-021": {"area": "Validaci\u00f3n de algoritmo", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Contrato de integraci\u00f3n del algoritmo", "requisito": "El sistema deber\u00e1 integrar el algoritmo de optimizaci\u00f3n del cliente mediante una interfaz definida (CLI/API/librer\u00eda) con versionado (algorithm_build_id) y entradas/salidas determin\u00edsticas o con tolerancia definida.", "owner": "Backend/Quant", "roles": "Quant; Backend; DevOps", "estatus": "BACKLOG", "dependencias": "RM-022", "in_degree": 1, "out_degree": 4}, "RM-022": {"area": "Validaci\u00f3n de algoritmo", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Constructor de datasets (feature matrix)", "requisito": "El sistema deber\u00e1 construir datasets de validaci\u00f3n desde datos normalizados (features, targets/labels si aplica) con ventanas temporales expl\u00edcitas y metadatos (schema_version, broker_set, feature_list).", "owner": "Quant/Backend", "roles": "Quant; Analista", "estatus": "BACKLOG", "dependencias": "RM-010", "in_degree": 1, "out_degree": 5}, "RM-023": {"area": "Validaci\u00f3n de algoritmo", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Runner de backtests/experimentos", "requisito": "El sistema deber\u00e1 ejecutar runs de validaci\u00f3n sobre datasets seleccionados, guardando par\u00e1metros, logs, outputs, y m\u00e9tricas de ejecuci\u00f3n. Debe soportar tipos de run (train/validate/test) si aplica.", "owner": "Quant/Backend", "roles": "Quant; Analista", "estatus": "BACKLOG", "dependencias": "RM-021,RM-022", "in_degree": 2, "out_degree": 8}, "RM-024": {"area": "Validaci\u00f3n de algoritmo", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "M\u00e9tricas de evaluaci\u00f3n y scorecards", "requisito": "El sistema deber\u00e1 calcular m\u00e9tricas de evaluaci\u00f3n (error, estabilidad, violaciones de constraints, uplift vs baseline) seg\u00fan el objetivo del cliente, con thresholds configurables para pass/fail.", "owner": "Quant", "roles": "Quant; Analista; Viewer", "estatus": "BACKLOG", "dependencias": "RM-023,RM-013", "in_degree": 2, "out_degree": 4}, "RM-025": {"area": "Validaci\u00f3n de algoritmo", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Diagn\u00f3sticos y sensibilidad", "requisito": "El sistema deber\u00e1 generar diagn\u00f3sticos para runs (p.ej. an\u00e1lisis de fallos, frecuencia de constraints activas, ablation/feature importance si aplica) y exportarlos en reporte t\u00e9cnico.", "owner": "Quant", "roles": "Quant; Analista", "estatus": "BACKLOG", "dependencias": "RM-023,RM-024", "in_degree": 2, "out_degree": 1}, "RM-026": {"area": "Validaci\u00f3n de algoritmo", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "What-if y parameter sweeps", "requisito": "El sistema deber\u00e1 permitir ejecutar batch de escenarios (fees \u00b1x, imputaci\u00f3n, distintos thresholds) y comparar resultados en una tabla/visualizaci\u00f3n \u00fanica.", "owner": "Quant/Backend", "roles": "Quant; Analista", "estatus": "BACKLOG", "dependencias": "RM-023", "in_degree": 1, "out_degree": 1}, "RM-027": {"area": "Reportes", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Plantillas y generaci\u00f3n de reportes", "requisito": "El sistema deber\u00e1 generar reportes (HTML/PDF) a partir de plantillas con secciones: overview brokers, tablas de m\u00e9tricas, scorecards de validaci\u00f3n, anomal\u00edas y appendix de metodolog\u00eda + versiones.", "owner": "Backend", "roles": "Analista; Viewer; Admin", "estatus": "BACKLOG", "dependencias": "RM-014,RM-024,RM-020", "in_degree": 3, "out_degree": 3}, "RM-028": {"area": "Reportes", "prioridad": "Baja (P2)", "version": "v0.3", "funcionalidad": "Distribuci\u00f3n programada", "requisito": "El sistema deber\u00e1 soportar generaci\u00f3n y distribuci\u00f3n programada de reportes (link seguro, email y/o webhook), con reintentos y alertas de falla.", "owner": "Backend/DevOps", "roles": "Admin; DevOps; Sistema", "estatus": "BACKLOG", "dependencias": "RM-027,RM-004,RM-034", "in_degree": 3, "out_degree": 1}, "RM-029": {"area": "Dashboard", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Vistas core del dashboard", "requisito": "El sistema deber\u00e1 proveer dashboard con: lista de brokers + filtros, p\u00e1gina detalle broker con charts, y resumen de validaci\u00f3n del algoritmo; debe soportar drill-down a lineage.", "owner": "Frontend", "roles": "Viewer; Analista; Admin", "estatus": "BACKLOG", "dependencias": "RM-014,RM-017,RM-020,RM-033,RM-034", "in_degree": 5, "out_degree": 2}, "RM-030": {"area": "Dashboard", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Comparaciones y rankings", "requisito": "El sistema deber\u00e1 permitir comparaci\u00f3n side-by-side de brokers y tablas de ranking con columnas configurables, ordenamiento y exportaci\u00f3n.", "owner": "Frontend", "roles": "Viewer; Analista", "estatus": "BACKLOG", "dependencias": "RM-017,RM-032,RM-018,RM-019", "in_degree": 4, "out_degree": 1}, "RM-031": {"area": "Dashboard", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Explorador de runs/experimentos", "requisito": "El sistema deber\u00e1 proveer UI para explorar runs (filtros por versi\u00f3n, par\u00e1metros, fecha, estado) y comparar 2+ runs, mostrando diffs y scorecards.", "owner": "Frontend", "roles": "Analista; Quant", "estatus": "BACKLOG", "dependencias": "RM-023,RM-024,RM-034", "in_degree": 3, "out_degree": 1}, "RM-032": {"area": "Exportaci\u00f3n", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Exports de datos y resultados", "requisito": "El sistema deber\u00e1 exportar (CSV/JSON) registro de brokers, m\u00e9tricas y resultados de runs con metadatos de schema y unidades; exports grandes deben ser as\u00edncronos.", "owner": "Backend", "roles": "Analista; Admin", "estatus": "BACKLOG", "dependencias": "RM-010,RM-013,RM-034", "in_degree": 3, "out_degree": 3}, "RM-033": {"area": "Seguridad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Autenticaci\u00f3n", "requisito": "El sistema deber\u00e1 requerir autenticaci\u00f3n para dashboard, reportes y exports (email/password o SSO/OIDC), con sesiones seguras, CSRF donde aplique y pol\u00edticas de password.", "owner": "Backend/DevOps", "roles": "Admin; Viewer; Analista", "estatus": "BACKLOG", "dependencias": "\u2014", "in_degree": 0, "out_degree": 3}, "RM-034": {"area": "Seguridad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Autorizaci\u00f3n y roles (RBAC)", "requisito": "El sistema deber\u00e1 implementar RBAC (Admin, Analista, Viewer) controlando: alta/edici\u00f3n brokers, ejecuci\u00f3n runs, exports, cambios de pol\u00edticas y acceso a auditor\u00edas.", "owner": "Backend/Frontend", "roles": "Admin; Analista; Viewer", "estatus": "BACKLOG", "dependencias": "RM-033", "in_degree": 1, "out_degree": 6}, "RM-035": {"area": "Seguridad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Gesti\u00f3n de secretos", "requisito": "El sistema deber\u00e1 gestionar secretos (API keys, SMTP, webhooks) fuera del repositorio (env/secret manager) y activar detecci\u00f3n de secretos en CI.", "owner": "DevOps", "roles": "DevOps", "estatus": "BACKLOG", "dependencias": "RM-043", "in_degree": 1, "out_degree": 2}, "RM-036": {"area": "Observabilidad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Logging estructurado con correlaci\u00f3n", "requisito": "El sistema deber\u00e1 emitir logs estructurados (JSON) para ingesta, transformaci\u00f3n, m\u00e9tricas y runs con correlation_id (run_id, broker_id, job_id) y niveles consistentes.", "owner": "DevOps", "roles": "DevOps; Backend", "estatus": "BACKLOG", "dependencias": "RM-004,RM-023", "in_degree": 2, "out_degree": 4}, "RM-037": {"area": "Observabilidad", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "M\u00e9tricas y alertas operativas", "requisito": "El sistema deber\u00e1 exponer m\u00e9tricas (duraci\u00f3n de jobs, tasa de \u00e9xito, errores de scraping, latencia API) y alertas por umbrales (p.ej. fallas >X%, retrasos).", "owner": "DevOps", "roles": "DevOps; Admin", "estatus": "BACKLOG", "dependencias": "RM-036", "in_degree": 1, "out_degree": 1}, "RM-038": {"area": "Performance", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Throughput del pipeline", "requisito": "El sistema deber\u00e1 procesar al menos 100 URLs end-to-end dentro de un SLA configurable (p.ej. <30 min) usando paralelismo sin violar rate limits por dominio.", "owner": "Backend/DevOps", "roles": "DevOps; Backend", "estatus": "BACKLOG", "dependencias": "RM-005,RM-004", "in_degree": 2, "out_degree": 1}, "RM-039": {"area": "Performance", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Responsividad del dashboard", "requisito": "El sistema deber\u00e1 mantener interacciones del dashboard con P95 <2s para consultas t\u00edpicas y <10s para consultas pesadas, mostrando indicador de progreso si aplica.", "owner": "Backend/Frontend", "roles": "Frontend; Backend", "estatus": "BACKLOG", "dependencias": "RM-029,RM-017", "in_degree": 2, "out_degree": 1}, "RM-040": {"area": "Reproducibilidad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Versionado end-to-end de componentes", "requisito": "El sistema deber\u00e1 versionar y relacionar parsers, mapeos, definiciones de m\u00e9tricas, datasets y builds del algoritmo, y asociarlos a cada run y reporte.", "owner": "Backend/Quant", "roles": "Quant; Backend", "estatus": "BACKLOG", "dependencias": "RM-009,RM-011,RM-013,RM-021,RM-022", "in_degree": 5, "out_degree": 1}, "RM-041": {"area": "Testing", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Suite de unit/integration/E2E", "requisito": "El sistema deber\u00e1 incluir pruebas autom\u00e1ticas para parsers, transformaciones, m\u00e9tricas y runner del algoritmo. Debe usar fixtures grabadas (no depender de sitios live) y seguir enfoque RED/GREEN.", "owner": "All", "roles": "Backend; Quant; Frontend", "estatus": "BACKLOG", "dependencias": "RM-006,RM-013,RM-023", "in_degree": 3, "out_degree": 3}, "RM-042": {"area": "Testing", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Data contract tests (schemas)", "requisito": "El sistema deber\u00e1 aplicar data contracts entre extracci\u00f3n\u2192normalizaci\u00f3n\u2192dataset\u2192algoritmo (schemas versionados) y fallar CI ante cambios rompientes.", "owner": "Backend", "roles": "Backend; Quant", "estatus": "BACKLOG", "dependencias": "RM-010,RM-022,RM-021", "in_degree": 3, "out_degree": 1}, "RM-043": {"area": "DevOps", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "CI/CD + migraciones + rollback", "requisito": "El sistema deber\u00e1 contar con CI/CD para build, tests, deploy y migraciones DB, con promoci\u00f3n de ambientes (dev/stage/prod) y procedimiento de rollback probado.", "owner": "DevOps", "roles": "DevOps", "estatus": "BACKLOG", "dependencias": "RM-041,RM-035", "in_degree": 2, "out_degree": 3}, "RM-044": {"area": "Gobernanza de datos", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Retenci\u00f3n y archivado", "requisito": "El sistema deber\u00e1 definir pol\u00edticas de retenci\u00f3n para raw_records, snapshots, outputs de runs, logs y reportes (purga/archivado) sin dejar referencias hu\u00e9rfanas.", "owner": "Backend/DevOps", "roles": "Admin; DevOps", "estatus": "BACKLOG", "dependencias": "RM-009,RM-023,RM-027", "in_degree": 3, "out_degree": 1}, "RM-045": {"area": "Gobernanza", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Bit\u00e1cora de auditor\u00eda de acciones cr\u00edticas", "requisito": "El sistema deber\u00e1 registrar eventos de auditor\u00eda para: cambios de brokers/URLs, ejecuciones de runs, exports, cambios de roles, cambios de pol\u00edticas, y accesos a reportes/lineage.", "owner": "Backend", "roles": "Admin", "estatus": "BACKLOG", "dependencias": "RM-034", "in_degree": 1, "out_degree": 1}, "RM-046": {"area": "UX", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Transparencia de errores y remediaci\u00f3n", "requisito": "El sistema deber\u00e1 mostrar errores claros y accionables (parser roto, dominio bloqueado, datos insuficientes, run fallido), con pasos sugeridos y links a evidencia (logs/lineage).", "owner": "Frontend", "roles": "Viewer; Analista; Admin", "estatus": "BACKLOG", "dependencias": "RM-019,RM-036,RM-020", "in_degree": 3, "out_degree": 1}, "RM-047": {"area": "Privacidad", "prioridad": "Baja (P2)", "version": "v0.3", "funcionalidad": "Minimizaci\u00f3n y redacci\u00f3n de datos", "requisito": "El sistema deber\u00e1 almacenar s\u00f3lo campos necesarios y permitir redacci\u00f3n/omisi\u00f3n de campos sensibles (si aparecen) en salidas (dash/report/export) seg\u00fan pol\u00edtica.", "owner": "Backend/DevOps", "roles": "Admin; DevOps", "estatus": "BACKLOG", "dependencias": "RM-036,RM-032", "in_degree": 2, "out_degree": 1}, "RM-048": {"area": "Documentaci\u00f3n", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Docs t\u00e9cnicas y operativas", "requisito": "El sistema deber\u00e1 incluir documentaci\u00f3n: setup local, despliegue, runbooks, cat\u00e1logo de m\u00e9tricas, c\u00f3mo agregar un nuevo dominio/adaptador y c\u00f3mo ejecutar validaci\u00f3n del algoritmo.", "owner": "All", "roles": "All", "estatus": "BACKLOG", "dependencias": "RM-043", "in_degree": 1, "out_degree": 1}, "RM-049": {"area": "Extensibilidad", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Onboarding de nuevo dominio/fuente", "requisito": "El sistema deber\u00e1 ofrecer un proceso est\u00e1ndar (template de adapter + mapping + fixtures + tests) para agregar un nuevo dominio en <=1 d\u00eda para un sitio t\u00edpico.", "owner": "Backend", "roles": "Backend; Quant", "estatus": "BACKLOG", "dependencias": "RM-006,RM-011,RM-041", "in_degree": 3, "out_degree": 1}, "RM-050": {"area": "Entregables", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Criterio de aceptaci\u00f3n del MVP", "requisito": "El MVP deber\u00e1 incluir: registro de brokers+URLs, scheduler, extracci\u00f3n+normalizaci\u00f3n, m\u00e9tricas core, dashboard b\u00e1sico, construcci\u00f3n de dataset, ejecuci\u00f3n de runs, scorecard, y generaci\u00f3n de reportes con versionado/lineage.", "owner": "PM/All", "roles": "PM; Admin; Analista", "estatus": "BACKLOG", "dependencias": "RM-001..RM-049", "in_degree": 49, "out_degree": 0}};
-        const subgraphData = {"RM-001": {"ancestors": [], "descendants": ["RM-025", "RM-015", "RM-028", "RM-009", "RM-031", "RM-020", "RM-010", "RM-047", "RM-016", "RM-038", "RM-027", "RM-040", "RM-014", "RM-035", "RM-037", "RM-008", "RM-004", "RM-019", "RM-043", "RM-002", "RM-032", "RM-021", "RM-046", "RM-018", "RM-005", "RM-022", "RM-029", "RM-012", "RM-049", "RM-006", "RM-023", "RM-024", "RM-041", "RM-050", "RM-044", "RM-039", "RM-042", "RM-003", "RM-036", "RM-017", "RM-011", "RM-013", "RM-007", "RM-030", "RM-048", "RM-026"]}, "RM-002": {"ancestors": ["RM-001"], "descendants": ["RM-025", "RM-015", "RM-028", "RM-009", "RM-031", "RM-020", "RM-010", "RM-047", "RM-016", "RM-038", "RM-027", "RM-040", "RM-014", "RM-035", "RM-008", "RM-037", "RM-019", "RM-043", "RM-032", "RM-021", "RM-046", "RM-018", "RM-005", "RM-022", "RM-029", "RM-012", "RM-049", "RM-006", "RM-023", "RM-024", "RM-041", "RM-050", "RM-044", "RM-039", "RM-042", "RM-003", "RM-036", "RM-017", "RM-011", "RM-013", "RM-007", "RM-030", "RM-048", "RM-026"]}, "RM-003": {"ancestors": ["RM-001", "RM-002"], "descendants": ["RM-025", "RM-015", "RM-028", "RM-009", "RM-031", "RM-020", "RM-010", "RM-047", "RM-016", "RM-038", "RM-027", "RM-040", "RM-014", "RM-035", "RM-008", "RM-037", "RM-019", "RM-043", "RM-032", "RM-021", "RM-046", "RM-018", "RM-005", "RM-022", "RM-029", "RM-012", "RM-049", "RM-006", "RM-023", "RM-024", "RM-041", "RM-050", "RM-044", "RM-039", "RM-042", "RM-036", "RM-017", "RM-011", "RM-013", "RM-007", "RM-030", "RM-048", "RM-026"]}, "RM-004": {"ancestors": ["RM-001"], "descendants": ["RM-025", "RM-015", "RM-028", "RM-009", "RM-031", "RM-020", "RM-010", "RM-047", "RM-016", "RM-038", "RM-027", "RM-040", "RM-014", "RM-035", "RM-037", "RM-008", "RM-019", "RM-043", "RM-032", "RM-021", "RM-046", "RM-018", "RM-022", "RM-029", "RM-012", "RM-049", "RM-006", "RM-023", "RM-024", "RM-041", "RM-050", "RM-044", "RM-039", "RM-042", "RM-036", "RM-017", "RM-011", "RM-013", "RM-007", "RM-030", "RM-048", "RM-026"]}, "RM-005": {"ancestors": ["RM-003", "RM-001", "RM-002"], "descendants": ["RM-025", "RM-015", "RM-028", "RM-009", "RM-031", "RM-020", "RM-010", "RM-047", "RM-016", "RM-038", "RM-027", "RM-040", "RM-014", "RM-035", "RM-008", "RM-037", "RM-019", "RM-043", "RM-032", "RM-021", "RM-046", "RM-018", "RM-022", "RM-029", "RM-012", "RM-049", "RM-006", "RM-023", "RM-024", "RM-041", "RM-050", "RM-044", "RM-039", "RM-042", "RM-036", "RM-017", "RM-011", "RM-013", "RM-007", "RM-030", "RM-048", "RM-026"]}, "RM-006": {"ancestors": ["RM-002", "RM-003", "RM-001", "RM-005", "RM-004"], "descendants": ["RM-025", "RM-015", "RM-028", "RM-009", "RM-031", "RM-020", "RM-010", "RM-047", "RM-016", "RM-027", "RM-040", "RM-014", "RM-035", "RM-008", "RM-037", "RM-019", "RM-043", "RM-032", "RM-021", "RM-046", "RM-018", "RM-022", "RM-029", "RM-012", "RM-049", "RM-023", "RM-024", "RM-041", "RM-050", "RM-044", "RM-039", "RM-042", "RM-036", "RM-017", "RM-011", "RM-013", "RM-007", "RM-030", "RM-048", "RM-026"]}, "RM-007": {"ancestors": ["RM-002", "RM-003", "RM-006", "RM-001", "RM-005", "RM-004"], "descendants": ["RM-050"]}, "RM-008": {"ancestors": ["RM-002", "RM-003", "RM-001", "RM-006", "RM-005", "RM-004"], "descendants": ["RM-050"]}, "RM-009": {"ancestors": ["RM-002", "RM-003", "RM-006", "RM-001", "RM-005", "RM-004"], "descendants": ["RM-025", "RM-015", "RM-028", "RM-031", "RM-020", "RM-010", "RM-047", "RM-016", "RM-027", "RM-040", "RM-014", "RM-037", "RM-019", "RM-043", "RM-032", "RM-021", "RM-046", "RM-018", "RM-022", "RM-029", "RM-012", "RM-049", "RM-023", "RM-024", "RM-041", "RM-050", "RM-044", "RM-039", "RM-042", "RM-036", "RM-017", "RM-011", "RM-013", "RM-035", "RM-030", "RM-048", "RM-026"]}, "RM-010": {"ancestors": ["RM-002", "RM-009", "RM-006", "RM-001", "RM-003", "RM-005", "RM-004"], "descendants": ["RM-025", "RM-015", "RM-028", "RM-031", "RM-020", "RM-047", "RM-016", "RM-027", "RM-040", "RM-014", "RM-037", "RM-019", "RM-043", "RM-032", "RM-021", "RM-046", "RM-018", "RM-022", "RM-029", "RM-012", "RM-049", "RM-023", "RM-024", "RM-041", "RM-050", "RM-044", "RM-039", "RM-042", "RM-036", "RM-017", "RM-011", "RM-013", "RM-035", "RM-030", "RM-048", "RM-026"]}, "RM-011": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-001", "RM-003", "RM-005", "RM-004"], "descendants": ["RM-012", "RM-019", "RM-049", "RM-046", "RM-040", "RM-050", "RM-030"]}, "RM-012": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-001", "RM-003", "RM-011", "RM-005", "RM-004"], "descendants": ["RM-050"]}, "RM-013": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-001", "RM-003", "RM-005", "RM-004"], "descendants": ["RM-025", "RM-015", "RM-028", "RM-031", "RM-020", "RM-047", "RM-016", "RM-027", "RM-040", "RM-014", "RM-019", "RM-043", "RM-032", "RM-046", "RM-018", "RM-029", "RM-049", "RM-024", "RM-041", "RM-050", "RM-044", "RM-039", "RM-017", "RM-035", "RM-030", "RM-048"]}, "RM-014": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-001", "RM-003", "RM-005", "RM-013", "RM-004"], "descendants": ["RM-019", "RM-028", "RM-044", "RM-039", "RM-017", "RM-027", "RM-046", "RM-018", "RM-050", "RM-030", "RM-029"]}, "RM-015": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-001", "RM-003", "RM-005", "RM-013", "RM-004"], "descendants": ["RM-050"]}, "RM-016": {"ancestors": ["RM-002", "RM-009", "RM-020", "RM-010", "RM-006", "RM-001", "RM-003", "RM-005", "RM-013", "RM-004"], "descendants": ["RM-050"]}, "RM-017": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-001", "RM-003", "RM-014", "RM-013", "RM-005", "RM-004"], "descendants": ["RM-050", "RM-030", "RM-039", "RM-029"]}, "RM-018": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-001", "RM-003", "RM-014", "RM-013", "RM-005", "RM-004"], "descendants": ["RM-030", "RM-050"]}, "RM-019": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-001", "RM-003", "RM-011", "RM-014", "RM-013", "RM-005", "RM-004"], "descendants": ["RM-030", "RM-050", "RM-046"]}, "RM-020": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-001", "RM-003", "RM-005", "RM-013", "RM-004"], "descendants": ["RM-028", "RM-044", "RM-039", "RM-046", "RM-027", "RM-016", "RM-050", "RM-029"]}, "RM-021": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-001", "RM-003", "RM-005", "RM-022", "RM-004"], "descendants": ["RM-025", "RM-028", "RM-031", "RM-047", "RM-027", "RM-040", "RM-037", "RM-043", "RM-046", "RM-049", "RM-023", "RM-024", "RM-041", "RM-050", "RM-044", "RM-042", "RM-036", "RM-035", "RM-048", "RM-026"]}, "RM-022": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-001", "RM-003", "RM-005", "RM-004"], "descendants": ["RM-025", "RM-028", "RM-031", "RM-047", "RM-027", "RM-040", "RM-037", "RM-043", "RM-021", "RM-046", "RM-049", "RM-023", "RM-024", "RM-041", "RM-050", "RM-044", "RM-042", "RM-036", "RM-035", "RM-048", "RM-026"]}, "RM-023": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-021", "RM-001", "RM-003", "RM-005", "RM-022", "RM-004"], "descendants": ["RM-025", "RM-043", "RM-028", "RM-044", "RM-031", "RM-049", "RM-036", "RM-047", "RM-027", "RM-046", "RM-024", "RM-041", "RM-050", "RM-035", "RM-037", "RM-048", "RM-026"]}, "RM-024": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-023", "RM-021", "RM-001", "RM-003", "RM-005", "RM-022", "RM-004", "RM-013"], "descendants": ["RM-025", "RM-028", "RM-044", "RM-031", "RM-027", "RM-050"]}, "RM-025": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-023", "RM-021", "RM-001", "RM-003", "RM-024", "RM-005", "RM-013", "RM-022", "RM-004"], "descendants": ["RM-050"]}, "RM-026": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-023", "RM-021", "RM-001", "RM-003", "RM-005", "RM-022", "RM-004"], "descendants": ["RM-050"]}, "RM-027": {"ancestors": ["RM-002", "RM-009", "RM-020", "RM-010", "RM-006", "RM-023", "RM-021", "RM-001", "RM-003", "RM-024", "RM-014", "RM-013", "RM-005", "RM-022", "RM-004"], "descendants": ["RM-028", "RM-044", "RM-050"]}, "RM-028": {"ancestors": ["RM-002", "RM-009", "RM-020", "RM-033", "RM-010", "RM-001", "RM-034", "RM-023", "RM-027", "RM-021", "RM-024", "RM-006", "RM-003", "RM-014", "RM-013", "RM-005", "RM-022", "RM-004"], "descendants": ["RM-050"]}, "RM-029": {"ancestors": ["RM-002", "RM-009", "RM-020", "RM-033", "RM-010", "RM-006", "RM-034", "RM-017", "RM-001", "RM-003", "RM-014", "RM-013", "RM-005", "RM-004"], "descendants": ["RM-050", "RM-039"]}, "RM-030": {"ancestors": ["RM-019", "RM-002", "RM-009", "RM-032", "RM-010", "RM-033", "RM-006", "RM-017", "RM-034", "RM-001", "RM-003", "RM-011", "RM-018", "RM-014", "RM-013", "RM-005", "RM-004"], "descendants": ["RM-050"]}, "RM-031": {"ancestors": ["RM-002", "RM-009", "RM-033", "RM-010", "RM-023", "RM-034", "RM-021", "RM-006", "RM-001", "RM-024", "RM-003", "RM-005", "RM-022", "RM-004", "RM-013"], "descendants": ["RM-050"]}, "RM-032": {"ancestors": ["RM-002", "RM-009", "RM-033", "RM-010", "RM-006", "RM-034", "RM-001", "RM-003", "RM-005", "RM-013", "RM-004"], "descendants": ["RM-030", "RM-047", "RM-050"]}, "RM-033": {"ancestors": [], "descendants": ["RM-028", "RM-039", "RM-032", "RM-031", "RM-047", "RM-034", "RM-045", "RM-050", "RM-030", "RM-029"]}, "RM-034": {"ancestors": ["RM-033"], "descendants": ["RM-028", "RM-039", "RM-032", "RM-031", "RM-047", "RM-045", "RM-050", "RM-030", "RM-029"]}, "RM-035": {"ancestors": ["RM-043", "RM-002", "RM-009", "RM-010", "RM-006", "RM-023", "RM-021", "RM-001", "RM-003", "RM-041", "RM-005", "RM-013", "RM-022", "RM-004"], "descendants": ["RM-048", "RM-043", "RM-050"]}, "RM-036": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-023", "RM-001", "RM-021", "RM-003", "RM-005", "RM-022", "RM-004"], "descendants": ["RM-037", "RM-047", "RM-050", "RM-046"]}, "RM-037": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-023", "RM-036", "RM-001", "RM-021", "RM-003", "RM-005", "RM-022", "RM-004"], "descendants": ["RM-050"]}, "RM-038": {"ancestors": ["RM-002", "RM-003", "RM-001", "RM-005", "RM-004"], "descendants": ["RM-050"]}, "RM-039": {"ancestors": ["RM-002", "RM-009", "RM-020", "RM-033", "RM-010", "RM-006", "RM-017", "RM-034", "RM-001", "RM-003", "RM-014", "RM-013", "RM-005", "RM-004", "RM-029"], "descendants": ["RM-050"]}, "RM-040": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-021", "RM-001", "RM-003", "RM-011", "RM-005", "RM-022", "RM-004", "RM-013"], "descendants": ["RM-050"]}, "RM-041": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-023", "RM-021", "RM-001", "RM-003", "RM-005", "RM-013", "RM-022", "RM-004"], "descendants": ["RM-043", "RM-049", "RM-050", "RM-035", "RM-048"]}, "RM-042": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-021", "RM-001", "RM-003", "RM-005", "RM-022", "RM-004"], "descendants": ["RM-050"]}, "RM-043": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-023", "RM-021", "RM-001", "RM-003", "RM-041", "RM-005", "RM-013", "RM-035", "RM-022", "RM-004"], "descendants": ["RM-035", "RM-050", "RM-048"]}, "RM-044": {"ancestors": ["RM-002", "RM-009", "RM-020", "RM-010", "RM-006", "RM-023", "RM-021", "RM-001", "RM-027", "RM-003", "RM-024", "RM-013", "RM-014", "RM-022", "RM-005", "RM-004"], "descendants": ["RM-050"]}, "RM-045": {"ancestors": ["RM-033", "RM-034"], "descendants": ["RM-050"]}, "RM-046": {"ancestors": ["RM-019", "RM-002", "RM-009", "RM-020", "RM-010", "RM-006", "RM-036", "RM-023", "RM-001", "RM-021", "RM-003", "RM-011", "RM-014", "RM-013", "RM-005", "RM-022", "RM-004"], "descendants": ["RM-050"]}, "RM-047": {"ancestors": ["RM-002", "RM-009", "RM-032", "RM-010", "RM-033", "RM-023", "RM-036", "RM-034", "RM-001", "RM-021", "RM-006", "RM-003", "RM-005", "RM-013", "RM-022", "RM-004"], "descendants": ["RM-050"]}, "RM-048": {"ancestors": ["RM-043", "RM-002", "RM-009", "RM-010", "RM-006", "RM-023", "RM-021", "RM-001", "RM-003", "RM-041", "RM-005", "RM-013", "RM-035", "RM-022", "RM-004"], "descendants": ["RM-050"]}, "RM-049": {"ancestors": ["RM-002", "RM-009", "RM-010", "RM-006", "RM-023", "RM-001", "RM-003", "RM-021", "RM-011", "RM-041", "RM-005", "RM-013", "RM-022", "RM-004"], "descendants": ["RM-050"]}, "RM-050": {"ancestors": ["RM-025", "RM-015", "RM-028", "RM-009", "RM-031", "RM-020", "RM-010", "RM-047", "RM-016", "RM-027", "RM-038", "RM-045", "RM-040", "RM-014", "RM-035", "RM-008", "RM-037", "RM-004", "RM-019", "RM-043", "RM-002", "RM-032", "RM-021", "RM-034", "RM-046", "RM-018", "RM-005", "RM-022", "RM-029", "RM-012", "RM-049", "RM-033", "RM-006", "RM-023", "RM-024", "RM-041", "RM-044", "RM-039", "RM-042", "RM-003", "RM-001", "RM-017", "RM-036", "RM-011", "RM-013", "RM-007", "RM-030", "RM-048", "RM-026"], "descendants": []}};
+    (function() {
+        // Data
+        const nodeData = {"RM-001": {"area": "Ingesta", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Registro de brokers", "requisito": "El sistema deberá permitir cargar y administrar una lista configurable de N brokers con 1..N URLs de perfil por broker y metadatos (broker_id, nombre, región, etiquetas/estrategia). Debe soportar importación masiva (CSV) y edición incremental.", "owner": "Backend", "roles": "Admin; Sistema", "estatus": "BACKLOG", "dependencias": "—", "in_degree": 0, "out_degree": 4}, "RM-002": {"area": "Ingesta", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Validación de URL", "requisito": "Antes de ejecutar extracción, el sistema deberá validar cada URL (sintaxis, esquema, dominio permitido, alcanzabilidad HTTP/DNS) y persistir el resultado con código de error y política de reintento.", "owner": "Backend", "roles": "Sistema; Admin", "estatus": "BACKLOG", "dependencias": "RM-001", "in_degree": 1, "out_degree": 2}, "RM-003": {"area": "Ingesta", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Políticas de acceso por dominio (robots/ToS)", "requisito": "El sistema deberá registrar políticas por dominio (robots.txt snapshot, rate limit, notas ToS internas) y hacer cumplir dichas políticas durante la extracción. Debe permitir bloquear dominios o pausar scraping.", "owner": "Backend/DevOps", "roles": "Admin; DevOps; Sistema", "estatus": "BACKLOG", "dependencias": "RM-001,RM-002", "in_degree": 2, "out_degree": 3}, "RM-004": {"area": "Ingesta", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Scheduler de crawls", "requisito": "El sistema deberá soportar ejecución programada (horario configurable por proyecto y/o por broker) y refresh on-demand por broker, generando jobs con trazabilidad (run_id, broker_id, created_by).", "owner": "Backend/DevOps", "roles": "Admin; Analista; Sistema", "estatus": "BACKLOG", "dependencias": "RM-001", "in_degree": 1, "out_degree": 5}, "RM-005": {"area": "Ingesta", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Rate limiting, retries y circuit breaker", "requisito": "El sistema deberá implementar rate limiting por dominio, retries con exponential backoff y circuit breaker ante fallas repetidas. Debe registrar métricas de requests y errores.", "owner": "Backend/DevOps", "roles": "Sistema; DevOps", "estatus": "BACKLOG", "dependencias": "RM-003", "in_degree": 1, "out_degree": 3}, "RM-006": {"area": "Extracción", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Parser HTML por dominio", "requisito": "El sistema deberá extraer datos crudos desde HTML usando adaptadores por dominio (selectores/mapeos) mantenibles y testeables, versionando el parser.", "owner": "Backend", "roles": "Sistema; Backend", "estatus": "BACKLOG", "dependencias": "RM-004,RM-005", "in_degree": 2, "out_degree": 6}, "RM-007": {"area": "Extracción", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Soporte JSON/API cuando exista", "requisito": "Si el perfil expone datos vía JSON/API (directo o embebido), el adaptador deberá preferir esa fuente por estabilidad y registrar el endpoint utilizado.", "owner": "Backend", "roles": "Sistema; Backend", "estatus": "BACKLOG", "dependencias": "RM-006", "in_degree": 1, "out_degree": 1}, "RM-008": {"area": "Extracción", "prioridad": "Baja (P2)", "version": "v0.3", "funcionalidad": "Descarga de adjuntos relevantes", "requisito": "El sistema deberá detectar y descargar adjuntos/links (PDF u otros permitidos) asociados al perfil cuando estén presentes y permitidos por política, guardando checksum y metadatos.", "owner": "Backend", "roles": "Sistema; Backend", "estatus": "BACKLOG", "dependencias": "RM-003,RM-006", "in_degree": 2, "out_degree": 1}, "RM-009": {"area": "Modelo de datos", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Almacenamiento de datos crudos versionados", "requisito": "El sistema deberá guardar registros crudos inmutables con URL fuente, timestamp, parser_version, content_hash y payload (JSON). No debe sobrescribir datos crudos.", "owner": "Backend", "roles": "Sistema; Backend", "estatus": "BACKLOG", "dependencias": "RM-006", "in_degree": 1, "out_degree": 6}, "RM-010": {"area": "Modelo de datos", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Entidades normalizadas y snapshots", "requisito": "El sistema deberá normalizar datos crudos a entidades núcleo (Broker, ProfileSnapshot, MetricDefinition, MetricValue, Run, Experiment) y soportar snapshots temporalmente indexados.", "owner": "Backend", "roles": "Backend; Quant; Sistema", "estatus": "BACKLOG", "dependencias": "RM-009", "in_degree": 1, "out_degree": 6}, "RM-011": {"area": "Transformación", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Reglas de mapeo configurables", "requisito": "El sistema deberá permitir definir reglas de mapeo (por dominio) desde campos crudos a campos normalizados, con versionado y capacidad de rollback. Idealmente sin despliegue de código para cambios menores.", "owner": "Backend", "roles": "Admin; Backend; Quant", "estatus": "BACKLOG", "dependencias": "RM-010", "in_degree": 1, "out_degree": 5}, "RM-012": {"area": "Transformación", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Limpieza y estandarización de datos", "requisito": "El sistema deberá limpiar y estandarizar formatos (fechas, divisas, porcentajes, locales) a formatos canónicos y registrar errores de parseo por campo.", "owner": "Backend", "roles": "Backend; Sistema", "estatus": "BACKLOG", "dependencias": "RM-011", "in_degree": 1, "out_degree": 1}, "RM-013": {"area": "Métricas", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Catálogo de definiciones de métricas", "requisito": "El sistema deberá mantener un registro versionado de métricas (nombre, fórmula/algoritmo, insumos requeridos, unidad, rango válido, y constraints). Será la fuente única para cómputo y reporteo.", "owner": "Backend/Quant", "roles": "Quant; Backend; Admin", "estatus": "BACKLOG", "dependencias": "RM-010", "in_degree": 1, "out_degree": 10}, "RM-014": {"area": "Métricas", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Cálculo de métricas core", "requisito": "El sistema deberá calcular métricas base por broker y por periodo (p.ej. rendimiento, volatilidad, drawdown, win-rate) a partir de los datos disponibles, y manejar explícitamente el caso de 'datos insuficientes'.", "owner": "Quant", "roles": "Quant; Sistema", "estatus": "BACKLOG", "dependencias": "RM-013", "in_degree": 1, "out_degree": 6}, "RM-015": {"area": "Métricas", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Métricas de costos/fees", "requisito": "El sistema deberá calcular métricas relacionadas a costos/fees/spread cuando existan, documentando supuestos y anexándolos a reportes y exportaciones.", "owner": "Quant", "roles": "Quant; Analista", "estatus": "BACKLOG", "dependencias": "RM-013", "in_degree": 1, "out_degree": 1}, "RM-016": {"area": "Métricas", "prioridad": "Baja (P2)", "version": "v0.3", "funcionalidad": "Flags de riesgo/compliance basados en reglas", "requisito": "El sistema deberá evaluar reglas determinísticas para generar banderas (p.ej. disclosures faltantes, claims anómalos) y adjuntar evidencia (campo crudo + snapshot) para cada flag.", "owner": "Quant/Backend", "roles": "Quant; Analista; Admin", "estatus": "BACKLOG", "dependencias": "RM-013,RM-020", "in_degree": 2, "out_degree": 1}, "RM-017": {"area": "Métricas", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Benchmarks, percentiles y rankings", "requisito": "El sistema deberá generar agregados cross-broker (percentiles, rankings, peer groups) con definiciones versionadas de peer group y desempate determinístico.", "owner": "Quant", "roles": "Analista; Viewer", "estatus": "BACKLOG", "dependencias": "RM-014", "in_degree": 1, "out_degree": 4}, "RM-018": {"area": "Calidad de datos", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Score de completitud", "requisito": "El sistema deberá calcular un score de completitud por broker y por métrica en [0,1], basado en disponibilidad de insumos y cobertura temporal. Debe mostrarse en dashboard y reportes.", "owner": "Backend/Quant", "roles": "Analista; Viewer", "estatus": "BACKLOG", "dependencias": "RM-013,RM-014", "in_degree": 2, "out_degree": 2}, "RM-019": {"area": "Calidad de datos", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Detección de anomalías", "requisito": "El sistema deberá detectar anomalías (saltos bruscos de métricas, huecos temporales, cambios de parser/mapping) y etiquetar resultados afectados; debe permitir filtrar anomalías en validación del algoritmo.", "owner": "Quant/Backend", "roles": "Analista; Quant; DevOps", "estatus": "BACKLOG", "dependencias": "RM-014,RM-011,RM-009", "in_degree": 3, "out_degree": 3}, "RM-020": {"area": "Auditabilidad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Lineage de métricas a raw data", "requisito": "El sistema deberá proveer trazabilidad desde cualquier valor de métrica/ranking/reporte hasta los raw_records y transformaciones usadas (parser_version, mapping_version, metric_definition_version).", "owner": "Backend", "roles": "Analista; Admin", "estatus": "BACKLOG", "dependencias": "RM-009,RM-013", "in_degree": 2, "out_degree": 5}, "RM-021": {"area": "Validación de algoritmo", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Contrato de integración del algoritmo", "requisito": "El sistema deberá integrar el algoritmo de optimización del cliente mediante una interfaz definida (CLI/API/librería) con versionado (algorithm_build_id) y entradas/salidas determinísticas o con tolerancia definida.", "owner": "Backend/Quant", "roles": "Quant; Backend; DevOps", "estatus": "BACKLOG", "dependencias": "RM-022", "in_degree": 1, "out_degree": 4}, "RM-022": {"area": "Validación de algoritmo", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Constructor de datasets (feature matrix)", "requisito": "El sistema deberá construir datasets de validación desde datos normalizados (features, targets/labels si aplica) con ventanas temporales explícitas y metadatos (schema_version, broker_set, feature_list).", "owner": "Quant/Backend", "roles": "Quant; Analista", "estatus": "BACKLOG", "dependencias": "RM-010", "in_degree": 1, "out_degree": 5}, "RM-023": {"area": "Validación de algoritmo", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Runner de backtests/experimentos", "requisito": "El sistema deberá ejecutar runs de validación sobre datasets seleccionados, guardando parámetros, logs, outputs, y métricas de ejecución. Debe soportar tipos de run (train/validate/test) si aplica.", "owner": "Quant/Backend", "roles": "Quant; Analista", "estatus": "BACKLOG", "dependencias": "RM-021,RM-022", "in_degree": 2, "out_degree": 8}, "RM-024": {"area": "Validación de algoritmo", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Métricas de evaluación y scorecards", "requisito": "El sistema deberá calcular métricas de evaluación (error, estabilidad, violaciones de constraints, uplift vs baseline) según el objetivo del cliente, con thresholds configurables para pass/fail.", "owner": "Quant", "roles": "Quant; Analista; Viewer", "estatus": "BACKLOG", "dependencias": "RM-023,RM-013", "in_degree": 2, "out_degree": 4}, "RM-025": {"area": "Validación de algoritmo", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Diagnósticos y sensibilidad", "requisito": "El sistema deberá generar diagnósticos para runs (p.ej. análisis de fallos, frecuencia de constraints activas, ablation/feature importance si aplica) y exportarlos en reporte técnico.", "owner": "Quant", "roles": "Quant; Analista", "estatus": "BACKLOG", "dependencias": "RM-023,RM-024", "in_degree": 2, "out_degree": 1}, "RM-026": {"area": "Validación de algoritmo", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "What-if y parameter sweeps", "requisito": "El sistema deberá permitir ejecutar batch de escenarios (fees ±x, imputación, distintos thresholds) y comparar resultados en una tabla/visualización única.", "owner": "Quant/Backend", "roles": "Quant; Analista", "estatus": "BACKLOG", "dependencias": "RM-023", "in_degree": 1, "out_degree": 1}, "RM-027": {"area": "Reportes", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Plantillas y generación de reportes", "requisito": "El sistema deberá generar reportes (HTML/PDF) a partir de plantillas con secciones: overview brokers, tablas de métricas, scorecards de validación, anomalías y appendix de metodología + versiones.", "owner": "Backend", "roles": "Analista; Viewer; Admin", "estatus": "BACKLOG", "dependencias": "RM-014,RM-024,RM-020", "in_degree": 3, "out_degree": 3}, "RM-028": {"area": "Reportes", "prioridad": "Baja (P2)", "version": "v0.3", "funcionalidad": "Distribución programada", "requisito": "El sistema deberá soportar generación y distribución programada de reportes (link seguro, email y/o webhook), con reintentos y alertas de falla.", "owner": "Backend/DevOps", "roles": "Admin; DevOps; Sistema", "estatus": "BACKLOG", "dependencias": "RM-027,RM-004,RM-034", "in_degree": 3, "out_degree": 1}, "RM-029": {"area": "Dashboard", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Vistas core del dashboard", "requisito": "El sistema deberá proveer dashboard con: lista de brokers + filtros, página detalle broker con charts, y resumen de validación del algoritmo; debe soportar drill-down a lineage.", "owner": "Frontend", "roles": "Viewer; Analista; Admin", "estatus": "BACKLOG", "dependencias": "RM-014,RM-017,RM-020,RM-033,RM-034", "in_degree": 5, "out_degree": 2}, "RM-030": {"area": "Dashboard", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Comparaciones y rankings", "requisito": "El sistema deberá permitir comparación side-by-side de brokers y tablas de ranking con columnas configurables, ordenamiento y exportación.", "owner": "Frontend", "roles": "Viewer; Analista", "estatus": "BACKLOG", "dependencias": "RM-017,RM-032,RM-018,RM-019", "in_degree": 4, "out_degree": 1}, "RM-031": {"area": "Dashboard", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Explorador de runs/experimentos", "requisito": "El sistema deberá proveer UI para explorar runs (filtros por versión, parámetros, fecha, estado) y comparar 2+ runs, mostrando diffs y scorecards.", "owner": "Frontend", "roles": "Analista; Quant", "estatus": "BACKLOG", "dependencias": "RM-023,RM-024,RM-034", "in_degree": 3, "out_degree": 1}, "RM-032": {"area": "Exportación", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Exports de datos y resultados", "requisito": "El sistema deberá exportar (CSV/JSON) registro de brokers, métricas y resultados de runs con metadatos de schema y unidades; exports grandes deben ser asíncronos.", "owner": "Backend", "roles": "Analista; Admin", "estatus": "BACKLOG", "dependencias": "RM-010,RM-013,RM-034", "in_degree": 3, "out_degree": 3}, "RM-033": {"area": "Seguridad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Autenticación", "requisito": "El sistema deberá requerir autenticación para dashboard, reportes y exports (email/password o SSO/OIDC), con sesiones seguras, CSRF donde aplique y políticas de password.", "owner": "Backend/DevOps", "roles": "Admin; Viewer; Analista", "estatus": "BACKLOG", "dependencias": "—", "in_degree": 0, "out_degree": 3}, "RM-034": {"area": "Seguridad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Autorización y roles (RBAC)", "requisito": "El sistema deberá implementar RBAC (Admin, Analista, Viewer) controlando: alta/edición brokers, ejecución runs, exports, cambios de políticas y acceso a auditorías.", "owner": "Backend/Frontend", "roles": "Admin; Analista; Viewer", "estatus": "BACKLOG", "dependencias": "RM-033", "in_degree": 1, "out_degree": 6}, "RM-035": {"area": "Seguridad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Gestión de secretos", "requisito": "El sistema deberá gestionar secretos (API keys, SMTP, webhooks) fuera del repositorio (env/secret manager) y activar detección de secretos en CI.", "owner": "DevOps", "roles": "DevOps", "estatus": "BACKLOG", "dependencias": "RM-043", "in_degree": 1, "out_degree": 2}, "RM-036": {"area": "Observabilidad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Logging estructurado con correlación", "requisito": "El sistema deberá emitir logs estructurados (JSON) para ingesta, transformación, métricas y runs con correlation_id (run_id, broker_id, job_id) y niveles consistentes.", "owner": "DevOps", "roles": "DevOps; Backend", "estatus": "BACKLOG", "dependencias": "RM-004,RM-023", "in_degree": 2, "out_degree": 4}, "RM-037": {"area": "Observabilidad", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Métricas y alertas operativas", "requisito": "El sistema deberá exponer métricas (duración de jobs, tasa de éxito, errores de scraping, latencia API) y alertas por umbrales (p.ej. fallas >X%, retrasos).", "owner": "DevOps", "roles": "DevOps; Admin", "estatus": "BACKLOG", "dependencias": "RM-036", "in_degree": 1, "out_degree": 1}, "RM-038": {"area": "Performance", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Throughput del pipeline", "requisito": "El sistema deberá procesar al menos 100 URLs end-to-end dentro de un SLA configurable (p.ej. <30 min) usando paralelismo sin violar rate limits por dominio.", "owner": "Backend/DevOps", "roles": "DevOps; Backend", "estatus": "BACKLOG", "dependencias": "RM-005,RM-004", "in_degree": 2, "out_degree": 1}, "RM-039": {"area": "Performance", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Responsividad del dashboard", "requisito": "El sistema deberá mantener interacciones del dashboard con P95 <2s para consultas típicas y <10s para consultas pesadas, mostrando indicador de progreso si aplica.", "owner": "Backend/Frontend", "roles": "Frontend; Backend", "estatus": "BACKLOG", "dependencias": "RM-029,RM-017", "in_degree": 2, "out_degree": 1}, "RM-040": {"area": "Reproducibilidad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Versionado end-to-end de componentes", "requisito": "El sistema deberá versionar y relacionar parsers, mapeos, definiciones de métricas, datasets y builds del algoritmo, y asociarlos a cada run y reporte.", "owner": "Backend/Quant", "roles": "Quant; Backend", "estatus": "BACKLOG", "dependencias": "RM-009,RM-011,RM-013,RM-021,RM-022", "in_degree": 5, "out_degree": 1}, "RM-041": {"area": "Testing", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Suite de unit/integration/E2E", "requisito": "El sistema deberá incluir pruebas automáticas para parsers, transformaciones, métricas y runner del algoritmo. Debe usar fixtures grabadas (no depender de sitios live) y seguir enfoque RED/GREEN.", "owner": "All", "roles": "Backend; Quant; Frontend", "estatus": "BACKLOG", "dependencias": "RM-006,RM-013,RM-023", "in_degree": 3, "out_degree": 3}, "RM-042": {"area": "Testing", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Data contract tests (schemas)", "requisito": "El sistema deberá aplicar data contracts entre extracción→normalización→dataset→algoritmo (schemas versionados) y fallar CI ante cambios rompientes.", "owner": "Backend", "roles": "Backend; Quant", "estatus": "BACKLOG", "dependencias": "RM-010,RM-022,RM-021", "in_degree": 3, "out_degree": 1}, "RM-043": {"area": "DevOps", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "CI/CD + migraciones + rollback", "requisito": "El sistema deberá contar con CI/CD para build, tests, deploy y migraciones DB, con promoción de ambientes (dev/stage/prod) y procedimiento de rollback probado.", "owner": "DevOps", "roles": "DevOps", "estatus": "BACKLOG", "dependencias": "RM-041,RM-035", "in_degree": 2, "out_degree": 3}, "RM-044": {"area": "Gobernanza de datos", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Retención y archivado", "requisito": "El sistema deberá definir políticas de retención para raw_records, snapshots, outputs de runs, logs y reportes (purga/archivado) sin dejar referencias huérfanas.", "owner": "Backend/DevOps", "roles": "Admin; DevOps", "estatus": "BACKLOG", "dependencias": "RM-009,RM-023,RM-027", "in_degree": 3, "out_degree": 1}, "RM-045": {"area": "Gobernanza", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Bitácora de auditoría de acciones críticas", "requisito": "El sistema deberá registrar eventos de auditoría para: cambios de brokers/URLs, ejecuciones de runs, exports, cambios de roles, cambios de políticas, y accesos a reportes/lineage.", "owner": "Backend", "roles": "Admin", "estatus": "BACKLOG", "dependencias": "RM-034", "in_degree": 1, "out_degree": 1}, "RM-046": {"area": "UX", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Transparencia de errores y remediación", "requisito": "El sistema deberá mostrar errores claros y accionables (parser roto, dominio bloqueado, datos insuficientes, run fallido), con pasos sugeridos y links a evidencia (logs/lineage).", "owner": "Frontend", "roles": "Viewer; Analista; Admin", "estatus": "BACKLOG", "dependencias": "RM-019,RM-036,RM-020", "in_degree": 3, "out_degree": 1}, "RM-047": {"area": "Privacidad", "prioridad": "Baja (P2)", "version": "v0.3", "funcionalidad": "Minimización y redacción de datos", "requisito": "El sistema deberá almacenar sólo campos necesarios y permitir redacción/omisión de campos sensibles (si aparecen) en salidas (dash/report/export) según política.", "owner": "Backend/DevOps", "roles": "Admin; DevOps", "estatus": "BACKLOG", "dependencias": "RM-036,RM-032", "in_degree": 2, "out_degree": 1}, "RM-048": {"area": "Documentación", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Docs técnicas y operativas", "requisito": "El sistema deberá incluir documentación: setup local, despliegue, runbooks, catálogo de métricas, cómo agregar un nuevo dominio/adaptador y cómo ejecutar validación del algoritmo.", "owner": "All", "roles": "All", "estatus": "BACKLOG", "dependencias": "RM-043", "in_degree": 1, "out_degree": 1}, "RM-049": {"area": "Extensibilidad", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Onboarding de nuevo dominio/fuente", "requisito": "El sistema deberá ofrecer un proceso estándar (template de adapter + mapping + fixtures + tests) para agregar un nuevo dominio en <=1 día para un sitio típico.", "owner": "Backend", "roles": "Backend; Quant", "estatus": "BACKLOG", "dependencias": "RM-006,RM-011,RM-041", "in_degree": 3, "out_degree": 1}, "RM-050": {"area": "Entregables", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Criterio de aceptación del MVP", "requisito": "El MVP deberá incluir: registro de brokers+URLs, scheduler, extracción+normalización, métricas core, dashboard básico, construcción de dataset, ejecución de runs, scorecard, y generación de reportes con versionado/lineage.", "owner": "PM/All", "roles": "PM; Admin; Analista", "estatus": "BACKLOG", "dependencias": "RM-001..RM-049", "in_degree": 49, "out_degree": 0}};
+        const subgraphData = {"RM-001": {"ancestors": [], "descendants": ["RM-027", "RM-046", "RM-043", "RM-031", "RM-038", "RM-047", "RM-008", "RM-029", "RM-048", "RM-009", "RM-040", "RM-044", "RM-017", "RM-003", "RM-015", "RM-010", "RM-007", "RM-030", "RM-022", "RM-025", "RM-013", "RM-041", "RM-012", "RM-036", "RM-016", "RM-028", "RM-020", "RM-002", "RM-039", "RM-026", "RM-042", "RM-011", "RM-018", "RM-006", "RM-050", "RM-049", "RM-004", "RM-032", "RM-035", "RM-037", "RM-019", "RM-021", "RM-024", "RM-023", "RM-014", "RM-005"]}, "RM-002": {"ancestors": ["RM-001"], "descendants": ["RM-027", "RM-043", "RM-046", "RM-031", "RM-038", "RM-047", "RM-008", "RM-029", "RM-048", "RM-009", "RM-040", "RM-044", "RM-017", "RM-003", "RM-015", "RM-010", "RM-007", "RM-030", "RM-022", "RM-025", "RM-013", "RM-041", "RM-012", "RM-036", "RM-016", "RM-028", "RM-020", "RM-039", "RM-026", "RM-042", "RM-011", "RM-018", "RM-006", "RM-050", "RM-049", "RM-032", "RM-035", "RM-037", "RM-019", "RM-021", "RM-024", "RM-023", "RM-014", "RM-005"]}, "RM-003": {"ancestors": ["RM-001", "RM-002"], "descendants": ["RM-027", "RM-043", "RM-046", "RM-031", "RM-038", "RM-047", "RM-008", "RM-029", "RM-048", "RM-009", "RM-040", "RM-044", "RM-017", "RM-015", "RM-010", "RM-007", "RM-030", "RM-022", "RM-025", "RM-013", "RM-041", "RM-012", "RM-036", "RM-016", "RM-028", "RM-020", "RM-039", "RM-026", "RM-042", "RM-011", "RM-018", "RM-006", "RM-050", "RM-049", "RM-032", "RM-035", "RM-037", "RM-019", "RM-021", "RM-024", "RM-023", "RM-014", "RM-005"]}, "RM-004": {"ancestors": ["RM-001"], "descendants": ["RM-027", "RM-046", "RM-043", "RM-038", "RM-047", "RM-008", "RM-029", "RM-048", "RM-009", "RM-040", "RM-044", "RM-017", "RM-015", "RM-010", "RM-007", "RM-030", "RM-022", "RM-025", "RM-013", "RM-041", "RM-012", "RM-036", "RM-016", "RM-028", "RM-020", "RM-039", "RM-026", "RM-042", "RM-011", "RM-018", "RM-006", "RM-050", "RM-049", "RM-032", "RM-035", "RM-037", "RM-019", "RM-021", "RM-024", "RM-023", "RM-014", "RM-031"]}, "RM-005": {"ancestors": ["RM-003", "RM-001", "RM-002"], "descendants": ["RM-027", "RM-043", "RM-046", "RM-038", "RM-047", "RM-008", "RM-029", "RM-048", "RM-009", "RM-040", "RM-044", "RM-017", "RM-015", "RM-010", "RM-007", "RM-030", "RM-022", "RM-025", "RM-013", "RM-041", "RM-012", "RM-036", "RM-016", "RM-028", "RM-020", "RM-039", "RM-026", "RM-042", "RM-011", "RM-018", "RM-006", "RM-050", "RM-049", "RM-032", "RM-035", "RM-037", "RM-019", "RM-021", "RM-024", "RM-023", "RM-014", "RM-031"]}, "RM-006": {"ancestors": ["RM-004", "RM-002", "RM-003", "RM-005", "RM-001"], "descendants": ["RM-027", "RM-043", "RM-046", "RM-047", "RM-008", "RM-029", "RM-048", "RM-009", "RM-040", "RM-044", "RM-017", "RM-015", "RM-010", "RM-007", "RM-030", "RM-022", "RM-025", "RM-013", "RM-041", "RM-012", "RM-036", "RM-016", "RM-028", "RM-020", "RM-039", "RM-026", "RM-042", "RM-011", "RM-018", "RM-050", "RM-049", "RM-032", "RM-035", "RM-037", "RM-019", "RM-021", "RM-024", "RM-023", "RM-014", "RM-031"]}, "RM-007": {"ancestors": ["RM-004", "RM-002", "RM-006", "RM-003", "RM-005", "RM-001"], "descendants": ["RM-050"]}, "RM-008": {"ancestors": ["RM-004", "RM-002", "RM-006", "RM-003", "RM-005", "RM-001"], "descendants": ["RM-050"]}, "RM-009": {"ancestors": ["RM-004", "RM-002", "RM-006", "RM-003", "RM-005", "RM-001"], "descendants": ["RM-027", "RM-046", "RM-043", "RM-047", "RM-029", "RM-048", "RM-017", "RM-040", "RM-044", "RM-015", "RM-010", "RM-030", "RM-022", "RM-025", "RM-013", "RM-041", "RM-012", "RM-036", "RM-016", "RM-028", "RM-020", "RM-039", "RM-026", "RM-042", "RM-011", "RM-018", "RM-050", "RM-049", "RM-032", "RM-035", "RM-037", "RM-019", "RM-021", "RM-024", "RM-023", "RM-014", "RM-031"]}, "RM-010": {"ancestors": ["RM-004", "RM-002", "RM-009", "RM-006", "RM-003", "RM-005", "RM-001"], "descendants": ["RM-027", "RM-046", "RM-043", "RM-047", "RM-029", "RM-048", "RM-017", "RM-040", "RM-044", "RM-015", "RM-030", "RM-022", "RM-025", "RM-013", "RM-041", "RM-012", "RM-036", "RM-016", "RM-028", "RM-020", "RM-039", "RM-026", "RM-042", "RM-011", "RM-018", "RM-050", "RM-049", "RM-032", "RM-035", "RM-037", "RM-019", "RM-021", "RM-024", "RM-023", "RM-014", "RM-031"]}, "RM-011": {"ancestors": ["RM-004", "RM-002", "RM-009", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050", "RM-046", "RM-049", "RM-030", "RM-019", "RM-012", "RM-040"]}, "RM-012": {"ancestors": ["RM-004", "RM-002", "RM-011", "RM-009", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050"]}, "RM-013": {"ancestors": ["RM-004", "RM-002", "RM-009", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-027", "RM-046", "RM-043", "RM-047", "RM-029", "RM-048", "RM-017", "RM-040", "RM-044", "RM-015", "RM-030", "RM-025", "RM-041", "RM-016", "RM-028", "RM-020", "RM-039", "RM-018", "RM-050", "RM-049", "RM-032", "RM-035", "RM-019", "RM-024", "RM-014", "RM-031"]}, "RM-014": {"ancestors": ["RM-004", "RM-002", "RM-013", "RM-009", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-027", "RM-050", "RM-046", "RM-030", "RM-028", "RM-039", "RM-019", "RM-029", "RM-018", "RM-017", "RM-044"]}, "RM-015": {"ancestors": ["RM-004", "RM-002", "RM-013", "RM-009", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050"]}, "RM-016": {"ancestors": ["RM-020", "RM-004", "RM-002", "RM-013", "RM-009", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050"]}, "RM-017": {"ancestors": ["RM-004", "RM-002", "RM-013", "RM-003", "RM-009", "RM-006", "RM-014", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-039", "RM-050", "RM-030", "RM-029"]}, "RM-018": {"ancestors": ["RM-004", "RM-002", "RM-013", "RM-003", "RM-009", "RM-006", "RM-014", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050", "RM-030"]}, "RM-019": {"ancestors": ["RM-004", "RM-002", "RM-013", "RM-003", "RM-011", "RM-009", "RM-006", "RM-014", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050", "RM-046", "RM-030"]}, "RM-020": {"ancestors": ["RM-004", "RM-002", "RM-013", "RM-009", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-027", "RM-046", "RM-050", "RM-028", "RM-039", "RM-029", "RM-044", "RM-016"]}, "RM-021": {"ancestors": ["RM-004", "RM-022", "RM-002", "RM-009", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-027", "RM-046", "RM-043", "RM-047", "RM-048", "RM-040", "RM-044", "RM-025", "RM-041", "RM-036", "RM-028", "RM-026", "RM-042", "RM-050", "RM-049", "RM-035", "RM-037", "RM-024", "RM-023", "RM-031"]}, "RM-022": {"ancestors": ["RM-004", "RM-002", "RM-009", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-027", "RM-046", "RM-043", "RM-047", "RM-048", "RM-040", "RM-044", "RM-025", "RM-041", "RM-036", "RM-028", "RM-026", "RM-042", "RM-050", "RM-049", "RM-035", "RM-037", "RM-021", "RM-024", "RM-023", "RM-031"]}, "RM-023": {"ancestors": ["RM-004", "RM-022", "RM-002", "RM-021", "RM-009", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050", "RM-027", "RM-046", "RM-043", "RM-049", "RM-028", "RM-025", "RM-037", "RM-026", "RM-035", "RM-047", "RM-041", "RM-024", "RM-048", "RM-044", "RM-031", "RM-036"]}, "RM-024": {"ancestors": ["RM-004", "RM-022", "RM-002", "RM-013", "RM-021", "RM-009", "RM-023", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-027", "RM-050", "RM-028", "RM-025", "RM-044", "RM-031"]}, "RM-025": {"ancestors": ["RM-004", "RM-022", "RM-002", "RM-013", "RM-021", "RM-024", "RM-009", "RM-023", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050"]}, "RM-026": {"ancestors": ["RM-004", "RM-022", "RM-002", "RM-021", "RM-009", "RM-023", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050"]}, "RM-027": {"ancestors": ["RM-020", "RM-022", "RM-004", "RM-013", "RM-002", "RM-021", "RM-003", "RM-024", "RM-009", "RM-023", "RM-006", "RM-014", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050", "RM-028", "RM-044"]}, "RM-028": {"ancestors": ["RM-027", "RM-004", "RM-020", "RM-022", "RM-013", "RM-002", "RM-021", "RM-003", "RM-034", "RM-024", "RM-009", "RM-033", "RM-023", "RM-006", "RM-014", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050"]}, "RM-029": {"ancestors": ["RM-020", "RM-004", "RM-002", "RM-013", "RM-003", "RM-034", "RM-017", "RM-009", "RM-033", "RM-006", "RM-014", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-039", "RM-050"]}, "RM-030": {"ancestors": ["RM-032", "RM-004", "RM-002", "RM-013", "RM-019", "RM-003", "RM-034", "RM-018", "RM-017", "RM-011", "RM-009", "RM-033", "RM-006", "RM-014", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050"]}, "RM-031": {"ancestors": ["RM-004", "RM-022", "RM-002", "RM-013", "RM-021", "RM-034", "RM-024", "RM-009", "RM-033", "RM-023", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050"]}, "RM-032": {"ancestors": ["RM-004", "RM-002", "RM-013", "RM-034", "RM-009", "RM-033", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050", "RM-047", "RM-030"]}, "RM-033": {"ancestors": [], "descendants": ["RM-050", "RM-028", "RM-032", "RM-030", "RM-039", "RM-045", "RM-047", "RM-029", "RM-034", "RM-031"]}, "RM-034": {"ancestors": ["RM-033"], "descendants": ["RM-050", "RM-028", "RM-032", "RM-030", "RM-039", "RM-045", "RM-047", "RM-029", "RM-031"]}, "RM-035": {"ancestors": ["RM-043", "RM-004", "RM-022", "RM-002", "RM-013", "RM-021", "RM-041", "RM-009", "RM-023", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050", "RM-043", "RM-048"]}, "RM-036": {"ancestors": ["RM-004", "RM-022", "RM-002", "RM-021", "RM-009", "RM-023", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-037", "RM-046", "RM-050", "RM-047"]}, "RM-037": {"ancestors": ["RM-004", "RM-022", "RM-002", "RM-021", "RM-036", "RM-009", "RM-023", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050"]}, "RM-038": {"ancestors": ["RM-004", "RM-002", "RM-003", "RM-005", "RM-001"], "descendants": ["RM-050"]}, "RM-039": {"ancestors": ["RM-020", "RM-004", "RM-002", "RM-013", "RM-029", "RM-003", "RM-034", "RM-017", "RM-009", "RM-033", "RM-006", "RM-014", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050"]}, "RM-040": {"ancestors": ["RM-004", "RM-022", "RM-002", "RM-013", "RM-021", "RM-011", "RM-009", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050"]}, "RM-041": {"ancestors": ["RM-004", "RM-022", "RM-002", "RM-013", "RM-021", "RM-009", "RM-023", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050", "RM-043", "RM-049", "RM-035", "RM-048"]}, "RM-042": {"ancestors": ["RM-004", "RM-022", "RM-002", "RM-021", "RM-009", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050"]}, "RM-043": {"ancestors": ["RM-004", "RM-022", "RM-035", "RM-013", "RM-002", "RM-021", "RM-041", "RM-009", "RM-023", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-035", "RM-050", "RM-048"]}, "RM-044": {"ancestors": ["RM-027", "RM-020", "RM-022", "RM-004", "RM-013", "RM-002", "RM-021", "RM-003", "RM-009", "RM-024", "RM-023", "RM-006", "RM-014", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050"]}, "RM-045": {"ancestors": ["RM-034", "RM-033"], "descendants": ["RM-050"]}, "RM-046": {"ancestors": ["RM-020", "RM-004", "RM-001", "RM-013", "RM-022", "RM-002", "RM-019", "RM-021", "RM-003", "RM-011", "RM-009", "RM-023", "RM-006", "RM-014", "RM-005", "RM-036", "RM-010"], "descendants": ["RM-050"]}, "RM-047": {"ancestors": ["RM-004", "RM-032", "RM-022", "RM-013", "RM-002", "RM-021", "RM-003", "RM-034", "RM-009", "RM-033", "RM-023", "RM-006", "RM-001", "RM-005", "RM-036", "RM-010"], "descendants": ["RM-050"]}, "RM-048": {"ancestors": ["RM-043", "RM-004", "RM-022", "RM-035", "RM-013", "RM-002", "RM-021", "RM-041", "RM-009", "RM-023", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050"]}, "RM-049": {"ancestors": ["RM-004", "RM-022", "RM-002", "RM-013", "RM-021", "RM-011", "RM-041", "RM-009", "RM-023", "RM-006", "RM-003", "RM-005", "RM-001", "RM-010"], "descendants": ["RM-050"]}, "RM-050": {"ancestors": ["RM-027", "RM-043", "RM-046", "RM-031", "RM-045", "RM-038", "RM-047", "RM-008", "RM-029", "RM-048", "RM-009", "RM-017", "RM-040", "RM-044", "RM-003", "RM-015", "RM-010", "RM-007", "RM-030", "RM-022", "RM-025", "RM-013", "RM-034", "RM-041", "RM-012", "RM-001", "RM-016", "RM-036", "RM-028", "RM-020", "RM-002", "RM-039", "RM-026", "RM-042", "RM-011", "RM-018", "RM-006", "RM-049", "RM-004", "RM-032", "RM-035", "RM-037", "RM-019", "RM-021", "RM-024", "RM-033", "RM-023", "RM-014", "RM-005"], "descendants": []}};
         const areaColors = {"Ingesta": "#4ECDC4", "Extracci\u00f3n": "#FF6B6B", "Modelo de datos": "#45B7D1", "Normalizaci\u00f3n": "#96CEB4", "Transformaci\u00f3n": "#96CEB4", "M\u00e9tricas": "#FFD93D", "Dataset": "#DDA0DD", "Algoritmo": "#98D8C8", "Backtest": "#F7DC6F", "Reportes": "#BB8FCE", "UI/UX": "#85C1E9", "Dashboard": "#85C1E9", "Seguridad": "#F1948A", "Observabilidad": "#ABEBC6", "Testing": "#F5B041", "DevOps": "#AED6F1", "Gobernanza de datos": "#D7BDE2", "Gobernanza": "#D7BDE2", "Privacidad": "#FADBD8", "Documentaci\u00f3n": "#D5DBDB", "Extensibilidad": "#A9DFBF", "Entregables": "#FAD7A0", "UX": "#85C1E9", "Calidad de datos": "#82E0AA", "Auditabilidad": "#F9E79F", "Exportaci\u00f3n": "#D2B4DE", "Reproducibilidad": "#AEB6BF", "Performance": "#F5CBA7", "Validaci\u00f3n de algoritmo": "#76D7C4"};
+        const totalNodes = 50;
+        const totalEdges = 141;
 
+        // State
         let selectedNodeId = null;
-        let allNodes = null;
-        let allEdges = null;
         let currentLayout = 'force';
-        const hoverTooltip = document.getElementById('hover-tooltip');
+        let visibleNodeIds = new Set(Object.keys(nodeData));
 
-        // Store original data after network is ready
-        network.once('stabilizationIterationsDone', function() {
-            allNodes = nodes.get();
-            allEdges = edges.get();
-        });
-
-        // Node click handler
-        network.on('click', function(params) {
-            if (params.nodes.length > 0) {
-                selectedNodeId = params.nodes[0];
-                updateStats(selectedNodeId);
-                showNodeInfo(selectedNodeId);
+        // Wait for network to be ready
+        function waitForNetwork(callback) {
+            if (typeof network !== 'undefined' && network) {
+                callback();
             } else {
-                selectedNodeId = null;
-                updateStats(null);
-                closeNodeInfo();
+                setTimeout(() => waitForNetwork(callback), 100);
             }
+        }
+
+        // Initialize when ready
+        waitForNetwork(function() {
+            console.log('Network ready, initializing custom controls...');
+            initializeApp();
         });
 
-        // Hover tooltip handlers
-        network.on('hoverNode', function(params) {
-            const nodeId = params.node;
+        function initializeApp() {
+            // Initial table render
+            updateTable();
+
+            // Bind event handlers
+            bindEventHandlers();
+
+            // Setup network event handlers
+            setupNetworkHandlers();
+        }
+
+        function bindEventHandlers() {
+            // Search button
+            document.getElementById('btn-search').addEventListener('click', focusNode);
+
+            // Search input enter key
+            document.getElementById('node-search').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') focusNode();
+            });
+
+            // Filter dropdowns
+            document.getElementById('area-filter').addEventListener('change', applyFilters);
+            document.getElementById('priority-filter').addEventListener('change', applyFilters);
+            document.getElementById('version-filter').addEventListener('change', applyFilters);
+
+            // Exploration buttons
+            document.getElementById('btn-ancestors').addEventListener('click', showAncestors);
+            document.getElementById('btn-descendants').addEventListener('click', showDescendants);
+            document.getElementById('btn-neighborhood').addEventListener('click', showNeighborhood);
+
+            // Layout buttons
+            document.getElementById('layout-force').addEventListener('click', () => setLayout('force'));
+            document.getElementById('layout-tree').addEventListener('click', () => setLayout('tree'));
+
+            // Reset button
+            document.getElementById('btn-reset').addEventListener('click', resetView);
+
+            // Legend clicks
+            document.querySelectorAll('.legend-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const area = this.getAttribute('data-area');
+                    document.getElementById('area-filter').value = area;
+                    applyFilters();
+                });
+            });
+        }
+
+        function setupNetworkHandlers() {
+            // Click handler
+            network.on('click', function(params) {
+                if (params.nodes.length > 0) {
+                    selectedNodeId = params.nodes[0];
+                    showSelectedInfo(selectedNodeId);
+                } else {
+                    selectedNodeId = null;
+                    hideSelectedInfo();
+                }
+            });
+
+            // Hover tooltip
+            const tooltip = document.getElementById('hover-tooltip');
+
+            network.on('hoverNode', function(params) {
+                const nodeId = params.node;
+                const data = nodeData[nodeId];
+                if (!data) return;
+
+                const color = areaColors[data.area] || '#888888';
+                tooltip.innerHTML = `
+                    <h4 style="color: ${color}">${nodeId}: ${data.funcionalidad}</h4>
+                    <div class="tooltip-row">
+                        <span class="tooltip-label">Área:</span>
+                        <span class="tooltip-value">${data.area}</span>
+                    </div>
+                    <div class="tooltip-row">
+                        <span class="tooltip-label">Prioridad:</span>
+                        <span class="tooltip-value">${data.prioridad}</span>
+                    </div>
+                    <div class="tooltip-row">
+                        <span class="tooltip-label">Versión:</span>
+                        <span class="tooltip-value">${data.version}</span>
+                    </div>
+                    <div class="tooltip-row">
+                        <span class="tooltip-label">Owner:</span>
+                        <span class="tooltip-value">${data.owner}</span>
+                    </div>
+                    <div class="tooltip-row">
+                        <span class="tooltip-label">Dependencias:</span>
+                        <span class="tooltip-value">${data.dependencias}</span>
+                    </div>
+                    <div class="tooltip-requisito">${data.requisito}</div>
+                `;
+                tooltip.style.display = 'block';
+            });
+
+            network.on('blurNode', function() {
+                tooltip.style.display = 'none';
+            });
+
+            // Tooltip follows mouse
+            document.querySelector('.graph-panel').addEventListener('mousemove', function(e) {
+                if (tooltip.style.display === 'block') {
+                    const x = e.clientX + 15;
+                    const y = e.clientY + 15;
+                    const rect = tooltip.getBoundingClientRect();
+                    const maxX = window.innerWidth - rect.width - 20;
+                    const maxY = window.innerHeight - rect.height - 20;
+                    tooltip.style.left = Math.min(x, maxX) + 'px';
+                    tooltip.style.top = Math.min(y, maxY) + 'px';
+                }
+            });
+        }
+
+        function focusNode() {
+            const input = document.getElementById('node-search').value.trim().toUpperCase();
+            if (!input) {
+                alert('Por favor ingresa un ID de requisito (ej: RM-001)');
+                return;
+            }
+
+            if (nodeData[input]) {
+                network.focus(input, {
+                    scale: 1.5,
+                    animation: { duration: 500, easingFunction: 'easeInOutQuad' }
+                });
+                network.selectNodes([input]);
+                selectedNodeId = input;
+                showSelectedInfo(input);
+            } else {
+                alert('Nodo no encontrado: ' + input + '\n\nAsegúrate de usar el formato correcto (ej: RM-001)');
+            }
+        }
+
+        function applyFilters() {
+            const areaFilter = document.getElementById('area-filter').value;
+            const priorityFilter = document.getElementById('priority-filter').value;
+            const versionFilter = document.getElementById('version-filter').value;
+
+            visibleNodeIds = new Set();
+
+            Object.keys(nodeData).forEach(nodeId => {
+                const data = nodeData[nodeId];
+                const matchArea = !areaFilter || data.area === areaFilter;
+                const matchPriority = !priorityFilter || data.prioridad === priorityFilter;
+                const matchVersion = !versionFilter || data.version === versionFilter;
+
+                if (matchArea && matchPriority && matchVersion) {
+                    visibleNodeIds.add(nodeId);
+                }
+            });
+
+            updateVisibility();
+            updateTable();
+            updateStats();
+        }
+
+        function updateVisibility() {
+            const nodeUpdates = Object.keys(nodeData).map(id => ({
+                id: id,
+                hidden: !visibleNodeIds.has(id)
+            }));
+            nodes.update(nodeUpdates);
+
+            const edgeUpdates = edges.get().map(edge => ({
+                id: edge.id,
+                hidden: !visibleNodeIds.has(edge.from) || !visibleNodeIds.has(edge.to)
+            }));
+            edges.update(edgeUpdates);
+
+            setTimeout(() => {
+                network.fit({ animation: { duration: 300 } });
+            }, 100);
+        }
+
+        function updateTable() {
+            const tbody = document.getElementById('table-body');
+            const sortedIds = Array.from(visibleNodeIds).sort();
+
+            let html = '';
+            sortedIds.forEach(id => {
+                const data = nodeData[id];
+                const priorityClass = data.prioridad.includes('P0') ? 'priority-p0' :
+                                      data.prioridad.includes('P1') ? 'priority-p1' : 'priority-p2';
+
+                html += `
+                    <tr data-id="${id}" style="cursor: pointer;">
+                        <td class="id-cell">${id}</td>
+                        <td class="area-cell">${data.area}</td>
+                        <td class="func-cell">${data.funcionalidad}</td>
+                        <td><span class="priority-badge ${priorityClass}">${data.prioridad}</span></td>
+                        <td>${data.version}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+            document.getElementById('table-count').textContent = visibleNodeIds.size + ' requisitos';
+
+            // Add click handlers to table rows
+            tbody.querySelectorAll('tr').forEach(row => {
+                row.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    network.focus(id, {
+                        scale: 1.5,
+                        animation: { duration: 500 }
+                    });
+                    network.selectNodes([id]);
+                    selectedNodeId = id;
+                    showSelectedInfo(id);
+                });
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('visible-nodes').textContent = visibleNodeIds.size;
+            const visibleEdgeCount = edges.get().filter(e =>
+                visibleNodeIds.has(e.from) && visibleNodeIds.has(e.to)
+            ).length;
+            document.getElementById('visible-edges').textContent = visibleEdgeCount;
+        }
+
+        function showSelectedInfo(nodeId) {
             const data = nodeData[nodeId];
             if (!data) return;
 
-            const color = areaColors[data.area] || '#888888';
-            hoverTooltip.innerHTML = `
-                <h4 style="color: ${color}">${nodeId}: ${data.funcionalidad}</h4>
-                <div class="tooltip-row">
-                    <span class="tooltip-label">Área:</span>
-                    <span class="tooltip-value">${data.area}</span>
-                </div>
-                <div class="tooltip-row">
-                    <span class="tooltip-label">Prioridad:</span>
-                    <span class="tooltip-value">${data.prioridad}</span>
-                </div>
-                <div class="tooltip-row">
-                    <span class="tooltip-label">Versión:</span>
-                    <span class="tooltip-value">${data.version}</span>
-                </div>
-                <div class="tooltip-row">
-                    <span class="tooltip-label">Estatus:</span>
-                    <span class="tooltip-value">${data.estatus}</span>
-                </div>
-                <div class="tooltip-row">
-                    <span class="tooltip-label">Owner:</span>
-                    <span class="tooltip-value">${data.owner}</span>
-                </div>
-                <div class="tooltip-row">
-                    <span class="tooltip-label">Roles:</span>
-                    <span class="tooltip-value">${data.roles}</span>
-                </div>
-                <div class="tooltip-row">
-                    <span class="tooltip-label">Dependencias:</span>
-                    <span class="tooltip-value">${data.dependencias}</span>
-                </div>
-                <div class="tooltip-requisito">
-                    <span class="tooltip-requisito-label">Requisito:</span>
-                    ${data.requisito}
-                </div>
-            `;
-            hoverTooltip.style.display = 'block';
-        });
+            document.getElementById('sel-id').textContent = nodeId;
+            document.getElementById('sel-area').textContent = data.area;
+            document.getElementById('sel-priority').textContent = data.prioridad;
+            document.getElementById('sel-deps').textContent = data.dependencias;
+            document.getElementById('selected-title').textContent = data.funcionalidad;
+            document.getElementById('selected-info').classList.add('visible');
+        }
 
-        network.on('blurNode', function() {
-            hoverTooltip.style.display = 'none';
-        });
+        function hideSelectedInfo() {
+            document.getElementById('selected-info').classList.remove('visible');
+        }
 
-        // Update tooltip position on mouse move
-        document.getElementById('mynetwork').addEventListener('mousemove', function(e) {
-            if (hoverTooltip.style.display === 'block') {
-                const x = e.clientX + 15;
-                const y = e.clientY + 15;
-                const tooltipRect = hoverTooltip.getBoundingClientRect();
-
-                // Keep tooltip within viewport
-                const maxX = window.innerWidth - tooltipRect.width - 20;
-                const maxY = window.innerHeight - tooltipRect.height - 20;
-
-                hoverTooltip.style.left = Math.min(x, maxX) + 'px';
-                hoverTooltip.style.top = Math.min(y, maxY) + 'px';
+        function showAncestors() {
+            if (!selectedNodeId) {
+                alert('Primero selecciona un nodo haciendo clic en el grafo');
+                return;
             }
-        });
+            const ancestors = subgraphData[selectedNodeId]?.ancestors || [];
+            visibleNodeIds = new Set([selectedNodeId, ...ancestors]);
+            updateVisibility();
+            updateTable();
+            updateStats();
+        }
 
-        function updateStats(nodeId) {
-            document.getElementById('selected-node').textContent = nodeId || '—';
-            if (nodeId && nodeData[nodeId]) {
-                document.getElementById('in-degree').textContent = nodeData[nodeId].in_degree;
-                document.getElementById('out-degree').textContent = nodeData[nodeId].out_degree;
-            } else {
-                document.getElementById('in-degree').textContent = '—';
-                document.getElementById('out-degree').textContent = '—';
+        function showDescendants() {
+            if (!selectedNodeId) {
+                alert('Primero selecciona un nodo haciendo clic en el grafo');
+                return;
             }
+            const descendants = subgraphData[selectedNodeId]?.descendants || [];
+            visibleNodeIds = new Set([selectedNodeId, ...descendants]);
+            updateVisibility();
+            updateTable();
+            updateStats();
         }
 
-        function showNodeInfo(nodeId) {
-            const data = nodeData[nodeId];
-            const subgraph = subgraphData[nodeId];
-            if (!data) return;
-
-            document.getElementById('info-title').textContent = nodeId + ': ' + data.funcionalidad;
-            document.getElementById('info-content').innerHTML = `
-                <p><strong>Área:</strong> ${data.area}</p>
-                <p><strong>Prioridad:</strong> ${data.prioridad}</p>
-                <p><strong>Versión:</strong> ${data.version}</p>
-                <p><strong>Estatus:</strong> ${data.estatus}</p>
-                <p><strong>Owner:</strong> ${data.owner}</p>
-                <hr style="border-color: #4a4a6a; margin: 10px 0;">
-                <p><strong>Dependencias directas:</strong> ${data.in_degree}</p>
-                <p><strong>Dependientes directos:</strong> ${data.out_degree}</p>
-                <p><strong>Total ancestros:</strong> ${subgraph.ancestors.length}</p>
-                <p><strong>Total descendientes:</strong> ${subgraph.descendants.length}</p>
-            `;
-            document.getElementById('node-info').style.display = 'block';
+        function showNeighborhood() {
+            if (!selectedNodeId) {
+                alert('Primero selecciona un nodo haciendo clic en el grafo');
+                return;
+            }
+            const neighbors = new Set([selectedNodeId]);
+            edges.get().forEach(edge => {
+                if (edge.from === selectedNodeId) neighbors.add(edge.to);
+                if (edge.to === selectedNodeId) neighbors.add(edge.from);
+            });
+            visibleNodeIds = neighbors;
+            updateVisibility();
+            updateTable();
+            updateStats();
         }
 
-        function closeNodeInfo() {
-            document.getElementById('node-info').style.display = 'none';
-        }
-
-        // Layout switching
         function setLayout(layout) {
             currentLayout = layout;
 
@@ -944,16 +1014,15 @@
             document.getElementById('layout-tree').classList.toggle('active', layout === 'tree');
 
             if (layout === 'tree') {
-                // Hierarchical layout
                 network.setOptions({
                     layout: {
                         hierarchical: {
                             enabled: true,
                             direction: 'UD',
                             sortMethod: 'directed',
-                            levelSeparation: 120,
-                            nodeSpacing: 150,
-                            treeSpacing: 200,
+                            levelSeparation: 100,
+                            nodeSpacing: 120,
+                            treeSpacing: 150,
                             blockShifting: true,
                             edgeMinimization: true,
                             parentCentralization: true
@@ -964,7 +1033,6 @@
                     }
                 });
             } else {
-                // Force-directed layout
                 network.setOptions({
                     layout: {
                         hierarchical: {
@@ -981,161 +1049,14 @@
                             springConstant: 0.08,
                             damping: 0.4,
                             avoidOverlap: 0.8
-                        },
-                        stabilization: {
-                            enabled: true,
-                            iterations: 200,
-                            updateInterval: 25
                         }
                     }
                 });
             }
 
-            // Fit view after layout change
             setTimeout(() => {
                 network.fit({ animation: { duration: 500 } });
             }, 300);
-        }
-
-        function focusNode() {
-            const nodeId = document.getElementById('node-search').value.toUpperCase();
-            if (nodes.get(nodeId)) {
-                network.focus(nodeId, {
-                    scale: 1.5,
-                    animation: { duration: 500, easingFunction: 'easeInOutQuad' }
-                });
-                network.selectNodes([nodeId]);
-                selectedNodeId = nodeId;
-                updateStats(nodeId);
-                showNodeInfo(nodeId);
-            } else {
-                alert('Nodo no encontrado: ' + nodeId);
-            }
-        }
-
-        function filterByArea(area) {
-            document.getElementById('area-filter').value = area;
-            applyFilters();
-        }
-
-        function applyFilters() {
-            const areaFilter = document.getElementById('area-filter').value;
-            const priorityFilter = document.getElementById('priority-filter').value;
-            const versionFilter = document.getElementById('version-filter').value;
-
-            if (!allNodes) allNodes = nodes.get();
-            if (!allEdges) allEdges = edges.get();
-
-            // Filter nodes
-            const visibleNodeIds = new Set();
-            allNodes.forEach(node => {
-                const data = nodeData[node.id];
-                if (!data) return;
-
-                const matchArea = !areaFilter || data.area === areaFilter;
-                const matchPriority = !priorityFilter || data.prioridad === priorityFilter;
-                const matchVersion = !versionFilter || data.version === versionFilter;
-
-                if (matchArea && matchPriority && matchVersion) {
-                    visibleNodeIds.add(node.id);
-                }
-            });
-
-            // Update node visibility
-            const updates = allNodes.map(node => ({
-                id: node.id,
-                hidden: !visibleNodeIds.has(node.id)
-            }));
-            nodes.update(updates);
-
-            // Update edge visibility
-            const edgeUpdates = allEdges.map(edge => ({
-                id: edge.id,
-                hidden: !visibleNodeIds.has(edge.from) || !visibleNodeIds.has(edge.to)
-            }));
-            edges.update(edgeUpdates);
-
-            // Update stats
-            const visibleEdges = allEdges.filter(e =>
-                visibleNodeIds.has(e.from) && visibleNodeIds.has(e.to)
-            ).length;
-
-            document.getElementById('visible-nodes').textContent = visibleNodeIds.size;
-            document.getElementById('visible-edges').textContent = visibleEdges;
-        }
-
-        function showAncestors() {
-            if (!selectedNodeId) {
-                alert('Selecciona un nodo primero');
-                return;
-            }
-            showAncestorsOf(selectedNodeId);
-        }
-
-        function showAncestorsOf(nodeId) {
-            const ancestors = subgraphData[nodeId]?.ancestors || [];
-            const visibleIds = new Set([nodeId, ...ancestors]);
-            showSubgraph(visibleIds, 'Dependencias de ' + nodeId);
-        }
-
-        function showDescendants() {
-            if (!selectedNodeId) {
-                alert('Selecciona un nodo primero');
-                return;
-            }
-            showDescendantsOf(selectedNodeId);
-        }
-
-        function showDescendantsOf(nodeId) {
-            const descendants = subgraphData[nodeId]?.descendants || [];
-            const visibleIds = new Set([nodeId, ...descendants]);
-            showSubgraph(visibleIds, 'Dependientes de ' + nodeId);
-        }
-
-        function showNeighborhood() {
-            if (!selectedNodeId) {
-                alert('Selecciona un nodo primero');
-                return;
-            }
-
-            // Get immediate neighbors only (depth 1)
-            const neighbors = new Set([selectedNodeId]);
-            allEdges.forEach(edge => {
-                if (edge.from === selectedNodeId) neighbors.add(edge.to);
-                if (edge.to === selectedNodeId) neighbors.add(edge.from);
-            });
-
-            showSubgraph(neighbors, 'Vecindario de ' + selectedNodeId);
-        }
-
-        function showSubgraph(visibleIds, title) {
-            if (!allNodes) allNodes = nodes.get();
-            if (!allEdges) allEdges = edges.get();
-
-            // Update nodes
-            const updates = allNodes.map(node => ({
-                id: node.id,
-                hidden: !visibleIds.has(node.id)
-            }));
-            nodes.update(updates);
-
-            // Update edges
-            const edgeUpdates = allEdges.map(edge => ({
-                id: edge.id,
-                hidden: !visibleIds.has(edge.from) || !visibleIds.has(edge.to)
-            }));
-            edges.update(edgeUpdates);
-
-            // Update stats
-            const visibleEdges = allEdges.filter(e =>
-                visibleIds.has(e.from) && visibleIds.has(e.to)
-            ).length;
-
-            document.getElementById('visible-nodes').textContent = visibleIds.size;
-            document.getElementById('visible-edges').textContent = visibleEdges;
-
-            // Fit view
-            network.fit({ animation: { duration: 500 } });
         }
 
         function resetView() {
@@ -1145,43 +1066,27 @@
             document.getElementById('version-filter').value = '';
             document.getElementById('node-search').value = '';
 
-            if (!allNodes) allNodes = nodes.get();
-            if (!allEdges) allEdges = edges.get();
-
             // Show all nodes
-            const updates = allNodes.map(node => ({ id: node.id, hidden: false }));
-            nodes.update(updates);
+            visibleNodeIds = new Set(Object.keys(nodeData));
+            updateVisibility();
+            updateTable();
 
-            // Show all edges
-            const edgeUpdates = allEdges.map(edge => ({ id: edge.id, hidden: false }));
-            edges.update(edgeUpdates);
-
-            // Update stats
-            document.getElementById('visible-nodes').textContent = allNodes.length;
-            document.getElementById('visible-edges').textContent = allEdges.length;
+            // Reset stats
+            document.getElementById('visible-nodes').textContent = totalNodes;
+            document.getElementById('visible-edges').textContent = totalEdges;
 
             // Deselect
             network.unselectAll();
             selectedNodeId = null;
-            updateStats(null);
-            closeNodeInfo();
+            hideSelectedInfo();
 
-            // Reset layout to force if needed and fit view
-            if (currentLayout === 'force') {
-                network.stabilize();
+            // Reset layout to force
+            if (currentLayout === 'tree') {
+                setLayout('force');
             }
+
             network.fit({ animation: { duration: 500 } });
         }
-
-        // Add event listeners to filters
-        document.getElementById('area-filter').addEventListener('change', applyFilters);
-        document.getElementById('priority-filter').addEventListener('change', applyFilters);
-        document.getElementById('version-filter').addEventListener('change', applyFilters);
-
-        // Enter key for search
-        document.getElementById('node-search').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') focusNode();
-        });
+    })();
     </script>
-    </body>
-</html>
+    </body></html>
