@@ -731,23 +731,51 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
             padding: 15px;
             background: rgba(0,255,136,0.05);
             border-bottom: 1px solid #4a4a6a;
-            display: none;
-        }
-
-        .selected-info.visible {
-            display: block;
         }
 
         .selected-info h3 {
             color: #00ff88;
-            margin: 0 0 8px 0;
-            font-size: 0.95em;
+            margin: 0 0 12px 0;
+            font-size: 1em;
+            font-weight: 600;
         }
 
-        .selected-info p {
+        .sel-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+            margin-bottom: 12px;
+        }
+
+        .sel-meta-item {
             color: #cccccc;
-            margin: 4px 0;
+            font-size: 0.8em;
+        }
+
+        .sel-meta-item strong {
+            color: #8888aa;
+        }
+
+        .sel-description {
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #3a3a5a;
+        }
+
+        .sel-description-label {
+            color: #00ff88;
             font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .sel-description-text {
+            color: #cccccc;
+            font-size: 0.85em;
+            line-height: 1.6;
+            max-height: 150px;
+            overflow-y: auto;
         }
 
         /* Hide pyvis default elements */
@@ -879,10 +907,18 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
         <div class="right-panel">
             <div class="selected-info" id="selected-info">
                 <h3 id="selected-title">Nodo Seleccionado</h3>
-                <p><strong>ID:</strong> <span id="sel-id">—</span></p>
-                <p><strong>Área:</strong> <span id="sel-area">—</span></p>
-                <p><strong>Prioridad:</strong> <span id="sel-priority">—</span></p>
-                <p><strong>Dependencias:</strong> <span id="sel-deps">—</span></p>
+                <div class="sel-meta">
+                    <span class="sel-meta-item"><strong>ID:</strong> <span id="sel-id">—</span></span>
+                    <span class="sel-meta-item"><strong>Área:</strong> <span id="sel-area">—</span></span>
+                    <span class="sel-meta-item"><strong>Prioridad:</strong> <span id="sel-priority">—</span></span>
+                    <span class="sel-meta-item"><strong>Versión:</strong> <span id="sel-version">—</span></span>
+                    <span class="sel-meta-item"><strong>Owner:</strong> <span id="sel-owner">—</span></span>
+                    <span class="sel-meta-item"><strong>Deps:</strong> <span id="sel-deps">—</span></span>
+                </div>
+                <div class="sel-description">
+                    <div class="sel-description-label">📝 Descripción del Requisito:</div>
+                    <div class="sel-description-text" id="sel-requisito">Selecciona un nodo en el grafo para ver su descripción completa.</div>
+                </div>
             </div>
             <div class="table-header">
                 <h2>📋 Requisitos Visibles</h2>
@@ -1167,9 +1203,11 @@ def inject_custom_controls(html_path: str, G: nx.DiGraph, title: str):
             document.getElementById('sel-id').textContent = nodeId;
             document.getElementById('sel-area').textContent = data.area;
             document.getElementById('sel-priority').textContent = data.prioridad;
+            document.getElementById('sel-version').textContent = data.version;
+            document.getElementById('sel-owner').textContent = data.owner;
             document.getElementById('sel-deps').textContent = data.dependencias;
+            document.getElementById('sel-requisito').textContent = data.requisito;
             document.getElementById('selected-title').textContent = data.funcionalidad;
-            document.getElementById('selected-info').classList.add('visible');
         }}
 
         function hideSelectedInfo() {{
