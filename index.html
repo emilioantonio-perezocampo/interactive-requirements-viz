@@ -1,0 +1,953 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+                <link href="lib/tom-select/tom-select.css" rel="stylesheet">
+                <script src="lib/tom-select/tom-select.complete.min.js"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 900px;
+                 background-color: #1a1a2e;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #1a1a2e;
+            overflow: hidden;
+        }
+        
+        #controls {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, #16213e 0%, #1a1a2e 100%);
+            padding: 15px 20px;
+            z-index: 1000;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            border-bottom: 1px solid #4a4a6a;
+        }
+        
+        #controls h1 {
+            color: #00ff88;
+            margin: 0;
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-right: 20px;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .control-group label {
+            color: #8888aa;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+        
+        .control-group select, .control-group input {
+            background: #0f0f23;
+            border: 1px solid #4a4a6a;
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .control-group select:hover, .control-group input:hover {
+            border-color: #00ff88;
+        }
+        
+        .control-group select:focus, .control-group input:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 10px rgba(0,255,136,0.3);
+        }
+        
+        button {
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+            border: none;
+            color: #1a1a2e;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9em;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,255,136,0.4);
+        }
+        
+        button.secondary {
+            background: #4a4a6a;
+            color: #ffffff;
+        }
+        
+        button.secondary:hover {
+            background: #5a5a7a;
+        }
+        
+        #stats {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(22, 33, 62, 0.95);
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 0.85em;
+            z-index: 1000;
+            border: 1px solid #4a4a6a;
+            max-width: 280px;
+        }
+        
+        #stats h3 {
+            margin: 0 0 10px 0;
+            color: #00ff88;
+            font-size: 1em;
+        }
+        
+        #stats p {
+            margin: 5px 0;
+            color: #aaaacc;
+        }
+        
+        #stats span {
+            color: #ffffff;
+            font-weight: 600;
+        }
+        
+        #legend {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(22, 33, 62, 0.95);
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 0.8em;
+            z-index: 1000;
+            border: 1px solid #4a4a6a;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        #legend h3 {
+            margin: 0 0 10px 0;
+            color: #00ff88;
+            font-size: 1em;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 5px 0;
+            cursor: pointer;
+            padding: 3px 5px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        
+        .legend-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        #mynetwork {
+            margin-top: 70px;
+            height: calc(100vh - 70px) !important;
+        }
+        
+        #node-info {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: rgba(22, 33, 62, 0.95);
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 0.85em;
+            z-index: 1000;
+            border: 1px solid #4a4a6a;
+            max-width: 350px;
+            display: none;
+        }
+        
+        #node-info h3 {
+            margin: 0 0 10px 0;
+            color: #00ff88;
+        }
+        
+        #node-info .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            cursor: pointer;
+            color: #888;
+            font-size: 1.2em;
+        }
+        
+        #node-info .close-btn:hover {
+            color: #fff;
+        }
+        
+        .help-text {
+            color: #6a6a8a;
+            font-size: 0.8em;
+            margin-left: auto;
+        }
+    </style>
+    </head>
+
+
+    <body>
+    <div id="controls">
+        <h1>📊 Matriz de Requisitos - Grafo de Dependencias</h1>
+        
+        <div class="control-group">
+            <label>Área:</label>
+            <select id="area-filter">
+                <option value="">Todas</option>
+                <option value="Auditabilidad">Auditabilidad</option><option value="Calidad de datos">Calidad de datos</option><option value="Dashboard">Dashboard</option><option value="DevOps">DevOps</option><option value="Documentación">Documentación</option><option value="Entregables">Entregables</option><option value="Exportación">Exportación</option><option value="Extensibilidad">Extensibilidad</option><option value="Extracción">Extracción</option><option value="Gobernanza">Gobernanza</option><option value="Gobernanza de datos">Gobernanza de datos</option><option value="Ingesta">Ingesta</option><option value="Modelo de datos">Modelo de datos</option><option value="Métricas">Métricas</option><option value="Observabilidad">Observabilidad</option><option value="Performance">Performance</option><option value="Privacidad">Privacidad</option><option value="Reportes">Reportes</option><option value="Reproducibilidad">Reproducibilidad</option><option value="Seguridad">Seguridad</option><option value="Testing">Testing</option><option value="Transformación">Transformación</option><option value="UX">UX</option><option value="Validación de algoritmo">Validación de algoritmo</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <label>Prioridad:</label>
+            <select id="priority-filter">
+                <option value="">Todas</option>
+                <option value="Alta (P0)">Alta (P0)</option><option value="Media (P1)">Media (P1)</option><option value="Baja (P2)">Baja (P2)</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <label>Versión:</label>
+            <select id="version-filter">
+                <option value="">Todas</option>
+                <option value="MVP v0.1">MVP v0.1</option><option value="v0.2">v0.2</option><option value="v0.3">v0.3</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <label>Nodo:</label>
+            <input type="text" id="node-search" placeholder="RM-001" style="width: 80px;">
+            <button onclick="focusNode()">Buscar</button>
+        </div>
+        
+        <div class="control-group">
+            <button onclick="showAncestors()">← Dependencias</button>
+            <button onclick="showDescendants()">Dependientes →</button>
+            <button onclick="showNeighborhood()">Vecindario</button>
+        </div>
+        
+        <button class="secondary" onclick="resetView()">Reset</button>
+        
+        <span class="help-text">Click en nodo para seleccionar • Doble click para fijar • Scroll para zoom</span>
+    </div>
+    
+    <div id="stats">
+        <h3>📈 Estadísticas</h3>
+        <p>Nodos visibles: <span id="visible-nodes">50</span></p>
+        <p>Aristas visibles: <span id="visible-edges">141</span></p>
+        <p>Nodo seleccionado: <span id="selected-node">—</span></p>
+        <p>In-degree: <span id="in-degree">—</span></p>
+        <p>Out-degree: <span id="out-degree">—</span></p>
+    </div>
+    
+    <div id="legend">
+        <h3>🎨 Áreas</h3>
+        <div class="legend-item" onclick="filterByArea('Auditabilidad')"><div class="legend-color" style="background: #F9E79F"></div><span>Auditabilidad</span></div><div class="legend-item" onclick="filterByArea('Calidad de datos')"><div class="legend-color" style="background: #82E0AA"></div><span>Calidad de datos</span></div><div class="legend-item" onclick="filterByArea('Dashboard')"><div class="legend-color" style="background: #85C1E9"></div><span>Dashboard</span></div><div class="legend-item" onclick="filterByArea('DevOps')"><div class="legend-color" style="background: #AED6F1"></div><span>DevOps</span></div><div class="legend-item" onclick="filterByArea('Documentación')"><div class="legend-color" style="background: #D5DBDB"></div><span>Documentación</span></div><div class="legend-item" onclick="filterByArea('Entregables')"><div class="legend-color" style="background: #FAD7A0"></div><span>Entregables</span></div><div class="legend-item" onclick="filterByArea('Exportación')"><div class="legend-color" style="background: #D2B4DE"></div><span>Exportación</span></div><div class="legend-item" onclick="filterByArea('Extensibilidad')"><div class="legend-color" style="background: #A9DFBF"></div><span>Extensibilidad</span></div><div class="legend-item" onclick="filterByArea('Extracción')"><div class="legend-color" style="background: #FF6B6B"></div><span>Extracción</span></div><div class="legend-item" onclick="filterByArea('Gobernanza')"><div class="legend-color" style="background: #D7BDE2"></div><span>Gobernanza</span></div><div class="legend-item" onclick="filterByArea('Gobernanza de datos')"><div class="legend-color" style="background: #D7BDE2"></div><span>Gobernanza de datos</span></div><div class="legend-item" onclick="filterByArea('Ingesta')"><div class="legend-color" style="background: #4ECDC4"></div><span>Ingesta</span></div><div class="legend-item" onclick="filterByArea('Modelo de datos')"><div class="legend-color" style="background: #45B7D1"></div><span>Modelo de datos</span></div><div class="legend-item" onclick="filterByArea('Métricas')"><div class="legend-color" style="background: #FFD93D"></div><span>Métricas</span></div><div class="legend-item" onclick="filterByArea('Observabilidad')"><div class="legend-color" style="background: #ABEBC6"></div><span>Observabilidad</span></div><div class="legend-item" onclick="filterByArea('Performance')"><div class="legend-color" style="background: #F5CBA7"></div><span>Performance</span></div><div class="legend-item" onclick="filterByArea('Privacidad')"><div class="legend-color" style="background: #FADBD8"></div><span>Privacidad</span></div><div class="legend-item" onclick="filterByArea('Reportes')"><div class="legend-color" style="background: #BB8FCE"></div><span>Reportes</span></div><div class="legend-item" onclick="filterByArea('Reproducibilidad')"><div class="legend-color" style="background: #AEB6BF"></div><span>Reproducibilidad</span></div><div class="legend-item" onclick="filterByArea('Seguridad')"><div class="legend-color" style="background: #F1948A"></div><span>Seguridad</span></div><div class="legend-item" onclick="filterByArea('Testing')"><div class="legend-color" style="background: #F5B041"></div><span>Testing</span></div><div class="legend-item" onclick="filterByArea('Transformación')"><div class="legend-color" style="background: #96CEB4"></div><span>Transformación</span></div><div class="legend-item" onclick="filterByArea('UX')"><div class="legend-color" style="background: #85C1E9"></div><span>UX</span></div><div class="legend-item" onclick="filterByArea('Validación de algoritmo')"><div class="legend-color" style="background: #76D7C4"></div><span>Validación de algoritmo</span></div>
+    </div>
+    
+    <div id="node-info">
+        <span class="close-btn" onclick="closeNodeInfo()">×</span>
+        <h3 id="info-title">—</h3>
+        <div id="info-content"></div>
+        <div style="margin-top: 15px; display: flex; gap: 10px;">
+            <button onclick="showAncestorsOf(selectedNodeId)">Ver dependencias</button>
+            <button onclick="showDescendantsOf(selectedNodeId)">Ver dependientes</button>
+        </div>
+    </div>
+    
+        <div class="card" style="width: 100%">
+            
+                <div id="select-menu" class="card-header">
+                    <div class="row no-gutters">
+                        <div class="col-10 pb-2">
+                            <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="selectNode([value]);"
+                            id="select-node"
+                            placeholder="Select node..."
+                            >
+                                <option selected>Select a Node by ID</option>
+                                
+                                    <option value="RM-001">RM-001</option>
+                                
+                                    <option value="RM-002">RM-002</option>
+                                
+                                    <option value="RM-003">RM-003</option>
+                                
+                                    <option value="RM-004">RM-004</option>
+                                
+                                    <option value="RM-005">RM-005</option>
+                                
+                                    <option value="RM-006">RM-006</option>
+                                
+                                    <option value="RM-007">RM-007</option>
+                                
+                                    <option value="RM-008">RM-008</option>
+                                
+                                    <option value="RM-009">RM-009</option>
+                                
+                                    <option value="RM-010">RM-010</option>
+                                
+                                    <option value="RM-011">RM-011</option>
+                                
+                                    <option value="RM-012">RM-012</option>
+                                
+                                    <option value="RM-013">RM-013</option>
+                                
+                                    <option value="RM-014">RM-014</option>
+                                
+                                    <option value="RM-015">RM-015</option>
+                                
+                                    <option value="RM-016">RM-016</option>
+                                
+                                    <option value="RM-017">RM-017</option>
+                                
+                                    <option value="RM-018">RM-018</option>
+                                
+                                    <option value="RM-019">RM-019</option>
+                                
+                                    <option value="RM-020">RM-020</option>
+                                
+                                    <option value="RM-021">RM-021</option>
+                                
+                                    <option value="RM-022">RM-022</option>
+                                
+                                    <option value="RM-023">RM-023</option>
+                                
+                                    <option value="RM-024">RM-024</option>
+                                
+                                    <option value="RM-025">RM-025</option>
+                                
+                                    <option value="RM-026">RM-026</option>
+                                
+                                    <option value="RM-027">RM-027</option>
+                                
+                                    <option value="RM-028">RM-028</option>
+                                
+                                    <option value="RM-029">RM-029</option>
+                                
+                                    <option value="RM-030">RM-030</option>
+                                
+                                    <option value="RM-031">RM-031</option>
+                                
+                                    <option value="RM-032">RM-032</option>
+                                
+                                    <option value="RM-033">RM-033</option>
+                                
+                                    <option value="RM-034">RM-034</option>
+                                
+                                    <option value="RM-035">RM-035</option>
+                                
+                                    <option value="RM-036">RM-036</option>
+                                
+                                    <option value="RM-037">RM-037</option>
+                                
+                                    <option value="RM-038">RM-038</option>
+                                
+                                    <option value="RM-039">RM-039</option>
+                                
+                                    <option value="RM-040">RM-040</option>
+                                
+                                    <option value="RM-041">RM-041</option>
+                                
+                                    <option value="RM-042">RM-042</option>
+                                
+                                    <option value="RM-043">RM-043</option>
+                                
+                                    <option value="RM-044">RM-044</option>
+                                
+                                    <option value="RM-045">RM-045</option>
+                                
+                                    <option value="RM-046">RM-046</option>
+                                
+                                    <option value="RM-047">RM-047</option>
+                                
+                                    <option value="RM-048">RM-048</option>
+                                
+                                    <option value="RM-049">RM-049</option>
+                                
+                                    <option value="RM-050">RM-050</option>
+                                
+                            </select>
+                        </div>
+                        <div class="col-2 pb-2">
+                            <button type="button" class="btn btn-primary btn-block" onclick="neighbourhoodHighlight({nodes: []});">Reset Selection</button>
+                        </div>
+                    </div>
+                </div>
+            
+            
+              <div id="filter-menu" class="card-header">
+                <div class="row no-gutters">
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="updateFilter(value, 'item')"
+                            id="select-item"
+                        >
+                        <option value="">Select a network item</option>
+                        <option value="edge">edge</option>
+                        <option value="node">node</option>
+                    </select>
+                  </div>
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="updateFilter(value, 'property')"
+                            id="select-property"
+                        >
+                        <option value="">Select a property...</option>
+                    </select>
+                  </div>
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            id="select-value"
+                        >
+                        <option value="">Select value(s)...</option>
+                    </select>
+                  </div>
+                  <div class="col-1 pb-2">
+                    <button type="button" class="btn btn-primary btn-block" onclick="highlightFilter(filter);">Filter</button>
+                  </div>
+                  <div class="col-2 pb-2">
+                    <button type="button" class="btn btn-primary btn-block" onclick="clearFilter(true)">Reset Selection</button>
+                  </div>
+                </div>
+              </div>
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+                  new TomSelect("#select-node",{
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      }
+                  });
+              
+
+              
+                  // explicitly using onItemAdd and this function as we need to save multiple values
+                  let updateValueFilter = function() {
+                      return function () {
+                      filter['value'].push(arguments[0])
+                      }
+                  }
+
+                  let valueControl = new TomSelect("#select-value",{
+                      maxItems: null,
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: updateValueFilter()
+                  });
+
+                  let addValues = function() {
+                      return function () {
+                          // clear the current value options and add the selected attribute values
+                          // tom-select handles duplicates
+                          let selectedProperty = arguments[0];
+                          valueControl.clear();
+                          valueControl.clearOptions();
+                          filter['value'] = []
+                          if (filter['item'] === 'node') {
+                              for (let each in allNodes) {
+                                  valueControl.addOption({
+                                      id:allNodes[each][selectedProperty],
+                                      title:allNodes[each][selectedProperty]
+                                  })
+                              }
+                          }
+                          else if (filter['item'] === 'edge') {
+                              for (let each in allEdges) {
+                                  valueControl.addOption({
+                                      id:allEdges[each][selectedProperty],
+                                      title:allEdges[each][selectedProperty]
+                                  })
+                              }
+                          }
+                      }
+                  };
+
+                  let propControl = new TomSelect("#select-property",{
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: addValues()
+                  });
+
+                  let addProperties = function() {
+                      return function () {
+                          // loops through the selected network item and adds the attributes to dropdown
+                          // tom-select handles duplicates
+                          clearFilter(false)
+                          if (arguments[0] === 'edge') {
+                              for (let each in allEdges) {
+                                  if (allEdges.hasOwnProperty(each)) {
+                                      for (let eachProp in allEdges[each]) {
+                                          if (allEdges[each].hasOwnProperty(eachProp)) {
+                                              propControl.addOption({id: eachProp, title: eachProp})
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                          else if (arguments[0] === 'node') {
+                              for (let each in allNodes) {
+                                  if (allNodes.hasOwnProperty(each)) {
+                                      for (let eachProp in allNodes[each]) {
+                                          if (allNodes[each].hasOwnProperty(eachProp)
+                                              && (eachProp !== 'hidden' && eachProp !== 'savedLabel'
+                                                  && eachProp !== 'hiddenLabel')) {
+                                              propControl.addOption({id: eachProp, title: eachProp})
+
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  };
+
+                  let itemControl = new TomSelect("#select-item",{
+                      create: false,
+                      sortField:{
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: addProperties()
+                  });
+
+                  function clearFilter(reset) {
+                      // utility function to clear all the selected filter options
+                      // if reset is set to true, the existing filter will be removed
+                      // else, only the dropdown options are cleared
+                      propControl.clear();
+                      propControl.clearOptions();
+                      valueControl.clear();
+                      valueControl.clearOptions();
+                      filter = {
+                          item : '',
+                          property : '',
+                          value : []
+                      }
+                      if (reset) {
+                          itemControl.clear();
+                          filterHighlight({nodes: []})
+                      }
+                  }
+
+                  function updateFilter(value, key) {
+                      // key could be 'item' or 'property' and value is as selected in dropdown
+                      filter[key] = value
+                  }
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Ingesta", "id": "RM-001", "label": "RM-001", "level": 0, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #4ECDC4;\u0027\u003eRM-001\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Registro de brokers\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Ingesta\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Admin; Sistema\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e \u2014\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 permitir cargar y administrar una lista configurable de N brokers con 1..N URLs de perfil por broker y metadatos (broker_id, nombre, regi\u00f3n, etiquetas/estrategia). Debe soportar impo...\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Ingesta", "id": "RM-002", "label": "RM-002", "level": 1, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #4ECDC4;\u0027\u003eRM-002\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Validaci\u00f3n de URL\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Ingesta\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Sistema; Admin\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-001\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eAntes de ejecutar extracci\u00f3n, el sistema deber\u00e1 validar cada URL (sintaxis, esquema, dominio permitido, alcanzabilidad HTTP/DNS) y persistir el resultado con c\u00f3digo de error y pol\u00edtica de reintento.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Ingesta", "id": "RM-003", "label": "RM-003", "level": 2, "shape": "dot", "size": 25, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #4ECDC4;\u0027\u003eRM-003\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Pol\u00edticas de acceso por dominio (robots/ToS)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Ingesta\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Media (P1)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e v0.2\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend/DevOps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Admin; DevOps; Sistema\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-001,RM-002\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 registrar pol\u00edticas por dominio (robots.txt snapshot, rate limit, notas ToS internas) y hacer cumplir dichas pol\u00edticas durante la extracci\u00f3n. Debe permitir bloquear dominios o pausar...\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Ingesta", "id": "RM-004", "label": "RM-004", "level": 1, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #4ECDC4;\u0027\u003eRM-004\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Scheduler de crawls\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Ingesta\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend/DevOps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Admin; Analista; Sistema\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-001\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 soportar ejecuci\u00f3n programada (horario configurable por proyecto y/o por broker) y refresh on-demand por broker, generando jobs con trazabilidad (run_id, broker_id, created_by).\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Ingesta", "id": "RM-005", "label": "RM-005", "level": 1, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #4ECDC4;\u0027\u003eRM-005\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Rate limiting, retries y circuit breaker\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Ingesta\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend/DevOps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Sistema; DevOps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-003\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 implementar rate limiting por dominio, retries con exponential backoff y circuit breaker ante fallas repetidas. Debe registrar m\u00e9tricas de requests y errores.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Extracci\u00f3n", "id": "RM-006", "label": "RM-006", "level": 2, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #FF6B6B;\u0027\u003eRM-006\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Parser HTML por dominio\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Extracci\u00f3n\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Sistema; Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-004,RM-005\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 extraer datos crudos desde HTML usando adaptadores por dominio (selectores/mapeos) mantenibles y testeables, versionando el parser.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Extracci\u00f3n", "id": "RM-007", "label": "RM-007", "level": 1, "shape": "dot", "size": 25, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #FF6B6B;\u0027\u003eRM-007\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Soporte JSON/API cuando exista\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Extracci\u00f3n\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Media (P1)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e v0.2\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Sistema; Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-006\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eSi el perfil expone datos v\u00eda JSON/API (directo o embebido), el adaptador deber\u00e1 preferir esa fuente por estabilidad y registrar el endpoint utilizado.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Extracci\u00f3n", "id": "RM-008", "label": "RM-008", "level": 2, "shape": "dot", "size": 18, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #FF6B6B;\u0027\u003eRM-008\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Descarga de adjuntos relevantes\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Extracci\u00f3n\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Baja (P2)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e v0.3\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Sistema; Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-003,RM-006\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 detectar y descargar adjuntos/links (PDF u otros permitidos) asociados al perfil cuando est\u00e9n presentes y permitidos por pol\u00edtica, guardando checksum y metadatos.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Modelo de datos", "id": "RM-009", "label": "RM-009", "level": 1, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #45B7D1;\u0027\u003eRM-009\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Almacenamiento de datos crudos versionados\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Modelo de datos\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Sistema; Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-006\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 guardar registros crudos inmutables con URL fuente, timestamp, parser_version, content_hash y payload (JSON). No debe sobrescribir datos crudos.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Modelo de datos", "id": "RM-010", "label": "RM-010", "level": 1, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #45B7D1;\u0027\u003eRM-010\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Entidades normalizadas y snapshots\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Modelo de datos\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Backend; Quant; Sistema\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-009\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 normalizar datos crudos a entidades n\u00facleo (Broker, ProfileSnapshot, MetricDefinition, MetricValue, Run, Experiment) y soportar snapshots temporalmente indexados.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Transformaci\u00f3n", "id": "RM-011", "label": "RM-011", "level": 1, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #96CEB4;\u0027\u003eRM-011\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Reglas de mapeo configurables\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Transformaci\u00f3n\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Admin; Backend; Quant\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-010\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 permitir definir reglas de mapeo (por dominio) desde campos crudos a campos normalizados, con versionado y capacidad de rollback. Idealmente sin despliegue de c\u00f3digo para cambios men...\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Transformaci\u00f3n", "id": "RM-012", "label": "RM-012", "level": 1, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #96CEB4;\u0027\u003eRM-012\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Limpieza y estandarizaci\u00f3n de datos\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Transformaci\u00f3n\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Backend; Sistema\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-011\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 limpiar y estandarizar formatos (fechas, divisas, porcentajes, locales) a formatos can\u00f3nicos y registrar errores de parseo por campo.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "M\u00e9tricas", "id": "RM-013", "label": "RM-013", "level": 1, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #FFD93D;\u0027\u003eRM-013\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Cat\u00e1logo de definiciones de m\u00e9tricas\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e M\u00e9tricas\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend/Quant\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Quant; Backend; Admin\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-010\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 mantener un registro versionado de m\u00e9tricas (nombre, f\u00f3rmula/algoritmo, insumos requeridos, unidad, rango v\u00e1lido, y constraints). Ser\u00e1 la fuente \u00fanica para c\u00f3mputo y reporteo.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "M\u00e9tricas", "id": "RM-014", "label": "RM-014", "level": 1, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #FFD93D;\u0027\u003eRM-014\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e C\u00e1lculo de m\u00e9tricas core\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e M\u00e9tricas\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Quant\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Quant; Sistema\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-013\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 calcular m\u00e9tricas base por broker y por periodo (p.ej. rendimiento, volatilidad, drawdown, win-rate) a partir de los datos disponibles, y manejar expl\u00edcitamente el caso de \u0027datos ins...\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "M\u00e9tricas", "id": "RM-015", "label": "RM-015", "level": 1, "shape": "dot", "size": 25, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #FFD93D;\u0027\u003eRM-015\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e M\u00e9tricas de costos/fees\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e M\u00e9tricas\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Media (P1)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e v0.2\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Quant\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Quant; Analista\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-013\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 calcular m\u00e9tricas relacionadas a costos/fees/spread cuando existan, documentando supuestos y anex\u00e1ndolos a reportes y exportaciones.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "M\u00e9tricas", "id": "RM-016", "label": "RM-016", "level": 2, "shape": "dot", "size": 18, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #FFD93D;\u0027\u003eRM-016\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Flags de riesgo/compliance basados en reglas\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e M\u00e9tricas\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Baja (P2)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e v0.3\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Quant/Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Quant; Analista; Admin\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-013,RM-020\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 evaluar reglas determin\u00edsticas para generar banderas (p.ej. disclosures faltantes, claims an\u00f3malos) y adjuntar evidencia (campo crudo + snapshot) para cada flag.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "M\u00e9tricas", "id": "RM-017", "label": "RM-017", "level": 1, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #FFD93D;\u0027\u003eRM-017\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Benchmarks, percentiles y rankings\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e M\u00e9tricas\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Quant\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Analista; Viewer\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-014\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 generar agregados cross-broker (percentiles, rankings, peer groups) con definiciones versionadas de peer group y desempate determin\u00edstico.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Calidad de datos", "id": "RM-018", "label": "RM-018", "level": 2, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #82E0AA;\u0027\u003eRM-018\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Score de completitud\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Calidad de datos\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend/Quant\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Analista; Viewer\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-013,RM-014\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 calcular un score de completitud por broker y por m\u00e9trica en [0,1], basado en disponibilidad de insumos y cobertura temporal. Debe mostrarse en dashboard y reportes.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Calidad de datos", "id": "RM-019", "label": "RM-019", "level": 3, "shape": "dot", "size": 25, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #82E0AA;\u0027\u003eRM-019\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Detecci\u00f3n de anomal\u00edas\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Calidad de datos\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Media (P1)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e v0.2\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Quant/Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Analista; Quant; DevOps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-014,RM-011,RM-009\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 detectar anomal\u00edas (saltos bruscos de m\u00e9tricas, huecos temporales, cambios de parser/mapping) y etiquetar resultados afectados; debe permitir filtrar anomal\u00edas en validaci\u00f3n del algo...\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Auditabilidad", "id": "RM-020", "label": "RM-020", "level": 2, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #F9E79F;\u0027\u003eRM-020\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Lineage de m\u00e9tricas a raw data\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Auditabilidad\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Analista; Admin\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-009,RM-013\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 proveer trazabilidad desde cualquier valor de m\u00e9trica/ranking/reporte hasta los raw_records y transformaciones usadas (parser_version, mapping_version, metric_definition_version).\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Validaci\u00f3n de algoritmo", "id": "RM-021", "label": "RM-021", "level": 1, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #76D7C4;\u0027\u003eRM-021\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Contrato de integraci\u00f3n del algoritmo\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Validaci\u00f3n de algoritmo\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend/Quant\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Quant; Backend; DevOps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-022\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 integrar el algoritmo de optimizaci\u00f3n del cliente mediante una interfaz definida (CLI/API/librer\u00eda) con versionado (algorithm_build_id) y entradas/salidas determin\u00edsticas o con toler...\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Validaci\u00f3n de algoritmo", "id": "RM-022", "label": "RM-022", "level": 1, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #76D7C4;\u0027\u003eRM-022\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Constructor de datasets (feature matrix)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Validaci\u00f3n de algoritmo\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Quant/Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Quant; Analista\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-010\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 construir datasets de validaci\u00f3n desde datos normalizados (features, targets/labels si aplica) con ventanas temporales expl\u00edcitas y metadatos (schema_version, broker_set, feature_lis...\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Validaci\u00f3n de algoritmo", "id": "RM-023", "label": "RM-023", "level": 2, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #76D7C4;\u0027\u003eRM-023\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Runner de backtests/experimentos\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Validaci\u00f3n de algoritmo\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Quant/Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Quant; Analista\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-021,RM-022\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 ejecutar runs de validaci\u00f3n sobre datasets seleccionados, guardando par\u00e1metros, logs, outputs, y m\u00e9tricas de ejecuci\u00f3n. Debe soportar tipos de run (train/validate/test) si aplica.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Validaci\u00f3n de algoritmo", "id": "RM-024", "label": "RM-024", "level": 2, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #76D7C4;\u0027\u003eRM-024\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e M\u00e9tricas de evaluaci\u00f3n y scorecards\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Validaci\u00f3n de algoritmo\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Quant\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Quant; Analista; Viewer\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-023,RM-013\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 calcular m\u00e9tricas de evaluaci\u00f3n (error, estabilidad, violaciones de constraints, uplift vs baseline) seg\u00fan el objetivo del cliente, con thresholds configurables para pass/fail.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Validaci\u00f3n de algoritmo", "id": "RM-025", "label": "RM-025", "level": 2, "shape": "dot", "size": 25, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #76D7C4;\u0027\u003eRM-025\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Diagn\u00f3sticos y sensibilidad\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Validaci\u00f3n de algoritmo\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Media (P1)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e v0.2\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Quant\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Quant; Analista\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-023,RM-024\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 generar diagn\u00f3sticos para runs (p.ej. an\u00e1lisis de fallos, frecuencia de constraints activas, ablation/feature importance si aplica) y exportarlos en reporte t\u00e9cnico.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Validaci\u00f3n de algoritmo", "id": "RM-026", "label": "RM-026", "level": 1, "shape": "dot", "size": 25, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #76D7C4;\u0027\u003eRM-026\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e What-if y parameter sweeps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Validaci\u00f3n de algoritmo\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Media (P1)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e v0.2\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Quant/Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Quant; Analista\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-023\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 permitir ejecutar batch de escenarios (fees \u00b1x, imputaci\u00f3n, distintos thresholds) y comparar resultados en una tabla/visualizaci\u00f3n \u00fanica.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Reportes", "id": "RM-027", "label": "RM-027", "level": 3, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #BB8FCE;\u0027\u003eRM-027\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Plantillas y generaci\u00f3n de reportes\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Reportes\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Analista; Viewer; Admin\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-014,RM-024,RM-020\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 generar reportes (HTML/PDF) a partir de plantillas con secciones: overview brokers, tablas de m\u00e9tricas, scorecards de validaci\u00f3n, anomal\u00edas y appendix de metodolog\u00eda + versiones.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Reportes", "id": "RM-028", "label": "RM-028", "level": 3, "shape": "dot", "size": 18, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #BB8FCE;\u0027\u003eRM-028\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Distribuci\u00f3n programada\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Reportes\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Baja (P2)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e v0.3\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend/DevOps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Admin; DevOps; Sistema\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-027,RM-004,RM-034\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 soportar generaci\u00f3n y distribuci\u00f3n programada de reportes (link seguro, email y/o webhook), con reintentos y alertas de falla.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Dashboard", "id": "RM-029", "label": "RM-029", "level": 5, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #85C1E9;\u0027\u003eRM-029\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Vistas core del dashboard\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Dashboard\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Frontend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Viewer; Analista; Admin\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-014,RM-017,RM-020,RM-033,RM-034\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 proveer dashboard con: lista de brokers + filtros, p\u00e1gina detalle broker con charts, y resumen de validaci\u00f3n del algoritmo; debe soportar drill-down a lineage.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Dashboard", "id": "RM-030", "label": "RM-030", "level": 4, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #85C1E9;\u0027\u003eRM-030\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Comparaciones y rankings\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Dashboard\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Frontend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Viewer; Analista\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-017,RM-032,RM-018,RM-019\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 permitir comparaci\u00f3n side-by-side de brokers y tablas de ranking con columnas configurables, ordenamiento y exportaci\u00f3n.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Dashboard", "id": "RM-031", "label": "RM-031", "level": 3, "shape": "dot", "size": 25, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #85C1E9;\u0027\u003eRM-031\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Explorador de runs/experimentos\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Dashboard\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Media (P1)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e v0.2\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Frontend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Analista; Quant\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-023,RM-024,RM-034\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 proveer UI para explorar runs (filtros por versi\u00f3n, par\u00e1metros, fecha, estado) y comparar 2+ runs, mostrando diffs y scorecards.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Exportaci\u00f3n", "id": "RM-032", "label": "RM-032", "level": 3, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #D2B4DE;\u0027\u003eRM-032\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Exports de datos y resultados\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Exportaci\u00f3n\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Analista; Admin\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-010,RM-013,RM-034\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 exportar (CSV/JSON) registro de brokers, m\u00e9tricas y resultados de runs con metadatos de schema y unidades; exports grandes deben ser as\u00edncronos.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Seguridad", "id": "RM-033", "label": "RM-033", "level": 0, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #F1948A;\u0027\u003eRM-033\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Autenticaci\u00f3n\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Seguridad\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend/DevOps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Admin; Viewer; Analista\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e \u2014\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 requerir autenticaci\u00f3n para dashboard, reportes y exports (email/password o SSO/OIDC), con sesiones seguras, CSRF donde aplique y pol\u00edticas de password.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Seguridad", "id": "RM-034", "label": "RM-034", "level": 1, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #F1948A;\u0027\u003eRM-034\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Autorizaci\u00f3n y roles (RBAC)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Seguridad\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend/Frontend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Admin; Analista; Viewer\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-033\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 implementar RBAC (Admin, Analista, Viewer) controlando: alta/edici\u00f3n brokers, ejecuci\u00f3n runs, exports, cambios de pol\u00edticas y acceso a auditor\u00edas.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Seguridad", "id": "RM-035", "label": "RM-035", "level": 1, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #F1948A;\u0027\u003eRM-035\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Gesti\u00f3n de secretos\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Seguridad\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e DevOps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e DevOps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-043\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 gestionar secretos (API keys, SMTP, webhooks) fuera del repositorio (env/secret manager) y activar detecci\u00f3n de secretos en CI.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Observabilidad", "id": "RM-036", "label": "RM-036", "level": 2, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #ABEBC6;\u0027\u003eRM-036\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Logging estructurado con correlaci\u00f3n\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Observabilidad\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e DevOps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e DevOps; Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-004,RM-023\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 emitir logs estructurados (JSON) para ingesta, transformaci\u00f3n, m\u00e9tricas y runs con correlation_id (run_id, broker_id, job_id) y niveles consistentes.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Observabilidad", "id": "RM-037", "label": "RM-037", "level": 1, "shape": "dot", "size": 25, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #ABEBC6;\u0027\u003eRM-037\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e M\u00e9tricas y alertas operativas\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Observabilidad\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Media (P1)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e v0.2\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e DevOps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e DevOps; Admin\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-036\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 exponer m\u00e9tricas (duraci\u00f3n de jobs, tasa de \u00e9xito, errores de scraping, latencia API) y alertas por umbrales (p.ej. fallas \u003eX%, retrasos).\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Performance", "id": "RM-038", "label": "RM-038", "level": 2, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #F5CBA7;\u0027\u003eRM-038\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Throughput del pipeline\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Performance\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend/DevOps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e DevOps; Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-005,RM-004\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 procesar al menos 100 URLs end-to-end dentro de un SLA configurable (p.ej. \u003c30 min) usando paralelismo sin violar rate limits por dominio.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Performance", "id": "RM-039", "label": "RM-039", "level": 2, "shape": "dot", "size": 25, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #F5CBA7;\u0027\u003eRM-039\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Responsividad del dashboard\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Performance\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Media (P1)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e v0.2\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend/Frontend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Frontend; Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-029,RM-017\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 mantener interacciones del dashboard con P95 \u003c2s para consultas t\u00edpicas y \u003c10s para consultas pesadas, mostrando indicador de progreso si aplica.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Reproducibilidad", "id": "RM-040", "label": "RM-040", "level": 5, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #AEB6BF;\u0027\u003eRM-040\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Versionado end-to-end de componentes\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Reproducibilidad\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend/Quant\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Quant; Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-009,RM-011,RM-013,RM-021,RM-022\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 versionar y relacionar parsers, mapeos, definiciones de m\u00e9tricas, datasets y builds del algoritmo, y asociarlos a cada run y reporte.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Testing", "id": "RM-041", "label": "RM-041", "level": 3, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #F5B041;\u0027\u003eRM-041\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Suite de unit/integration/E2E\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Testing\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e All\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Backend; Quant; Frontend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-006,RM-013,RM-023\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 incluir pruebas autom\u00e1ticas para parsers, transformaciones, m\u00e9tricas y runner del algoritmo. Debe usar fixtures grabadas (no depender de sitios live) y seguir enfoque RED/GREEN.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Testing", "id": "RM-042", "label": "RM-042", "level": 3, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #F5B041;\u0027\u003eRM-042\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Data contract tests (schemas)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Testing\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Backend; Quant\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-010,RM-022,RM-021\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 aplicar data contracts entre extracci\u00f3n\u2192normalizaci\u00f3n\u2192dataset\u2192algoritmo (schemas versionados) y fallar CI ante cambios rompientes.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "DevOps", "id": "RM-043", "label": "RM-043", "level": 2, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #AED6F1;\u0027\u003eRM-043\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e CI/CD + migraciones + rollback\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e DevOps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e DevOps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e DevOps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-041,RM-035\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 contar con CI/CD para build, tests, deploy y migraciones DB, con promoci\u00f3n de ambientes (dev/stage/prod) y procedimiento de rollback probado.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Gobernanza de datos", "id": "RM-044", "label": "RM-044", "level": 3, "shape": "dot", "size": 25, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #D7BDE2;\u0027\u003eRM-044\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Retenci\u00f3n y archivado\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Gobernanza de datos\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Media (P1)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e v0.2\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend/DevOps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Admin; DevOps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-009,RM-023,RM-027\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 definir pol\u00edticas de retenci\u00f3n para raw_records, snapshots, outputs de runs, logs y reportes (purga/archivado) sin dejar referencias hu\u00e9rfanas.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Gobernanza", "id": "RM-045", "label": "RM-045", "level": 1, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #D7BDE2;\u0027\u003eRM-045\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Bit\u00e1cora de auditor\u00eda de acciones cr\u00edticas\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Gobernanza\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Admin\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-034\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 registrar eventos de auditor\u00eda para: cambios de brokers/URLs, ejecuciones de runs, exports, cambios de roles, cambios de pol\u00edticas, y accesos a reportes/lineage.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "UX", "id": "RM-046", "label": "RM-046", "level": 3, "shape": "dot", "size": 25, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #85C1E9;\u0027\u003eRM-046\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Transparencia de errores y remediaci\u00f3n\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e UX\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Media (P1)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e v0.2\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Frontend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Viewer; Analista; Admin\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-019,RM-036,RM-020\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 mostrar errores claros y accionables (parser roto, dominio bloqueado, datos insuficientes, run fallido), con pasos sugeridos y links a evidencia (logs/lineage).\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Privacidad", "id": "RM-047", "label": "RM-047", "level": 2, "shape": "dot", "size": 18, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #FADBD8;\u0027\u003eRM-047\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Minimizaci\u00f3n y redacci\u00f3n de datos\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Privacidad\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Baja (P2)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e v0.3\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend/DevOps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Admin; DevOps\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-036,RM-032\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 almacenar s\u00f3lo campos necesarios y permitir redacci\u00f3n/omisi\u00f3n de campos sensibles (si aparecen) en salidas (dash/report/export) seg\u00fan pol\u00edtica.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Documentaci\u00f3n", "id": "RM-048", "label": "RM-048", "level": 1, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #D5DBDB;\u0027\u003eRM-048\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Docs t\u00e9cnicas y operativas\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Documentaci\u00f3n\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e All\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e All\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-043\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 incluir documentaci\u00f3n: setup local, despliegue, runbooks, cat\u00e1logo de m\u00e9tricas, c\u00f3mo agregar un nuevo dominio/adaptador y c\u00f3mo ejecutar validaci\u00f3n del algoritmo.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Extensibilidad", "id": "RM-049", "label": "RM-049", "level": 3, "shape": "dot", "size": 25, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #A9DFBF;\u0027\u003eRM-049\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Onboarding de nuevo dominio/fuente\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Extensibilidad\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Media (P1)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e v0.2\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e Backend\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e Backend; Quant\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-006,RM-011,RM-041\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl sistema deber\u00e1 ofrecer un proceso est\u00e1ndar (template de adapter + mapping + fixtures + tests) para agregar un nuevo dominio en \u003c=1 d\u00eda para un sitio t\u00edpico.\u003c/p\u003e\n        \u003c/div\u003e\n        "}, {"borderWidth": 2, "font": {"color": "#ffffff"}, "group": "Entregables", "id": "RM-050", "label": "RM-050", "level": 49, "shape": "dot", "size": 35, "title": "\n        \u003cdiv style=\u0027font-family: Arial; padding: 10px; max-width: 400px;\u0027\u003e\n            \u003ch3 style=\u0027margin: 0 0 10px 0; color: #FAD7A0;\u0027\u003eRM-050\u003c/h3\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eFuncionalidad:\u003c/strong\u003e Criterio de aceptaci\u00f3n del MVP\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003e\u00c1rea:\u003c/strong\u003e Entregables\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003ePrioridad:\u003c/strong\u003e Alta (P0)\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eVersi\u00f3n:\u003c/strong\u003e MVP v0.1\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eOwner:\u003c/strong\u003e PM/All\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eRoles:\u003c/strong\u003e PM; Admin; Analista\u003c/p\u003e\n            \u003cp style=\u0027margin: 5px 0;\u0027\u003e\u003cstrong\u003eDependencias:\u003c/strong\u003e RM-001..RM-049\u003c/p\u003e\n            \u003chr style=\u0027margin: 10px 0;\u0027\u003e\n            \u003cp style=\u0027margin: 5px 0; font-size: 0.9em;\u0027\u003e\u003cstrong\u003eRequisito:\u003c/strong\u003e\u003cbr\u003eEl MVP deber\u00e1 incluir: registro de brokers+URLs, scheduler, extracci\u00f3n+normalizaci\u00f3n, m\u00e9tricas core, dashboard b\u00e1sico, construcci\u00f3n de dataset, ejecuci\u00f3n de runs, scorecard, y generaci\u00f3n de reportes c...\u003c/p\u003e\n        \u003c/div\u003e\n        "}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "RM-001", "to": "RM-002"}, {"arrows": "to", "from": "RM-001", "to": "RM-003"}, {"arrows": "to", "from": "RM-001", "to": "RM-004"}, {"arrows": "to", "from": "RM-001", "to": "RM-050"}, {"arrows": "to", "from": "RM-002", "to": "RM-003"}, {"arrows": "to", "from": "RM-002", "to": "RM-050"}, {"arrows": "to", "from": "RM-003", "to": "RM-005"}, {"arrows": "to", "from": "RM-003", "to": "RM-008"}, {"arrows": "to", "from": "RM-003", "to": "RM-050"}, {"arrows": "to", "from": "RM-004", "to": "RM-006"}, {"arrows": "to", "from": "RM-004", "to": "RM-028"}, {"arrows": "to", "from": "RM-004", "to": "RM-036"}, {"arrows": "to", "from": "RM-004", "to": "RM-038"}, {"arrows": "to", "from": "RM-004", "to": "RM-050"}, {"arrows": "to", "from": "RM-005", "to": "RM-006"}, {"arrows": "to", "from": "RM-005", "to": "RM-038"}, {"arrows": "to", "from": "RM-005", "to": "RM-050"}, {"arrows": "to", "from": "RM-006", "to": "RM-007"}, {"arrows": "to", "from": "RM-006", "to": "RM-008"}, {"arrows": "to", "from": "RM-006", "to": "RM-009"}, {"arrows": "to", "from": "RM-006", "to": "RM-041"}, {"arrows": "to", "from": "RM-006", "to": "RM-049"}, {"arrows": "to", "from": "RM-006", "to": "RM-050"}, {"arrows": "to", "from": "RM-007", "to": "RM-050"}, {"arrows": "to", "from": "RM-008", "to": "RM-050"}, {"arrows": "to", "from": "RM-009", "to": "RM-010"}, {"arrows": "to", "from": "RM-009", "to": "RM-019"}, {"arrows": "to", "from": "RM-009", "to": "RM-020"}, {"arrows": "to", "from": "RM-009", "to": "RM-040"}, {"arrows": "to", "from": "RM-009", "to": "RM-044"}, {"arrows": "to", "from": "RM-009", "to": "RM-050"}, {"arrows": "to", "from": "RM-010", "to": "RM-011"}, {"arrows": "to", "from": "RM-010", "to": "RM-013"}, {"arrows": "to", "from": "RM-010", "to": "RM-022"}, {"arrows": "to", "from": "RM-010", "to": "RM-032"}, {"arrows": "to", "from": "RM-010", "to": "RM-042"}, {"arrows": "to", "from": "RM-010", "to": "RM-050"}, {"arrows": "to", "from": "RM-011", "to": "RM-012"}, {"arrows": "to", "from": "RM-011", "to": "RM-019"}, {"arrows": "to", "from": "RM-011", "to": "RM-040"}, {"arrows": "to", "from": "RM-011", "to": "RM-049"}, {"arrows": "to", "from": "RM-011", "to": "RM-050"}, {"arrows": "to", "from": "RM-012", "to": "RM-050"}, {"arrows": "to", "from": "RM-013", "to": "RM-014"}, {"arrows": "to", "from": "RM-013", "to": "RM-015"}, {"arrows": "to", "from": "RM-013", "to": "RM-016"}, {"arrows": "to", "from": "RM-013", "to": "RM-018"}, {"arrows": "to", "from": "RM-013", "to": "RM-020"}, {"arrows": "to", "from": "RM-013", "to": "RM-024"}, {"arrows": "to", "from": "RM-013", "to": "RM-032"}, {"arrows": "to", "from": "RM-013", "to": "RM-040"}, {"arrows": "to", "from": "RM-013", "to": "RM-041"}, {"arrows": "to", "from": "RM-013", "to": "RM-050"}, {"arrows": "to", "from": "RM-014", "to": "RM-017"}, {"arrows": "to", "from": "RM-014", "to": "RM-018"}, {"arrows": "to", "from": "RM-014", "to": "RM-019"}, {"arrows": "to", "from": "RM-014", "to": "RM-027"}, {"arrows": "to", "from": "RM-014", "to": "RM-029"}, {"arrows": "to", "from": "RM-014", "to": "RM-050"}, {"arrows": "to", "from": "RM-015", "to": "RM-050"}, {"arrows": "to", "from": "RM-016", "to": "RM-050"}, {"arrows": "to", "from": "RM-017", "to": "RM-029"}, {"arrows": "to", "from": "RM-017", "to": "RM-030"}, {"arrows": "to", "from": "RM-017", "to": "RM-039"}, {"arrows": "to", "from": "RM-017", "to": "RM-050"}, {"arrows": "to", "from": "RM-018", "to": "RM-030"}, {"arrows": "to", "from": "RM-018", "to": "RM-050"}, {"arrows": "to", "from": "RM-019", "to": "RM-030"}, {"arrows": "to", "from": "RM-019", "to": "RM-046"}, {"arrows": "to", "from": "RM-019", "to": "RM-050"}, {"arrows": "to", "from": "RM-020", "to": "RM-016"}, {"arrows": "to", "from": "RM-020", "to": "RM-027"}, {"arrows": "to", "from": "RM-020", "to": "RM-029"}, {"arrows": "to", "from": "RM-020", "to": "RM-046"}, {"arrows": "to", "from": "RM-020", "to": "RM-050"}, {"arrows": "to", "from": "RM-021", "to": "RM-023"}, {"arrows": "to", "from": "RM-021", "to": "RM-040"}, {"arrows": "to", "from": "RM-021", "to": "RM-042"}, {"arrows": "to", "from": "RM-021", "to": "RM-050"}, {"arrows": "to", "from": "RM-022", "to": "RM-021"}, {"arrows": "to", "from": "RM-022", "to": "RM-023"}, {"arrows": "to", "from": "RM-022", "to": "RM-040"}, {"arrows": "to", "from": "RM-022", "to": "RM-042"}, {"arrows": "to", "from": "RM-022", "to": "RM-050"}, {"arrows": "to", "from": "RM-023", "to": "RM-024"}, {"arrows": "to", "from": "RM-023", "to": "RM-025"}, {"arrows": "to", "from": "RM-023", "to": "RM-026"}, {"arrows": "to", "from": "RM-023", "to": "RM-031"}, {"arrows": "to", "from": "RM-023", "to": "RM-036"}, {"arrows": "to", "from": "RM-023", "to": "RM-041"}, {"arrows": "to", "from": "RM-023", "to": "RM-044"}, {"arrows": "to", "from": "RM-023", "to": "RM-050"}, {"arrows": "to", "from": "RM-024", "to": "RM-025"}, {"arrows": "to", "from": "RM-024", "to": "RM-027"}, {"arrows": "to", "from": "RM-024", "to": "RM-031"}, {"arrows": "to", "from": "RM-024", "to": "RM-050"}, {"arrows": "to", "from": "RM-025", "to": "RM-050"}, {"arrows": "to", "from": "RM-026", "to": "RM-050"}, {"arrows": "to", "from": "RM-027", "to": "RM-028"}, {"arrows": "to", "from": "RM-027", "to": "RM-044"}, {"arrows": "to", "from": "RM-027", "to": "RM-050"}, {"arrows": "to", "from": "RM-028", "to": "RM-050"}, {"arrows": "to", "from": "RM-029", "to": "RM-039"}, {"arrows": "to", "from": "RM-029", "to": "RM-050"}, {"arrows": "to", "from": "RM-030", "to": "RM-050"}, {"arrows": "to", "from": "RM-031", "to": "RM-050"}, {"arrows": "to", "from": "RM-032", "to": "RM-030"}, {"arrows": "to", "from": "RM-032", "to": "RM-047"}, {"arrows": "to", "from": "RM-032", "to": "RM-050"}, {"arrows": "to", "from": "RM-033", "to": "RM-029"}, {"arrows": "to", "from": "RM-033", "to": "RM-034"}, {"arrows": "to", "from": "RM-033", "to": "RM-050"}, {"arrows": "to", "from": "RM-034", "to": "RM-028"}, {"arrows": "to", "from": "RM-034", "to": "RM-029"}, {"arrows": "to", "from": "RM-034", "to": "RM-031"}, {"arrows": "to", "from": "RM-034", "to": "RM-032"}, {"arrows": "to", "from": "RM-034", "to": "RM-045"}, {"arrows": "to", "from": "RM-034", "to": "RM-050"}, {"arrows": "to", "from": "RM-035", "to": "RM-043"}, {"arrows": "to", "from": "RM-035", "to": "RM-050"}, {"arrows": "to", "from": "RM-036", "to": "RM-037"}, {"arrows": "to", "from": "RM-036", "to": "RM-046"}, {"arrows": "to", "from": "RM-036", "to": "RM-047"}, {"arrows": "to", "from": "RM-036", "to": "RM-050"}, {"arrows": "to", "from": "RM-037", "to": "RM-050"}, {"arrows": "to", "from": "RM-038", "to": "RM-050"}, {"arrows": "to", "from": "RM-039", "to": "RM-050"}, {"arrows": "to", "from": "RM-040", "to": "RM-050"}, {"arrows": "to", "from": "RM-041", "to": "RM-043"}, {"arrows": "to", "from": "RM-041", "to": "RM-049"}, {"arrows": "to", "from": "RM-041", "to": "RM-050"}, {"arrows": "to", "from": "RM-042", "to": "RM-050"}, {"arrows": "to", "from": "RM-043", "to": "RM-035"}, {"arrows": "to", "from": "RM-043", "to": "RM-048"}, {"arrows": "to", "from": "RM-043", "to": "RM-050"}, {"arrows": "to", "from": "RM-044", "to": "RM-050"}, {"arrows": "to", "from": "RM-045", "to": "RM-050"}, {"arrows": "to", "from": "RM-046", "to": "RM-050"}, {"arrows": "to", "from": "RM-047", "to": "RM-050"}, {"arrows": "to", "from": "RM-048", "to": "RM-050"}, {"arrows": "to", "from": "RM-049", "to": "RM-050"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {"nodes": {"font": {"size": 14, "face": "arial", "strokeWidth": 3, "strokeColor": "#1a1a2e"}, "borderWidth": 2, "borderWidthSelected": 4, "shadow": {"enabled": true, "color": "rgba(0,0,0,0.5)", "size": 10, "x": 3, "y": 3}}, "edges": {"color": {"color": "#4a4a6a", "highlight": "#00ff88", "hover": "#00ff88"}, "arrows": {"to": {"enabled": true, "scaleFactor": 0.8}}, "smooth": {"enabled": true, "type": "curvedCW", "roundness": 0.2}, "width": 1.5, "selectionWidth": 3}, "physics": {"enabled": true, "solver": "forceAtlas2Based", "forceAtlas2Based": {"gravitationalConstant": -80, "centralGravity": 0.01, "springLength": 150, "springConstant": 0.08, "damping": 0.4, "avoidOverlap": 0.8}, "stabilization": {"enabled": true, "iterations": 200, "updateInterval": 25}}, "interaction": {"hover": true, "hoverConnectedEdges": true, "selectConnectedEdges": true, "multiselect": true, "dragNodes": true, "dragView": true, "zoomView": true, "navigationButtons": true, "keyboard": {"enabled": true, "speed": {"x": 10, "y": 10, "zoom": 0.1}}, "tooltipDelay": 100}, "configure": {"enabled": false}};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+                    network.on("selectNode", neighbourhoodHighlight);
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    
+    <script>
+        const nodeData = {"RM-001": {"area": "Ingesta", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Registro de brokers", "in_degree": 0, "out_degree": 4}, "RM-002": {"area": "Ingesta", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Validaci\u00f3n de URL", "in_degree": 1, "out_degree": 2}, "RM-003": {"area": "Ingesta", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Pol\u00edticas de acceso por dominio (robots/ToS)", "in_degree": 2, "out_degree": 3}, "RM-004": {"area": "Ingesta", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Scheduler de crawls", "in_degree": 1, "out_degree": 5}, "RM-005": {"area": "Ingesta", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Rate limiting, retries y circuit breaker", "in_degree": 1, "out_degree": 3}, "RM-006": {"area": "Extracci\u00f3n", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Parser HTML por dominio", "in_degree": 2, "out_degree": 6}, "RM-007": {"area": "Extracci\u00f3n", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Soporte JSON/API cuando exista", "in_degree": 1, "out_degree": 1}, "RM-008": {"area": "Extracci\u00f3n", "prioridad": "Baja (P2)", "version": "v0.3", "funcionalidad": "Descarga de adjuntos relevantes", "in_degree": 2, "out_degree": 1}, "RM-009": {"area": "Modelo de datos", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Almacenamiento de datos crudos versionados", "in_degree": 1, "out_degree": 6}, "RM-010": {"area": "Modelo de datos", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Entidades normalizadas y snapshots", "in_degree": 1, "out_degree": 6}, "RM-011": {"area": "Transformaci\u00f3n", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Reglas de mapeo configurables", "in_degree": 1, "out_degree": 5}, "RM-012": {"area": "Transformaci\u00f3n", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Limpieza y estandarizaci\u00f3n de datos", "in_degree": 1, "out_degree": 1}, "RM-013": {"area": "M\u00e9tricas", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Cat\u00e1logo de definiciones de m\u00e9tricas", "in_degree": 1, "out_degree": 10}, "RM-014": {"area": "M\u00e9tricas", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "C\u00e1lculo de m\u00e9tricas core", "in_degree": 1, "out_degree": 6}, "RM-015": {"area": "M\u00e9tricas", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "M\u00e9tricas de costos/fees", "in_degree": 1, "out_degree": 1}, "RM-016": {"area": "M\u00e9tricas", "prioridad": "Baja (P2)", "version": "v0.3", "funcionalidad": "Flags de riesgo/compliance basados en reglas", "in_degree": 2, "out_degree": 1}, "RM-017": {"area": "M\u00e9tricas", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Benchmarks, percentiles y rankings", "in_degree": 1, "out_degree": 4}, "RM-018": {"area": "Calidad de datos", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Score de completitud", "in_degree": 2, "out_degree": 2}, "RM-019": {"area": "Calidad de datos", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Detecci\u00f3n de anomal\u00edas", "in_degree": 3, "out_degree": 3}, "RM-020": {"area": "Auditabilidad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Lineage de m\u00e9tricas a raw data", "in_degree": 2, "out_degree": 5}, "RM-021": {"area": "Validaci\u00f3n de algoritmo", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Contrato de integraci\u00f3n del algoritmo", "in_degree": 1, "out_degree": 4}, "RM-022": {"area": "Validaci\u00f3n de algoritmo", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Constructor de datasets (feature matrix)", "in_degree": 1, "out_degree": 5}, "RM-023": {"area": "Validaci\u00f3n de algoritmo", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Runner de backtests/experimentos", "in_degree": 2, "out_degree": 8}, "RM-024": {"area": "Validaci\u00f3n de algoritmo", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "M\u00e9tricas de evaluaci\u00f3n y scorecards", "in_degree": 2, "out_degree": 4}, "RM-025": {"area": "Validaci\u00f3n de algoritmo", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Diagn\u00f3sticos y sensibilidad", "in_degree": 2, "out_degree": 1}, "RM-026": {"area": "Validaci\u00f3n de algoritmo", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "What-if y parameter sweeps", "in_degree": 1, "out_degree": 1}, "RM-027": {"area": "Reportes", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Plantillas y generaci\u00f3n de reportes", "in_degree": 3, "out_degree": 3}, "RM-028": {"area": "Reportes", "prioridad": "Baja (P2)", "version": "v0.3", "funcionalidad": "Distribuci\u00f3n programada", "in_degree": 3, "out_degree": 1}, "RM-029": {"area": "Dashboard", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Vistas core del dashboard", "in_degree": 5, "out_degree": 2}, "RM-030": {"area": "Dashboard", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Comparaciones y rankings", "in_degree": 4, "out_degree": 1}, "RM-031": {"area": "Dashboard", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Explorador de runs/experimentos", "in_degree": 3, "out_degree": 1}, "RM-032": {"area": "Exportaci\u00f3n", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Exports de datos y resultados", "in_degree": 3, "out_degree": 3}, "RM-033": {"area": "Seguridad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Autenticaci\u00f3n", "in_degree": 0, "out_degree": 3}, "RM-034": {"area": "Seguridad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Autorizaci\u00f3n y roles (RBAC)", "in_degree": 1, "out_degree": 6}, "RM-035": {"area": "Seguridad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Gesti\u00f3n de secretos", "in_degree": 1, "out_degree": 2}, "RM-036": {"area": "Observabilidad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Logging estructurado con correlaci\u00f3n", "in_degree": 2, "out_degree": 4}, "RM-037": {"area": "Observabilidad", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "M\u00e9tricas y alertas operativas", "in_degree": 1, "out_degree": 1}, "RM-038": {"area": "Performance", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Throughput del pipeline", "in_degree": 2, "out_degree": 1}, "RM-039": {"area": "Performance", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Responsividad del dashboard", "in_degree": 2, "out_degree": 1}, "RM-040": {"area": "Reproducibilidad", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Versionado end-to-end de componentes", "in_degree": 5, "out_degree": 1}, "RM-041": {"area": "Testing", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Suite de unit/integration/E2E", "in_degree": 3, "out_degree": 3}, "RM-042": {"area": "Testing", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Data contract tests (schemas)", "in_degree": 3, "out_degree": 1}, "RM-043": {"area": "DevOps", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "CI/CD + migraciones + rollback", "in_degree": 2, "out_degree": 3}, "RM-044": {"area": "Gobernanza de datos", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Retenci\u00f3n y archivado", "in_degree": 3, "out_degree": 1}, "RM-045": {"area": "Gobernanza", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Bit\u00e1cora de auditor\u00eda de acciones cr\u00edticas", "in_degree": 1, "out_degree": 1}, "RM-046": {"area": "UX", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Transparencia de errores y remediaci\u00f3n", "in_degree": 3, "out_degree": 1}, "RM-047": {"area": "Privacidad", "prioridad": "Baja (P2)", "version": "v0.3", "funcionalidad": "Minimizaci\u00f3n y redacci\u00f3n de datos", "in_degree": 2, "out_degree": 1}, "RM-048": {"area": "Documentaci\u00f3n", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Docs t\u00e9cnicas y operativas", "in_degree": 1, "out_degree": 1}, "RM-049": {"area": "Extensibilidad", "prioridad": "Media (P1)", "version": "v0.2", "funcionalidad": "Onboarding de nuevo dominio/fuente", "in_degree": 3, "out_degree": 1}, "RM-050": {"area": "Entregables", "prioridad": "Alta (P0)", "version": "MVP v0.1", "funcionalidad": "Criterio de aceptaci\u00f3n del MVP", "in_degree": 49, "out_degree": 0}};
+        const subgraphData = {"RM-001": {"ancestors": [], "descendants": ["RM-028", "RM-050", "RM-015", "RM-006", "RM-035", "RM-037", "RM-004", "RM-038", "RM-040", "RM-003", "RM-043", "RM-048", "RM-012", "RM-008", "RM-023", "RM-019", "RM-046", "RM-047", "RM-026", "RM-027", "RM-007", "RM-031", "RM-011", "RM-036", "RM-039", "RM-041", "RM-022", "RM-016", "RM-020", "RM-024", "RM-049", "RM-009", "RM-005", "RM-010", "RM-018", "RM-044", "RM-021", "RM-002", "RM-030", "RM-032", "RM-025", "RM-029", "RM-013", "RM-014", "RM-017", "RM-042"]}, "RM-002": {"ancestors": ["RM-001"], "descendants": ["RM-028", "RM-050", "RM-015", "RM-006", "RM-035", "RM-037", "RM-040", "RM-038", "RM-003", "RM-043", "RM-048", "RM-012", "RM-008", "RM-023", "RM-019", "RM-046", "RM-047", "RM-026", "RM-027", "RM-007", "RM-031", "RM-011", "RM-036", "RM-039", "RM-041", "RM-022", "RM-016", "RM-020", "RM-024", "RM-049", "RM-009", "RM-005", "RM-010", "RM-018", "RM-044", "RM-021", "RM-030", "RM-032", "RM-025", "RM-029", "RM-013", "RM-014", "RM-017", "RM-042"]}, "RM-003": {"ancestors": ["RM-001", "RM-002"], "descendants": ["RM-028", "RM-050", "RM-015", "RM-006", "RM-035", "RM-037", "RM-040", "RM-038", "RM-043", "RM-048", "RM-012", "RM-008", "RM-023", "RM-019", "RM-046", "RM-047", "RM-026", "RM-027", "RM-007", "RM-031", "RM-011", "RM-036", "RM-039", "RM-041", "RM-022", "RM-016", "RM-020", "RM-024", "RM-049", "RM-009", "RM-005", "RM-010", "RM-018", "RM-044", "RM-021", "RM-030", "RM-032", "RM-025", "RM-029", "RM-013", "RM-014", "RM-017", "RM-042"]}, "RM-004": {"ancestors": ["RM-001"], "descendants": ["RM-028", "RM-050", "RM-015", "RM-006", "RM-035", "RM-037", "RM-040", "RM-038", "RM-043", "RM-048", "RM-012", "RM-008", "RM-023", "RM-019", "RM-046", "RM-047", "RM-026", "RM-027", "RM-007", "RM-031", "RM-011", "RM-036", "RM-039", "RM-041", "RM-022", "RM-016", "RM-020", "RM-024", "RM-049", "RM-009", "RM-010", "RM-018", "RM-044", "RM-021", "RM-030", "RM-032", "RM-025", "RM-029", "RM-013", "RM-014", "RM-017", "RM-042"]}, "RM-005": {"ancestors": ["RM-003", "RM-001", "RM-002"], "descendants": ["RM-028", "RM-050", "RM-015", "RM-006", "RM-035", "RM-037", "RM-040", "RM-038", "RM-043", "RM-048", "RM-012", "RM-008", "RM-023", "RM-019", "RM-046", "RM-047", "RM-026", "RM-027", "RM-007", "RM-031", "RM-011", "RM-036", "RM-039", "RM-041", "RM-022", "RM-016", "RM-020", "RM-024", "RM-049", "RM-009", "RM-010", "RM-018", "RM-044", "RM-021", "RM-030", "RM-032", "RM-025", "RM-029", "RM-013", "RM-014", "RM-017", "RM-042"]}, "RM-006": {"ancestors": ["RM-002", "RM-005", "RM-004", "RM-003", "RM-001"], "descendants": ["RM-028", "RM-050", "RM-015", "RM-035", "RM-037", "RM-040", "RM-043", "RM-048", "RM-012", "RM-008", "RM-023", "RM-019", "RM-046", "RM-047", "RM-026", "RM-027", "RM-007", "RM-031", "RM-011", "RM-036", "RM-039", "RM-041", "RM-022", "RM-016", "RM-020", "RM-024", "RM-049", "RM-009", "RM-010", "RM-018", "RM-044", "RM-021", "RM-030", "RM-032", "RM-025", "RM-029", "RM-013", "RM-014", "RM-017", "RM-042"]}, "RM-007": {"ancestors": ["RM-002", "RM-005", "RM-006", "RM-004", "RM-003", "RM-001"], "descendants": ["RM-050"]}, "RM-008": {"ancestors": ["RM-002", "RM-006", "RM-005", "RM-004", "RM-003", "RM-001"], "descendants": ["RM-050"]}, "RM-009": {"ancestors": ["RM-002", "RM-005", "RM-006", "RM-004", "RM-003", "RM-001"], "descendants": ["RM-028", "RM-050", "RM-015", "RM-035", "RM-037", "RM-040", "RM-043", "RM-048", "RM-012", "RM-023", "RM-019", "RM-046", "RM-047", "RM-026", "RM-027", "RM-031", "RM-011", "RM-036", "RM-039", "RM-041", "RM-022", "RM-016", "RM-020", "RM-024", "RM-049", "RM-010", "RM-018", "RM-044", "RM-021", "RM-030", "RM-032", "RM-025", "RM-029", "RM-013", "RM-014", "RM-017", "RM-042"]}, "RM-010": {"ancestors": ["RM-009", "RM-002", "RM-005", "RM-006", "RM-004", "RM-003", "RM-001"], "descendants": ["RM-028", "RM-050", "RM-015", "RM-035", "RM-037", "RM-040", "RM-043", "RM-048", "RM-012", "RM-023", "RM-019", "RM-047", "RM-046", "RM-026", "RM-027", "RM-031", "RM-011", "RM-036", "RM-039", "RM-041", "RM-022", "RM-016", "RM-020", "RM-024", "RM-049", "RM-018", "RM-044", "RM-021", "RM-030", "RM-032", "RM-025", "RM-029", "RM-013", "RM-014", "RM-017", "RM-042"]}, "RM-011": {"ancestors": ["RM-009", "RM-002", "RM-005", "RM-006", "RM-010", "RM-004", "RM-003", "RM-001"], "descendants": ["RM-012", "RM-049", "RM-019", "RM-030", "RM-050", "RM-046", "RM-040"]}, "RM-012": {"ancestors": ["RM-009", "RM-002", "RM-006", "RM-005", "RM-010", "RM-011", "RM-004", "RM-003", "RM-001"], "descendants": ["RM-050"]}, "RM-013": {"ancestors": ["RM-009", "RM-002", "RM-005", "RM-006", "RM-010", "RM-004", "RM-003", "RM-001"], "descendants": ["RM-028", "RM-015", "RM-050", "RM-035", "RM-040", "RM-043", "RM-048", "RM-019", "RM-046", "RM-047", "RM-027", "RM-031", "RM-039", "RM-041", "RM-016", "RM-020", "RM-024", "RM-049", "RM-018", "RM-044", "RM-030", "RM-032", "RM-025", "RM-029", "RM-014", "RM-017"]}, "RM-014": {"ancestors": ["RM-009", "RM-002", "RM-006", "RM-005", "RM-010", "RM-013", "RM-004", "RM-003", "RM-001"], "descendants": ["RM-028", "RM-019", "RM-030", "RM-050", "RM-046", "RM-027", "RM-018", "RM-029", "RM-044", "RM-039", "RM-017"]}, "RM-015": {"ancestors": ["RM-009", "RM-002", "RM-006", "RM-005", "RM-010", "RM-013", "RM-004", "RM-003", "RM-001"], "descendants": ["RM-050"]}, "RM-016": {"ancestors": ["RM-020", "RM-009", "RM-002", "RM-006", "RM-005", "RM-010", "RM-013", "RM-004", "RM-003", "RM-001"], "descendants": ["RM-050"]}, "RM-017": {"ancestors": ["RM-009", "RM-002", "RM-006", "RM-005", "RM-010", "RM-013", "RM-004", "RM-001", "RM-003", "RM-014"], "descendants": ["RM-050", "RM-039", "RM-029", "RM-030"]}, "RM-018": {"ancestors": ["RM-009", "RM-002", "RM-006", "RM-005", "RM-010", "RM-013", "RM-004", "RM-001", "RM-003", "RM-014"], "descendants": ["RM-050", "RM-030"]}, "RM-019": {"ancestors": ["RM-009", "RM-002", "RM-006", "RM-005", "RM-010", "RM-011", "RM-013", "RM-004", "RM-001", "RM-003", "RM-014"], "descendants": ["RM-050", "RM-030", "RM-046"]}, "RM-020": {"ancestors": ["RM-009", "RM-002", "RM-006", "RM-005", "RM-010", "RM-013", "RM-004", "RM-003", "RM-001"], "descendants": ["RM-028", "RM-046", "RM-050", "RM-027", "RM-029", "RM-044", "RM-039", "RM-016"]}, "RM-021": {"ancestors": ["RM-009", "RM-002", "RM-006", "RM-005", "RM-010", "RM-004", "RM-003", "RM-001", "RM-022"], "descendants": ["RM-028", "RM-050", "RM-035", "RM-037", "RM-040", "RM-043", "RM-048", "RM-023", "RM-046", "RM-026", "RM-047", "RM-027", "RM-031", "RM-036", "RM-041", "RM-024", "RM-049", "RM-044", "RM-025", "RM-042"]}, "RM-022": {"ancestors": ["RM-009", "RM-002", "RM-005", "RM-006", "RM-010", "RM-004", "RM-003", "RM-001"], "descendants": ["RM-028", "RM-050", "RM-035", "RM-037", "RM-040", "RM-043", "RM-048", "RM-023", "RM-046", "RM-026", "RM-047", "RM-027", "RM-031", "RM-036", "RM-041", "RM-024", "RM-049", "RM-044", "RM-021", "RM-025", "RM-042"]}, "RM-023": {"ancestors": ["RM-009", "RM-002", "RM-006", "RM-005", "RM-010", "RM-004", "RM-003", "RM-001", "RM-022", "RM-021"], "descendants": ["RM-028", "RM-024", "RM-049", "RM-046", "RM-026", "RM-050", "RM-047", "RM-027", "RM-035", "RM-025", "RM-031", "RM-037", "RM-044", "RM-036", "RM-041", "RM-043", "RM-048"]}, "RM-024": {"ancestors": ["RM-023", "RM-009", "RM-002", "RM-006", "RM-005", "RM-010", "RM-013", "RM-004", "RM-003", "RM-001", "RM-022", "RM-021"], "descendants": ["RM-028", "RM-050", "RM-027", "RM-025", "RM-031", "RM-044"]}, "RM-025": {"ancestors": ["RM-024", "RM-023", "RM-009", "RM-002", "RM-006", "RM-005", "RM-010", "RM-013", "RM-004", "RM-003", "RM-001", "RM-022", "RM-021"], "descendants": ["RM-050"]}, "RM-026": {"ancestors": ["RM-023", "RM-009", "RM-002", "RM-006", "RM-005", "RM-010", "RM-004", "RM-003", "RM-001", "RM-022", "RM-021"], "descendants": ["RM-050"]}, "RM-027": {"ancestors": ["RM-020", "RM-024", "RM-023", "RM-009", "RM-002", "RM-006", "RM-005", "RM-010", "RM-013", "RM-004", "RM-001", "RM-003", "RM-014", "RM-022", "RM-021"], "descendants": ["RM-050", "RM-028", "RM-044"]}, "RM-028": {"ancestors": ["RM-020", "RM-024", "RM-023", "RM-009", "RM-002", "RM-027", "RM-034", "RM-006", "RM-005", "RM-010", "RM-021", "RM-013", "RM-004", "RM-001", "RM-003", "RM-014", "RM-022", "RM-033"], "descendants": ["RM-050"]}, "RM-029": {"ancestors": ["RM-020", "RM-009", "RM-002", "RM-034", "RM-006", "RM-005", "RM-010", "RM-013", "RM-004", "RM-001", "RM-003", "RM-014", "RM-017", "RM-033"], "descendants": ["RM-050", "RM-039"]}, "RM-030": {"ancestors": ["RM-009", "RM-019", "RM-002", "RM-032", "RM-034", "RM-006", "RM-005", "RM-018", "RM-010", "RM-013", "RM-011", "RM-004", "RM-001", "RM-003", "RM-014", "RM-017", "RM-033"], "descendants": ["RM-050"]}, "RM-031": {"ancestors": ["RM-024", "RM-023", "RM-009", "RM-002", "RM-034", "RM-006", "RM-005", "RM-010", "RM-013", "RM-004", "RM-003", "RM-033", "RM-001", "RM-022", "RM-021"], "descendants": ["RM-050"]}, "RM-032": {"ancestors": ["RM-009", "RM-002", "RM-034", "RM-006", "RM-005", "RM-010", "RM-013", "RM-004", "RM-003", "RM-001", "RM-033"], "descendants": ["RM-050", "RM-030", "RM-047"]}, "RM-033": {"ancestors": [], "descendants": ["RM-028", "RM-030", "RM-047", "RM-050", "RM-032", "RM-034", "RM-045", "RM-029", "RM-031", "RM-039"]}, "RM-034": {"ancestors": ["RM-033"], "descendants": ["RM-028", "RM-030", "RM-047", "RM-050", "RM-032", "RM-045", "RM-029", "RM-031", "RM-039"]}, "RM-035": {"ancestors": ["RM-023", "RM-009", "RM-002", "RM-006", "RM-005", "RM-010", "RM-013", "RM-004", "RM-003", "RM-001", "RM-041", "RM-043", "RM-022", "RM-021"], "descendants": ["RM-050", "RM-043", "RM-048"]}, "RM-036": {"ancestors": ["RM-023", "RM-009", "RM-002", "RM-006", "RM-005", "RM-010", "RM-004", "RM-003", "RM-001", "RM-022", "RM-021"], "descendants": ["RM-050", "RM-047", "RM-037", "RM-046"]}, "RM-037": {"ancestors": ["RM-023", "RM-009", "RM-002", "RM-006", "RM-005", "RM-010", "RM-004", "RM-036", "RM-003", "RM-001", "RM-022", "RM-021"], "descendants": ["RM-050"]}, "RM-038": {"ancestors": ["RM-002", "RM-005", "RM-004", "RM-003", "RM-001"], "descendants": ["RM-050"]}, "RM-039": {"ancestors": ["RM-020", "RM-009", "RM-002", "RM-034", "RM-006", "RM-005", "RM-010", "RM-029", "RM-013", "RM-004", "RM-001", "RM-003", "RM-014", "RM-017", "RM-033"], "descendants": ["RM-050"]}, "RM-040": {"ancestors": ["RM-009", "RM-002", "RM-006", "RM-005", "RM-010", "RM-013", "RM-011", "RM-004", "RM-003", "RM-001", "RM-022", "RM-021"], "descendants": ["RM-050"]}, "RM-041": {"ancestors": ["RM-023", "RM-009", "RM-002", "RM-005", "RM-006", "RM-010", "RM-013", "RM-004", "RM-003", "RM-001", "RM-022", "RM-021"], "descendants": ["RM-049", "RM-050", "RM-035", "RM-043", "RM-048"]}, "RM-042": {"ancestors": ["RM-009", "RM-002", "RM-006", "RM-005", "RM-010", "RM-004", "RM-003", "RM-001", "RM-022", "RM-021"], "descendants": ["RM-050"]}, "RM-043": {"ancestors": ["RM-023", "RM-009", "RM-002", "RM-006", "RM-035", "RM-005", "RM-010", "RM-013", "RM-004", "RM-003", "RM-001", "RM-041", "RM-022", "RM-021"], "descendants": ["RM-035", "RM-050", "RM-048"]}, "RM-044": {"ancestors": ["RM-020", "RM-024", "RM-023", "RM-009", "RM-002", "RM-027", "RM-006", "RM-005", "RM-010", "RM-013", "RM-004", "RM-001", "RM-003", "RM-014", "RM-022", "RM-021"], "descendants": ["RM-050"]}, "RM-045": {"ancestors": ["RM-033", "RM-034"], "descendants": ["RM-050"]}, "RM-046": {"ancestors": ["RM-020", "RM-023", "RM-009", "RM-019", "RM-001", "RM-002", "RM-006", "RM-005", "RM-010", "RM-011", "RM-004", "RM-013", "RM-036", "RM-003", "RM-014", "RM-022", "RM-021"], "descendants": ["RM-050"]}, "RM-047": {"ancestors": ["RM-023", "RM-009", "RM-002", "RM-032", "RM-034", "RM-006", "RM-005", "RM-010", "RM-013", "RM-004", "RM-036", "RM-003", "RM-033", "RM-001", "RM-022", "RM-021"], "descendants": ["RM-050"]}, "RM-048": {"ancestors": ["RM-023", "RM-009", "RM-002", "RM-006", "RM-035", "RM-005", "RM-010", "RM-013", "RM-004", "RM-003", "RM-001", "RM-041", "RM-043", "RM-022", "RM-021"], "descendants": ["RM-050"]}, "RM-049": {"ancestors": ["RM-023", "RM-009", "RM-002", "RM-005", "RM-006", "RM-010", "RM-011", "RM-004", "RM-013", "RM-003", "RM-001", "RM-041", "RM-022", "RM-021"], "descendants": ["RM-050"]}, "RM-050": {"ancestors": ["RM-028", "RM-015", "RM-006", "RM-035", "RM-037", "RM-004", "RM-038", "RM-040", "RM-003", "RM-001", "RM-043", "RM-048", "RM-012", "RM-008", "RM-023", "RM-019", "RM-046", "RM-026", "RM-047", "RM-027", "RM-007", "RM-031", "RM-011", "RM-036", "RM-039", "RM-041", "RM-022", "RM-016", "RM-020", "RM-033", "RM-024", "RM-049", "RM-009", "RM-005", "RM-034", "RM-010", "RM-018", "RM-045", "RM-044", "RM-021", "RM-002", "RM-030", "RM-032", "RM-025", "RM-029", "RM-013", "RM-014", "RM-017", "RM-042"], "descendants": []}};
+        const areaColors = {"Ingesta": "#4ECDC4", "Extracci\u00f3n": "#FF6B6B", "Modelo de datos": "#45B7D1", "Normalizaci\u00f3n": "#96CEB4", "Transformaci\u00f3n": "#96CEB4", "M\u00e9tricas": "#FFD93D", "Dataset": "#DDA0DD", "Algoritmo": "#98D8C8", "Backtest": "#F7DC6F", "Reportes": "#BB8FCE", "UI/UX": "#85C1E9", "Dashboard": "#85C1E9", "Seguridad": "#F1948A", "Observabilidad": "#ABEBC6", "Testing": "#F5B041", "DevOps": "#AED6F1", "Gobernanza de datos": "#D7BDE2", "Gobernanza": "#D7BDE2", "Privacidad": "#FADBD8", "Documentaci\u00f3n": "#D5DBDB", "Extensibilidad": "#A9DFBF", "Entregables": "#FAD7A0", "UX": "#85C1E9", "Calidad de datos": "#82E0AA", "Auditabilidad": "#F9E79F", "Exportaci\u00f3n": "#D2B4DE", "Reproducibilidad": "#AEB6BF", "Performance": "#F5CBA7", "Validaci\u00f3n de algoritmo": "#76D7C4"};
+        
+        let selectedNodeId = null;
+        let allNodes = null;
+        let allEdges = null;
+        
+        // Store original data after network is ready
+        network.once('stabilizationIterationsDone', function() {
+            allNodes = nodes.get();
+            allEdges = edges.get();
+        });
+        
+        // Node click handler
+        network.on('click', function(params) {
+            if (params.nodes.length > 0) {
+                selectedNodeId = params.nodes[0];
+                updateStats(selectedNodeId);
+                showNodeInfo(selectedNodeId);
+            } else {
+                selectedNodeId = null;
+                updateStats(null);
+                closeNodeInfo();
+            }
+        });
+        
+        function updateStats(nodeId) {
+            document.getElementById('selected-node').textContent = nodeId || '—';
+            if (nodeId && nodeData[nodeId]) {
+                document.getElementById('in-degree').textContent = nodeData[nodeId].in_degree;
+                document.getElementById('out-degree').textContent = nodeData[nodeId].out_degree;
+            } else {
+                document.getElementById('in-degree').textContent = '—';
+                document.getElementById('out-degree').textContent = '—';
+            }
+        }
+        
+        function showNodeInfo(nodeId) {
+            const data = nodeData[nodeId];
+            const subgraph = subgraphData[nodeId];
+            if (!data) return;
+            
+            document.getElementById('info-title').textContent = nodeId + ': ' + data.funcionalidad;
+            document.getElementById('info-content').innerHTML = `
+                <p><strong>Área:</strong> ${data.area}</p>
+                <p><strong>Prioridad:</strong> ${data.prioridad}</p>
+                <p><strong>Versión:</strong> ${data.version}</p>
+                <p><strong>Dependencias directas:</strong> ${data.in_degree}</p>
+                <p><strong>Dependientes directos:</strong> ${data.out_degree}</p>
+                <p><strong>Total ancestros:</strong> ${subgraph.ancestors.length}</p>
+                <p><strong>Total descendientes:</strong> ${subgraph.descendants.length}</p>
+            `;
+            document.getElementById('node-info').style.display = 'block';
+        }
+        
+        function closeNodeInfo() {
+            document.getElementById('node-info').style.display = 'none';
+        }
+        
+        function focusNode() {
+            const nodeId = document.getElementById('node-search').value.toUpperCase();
+            if (nodes.get(nodeId)) {
+                network.focus(nodeId, {
+                    scale: 1.5,
+                    animation: { duration: 500, easingFunction: 'easeInOutQuad' }
+                });
+                network.selectNodes([nodeId]);
+                selectedNodeId = nodeId;
+                updateStats(nodeId);
+                showNodeInfo(nodeId);
+            } else {
+                alert('Nodo no encontrado: ' + nodeId);
+            }
+        }
+        
+        function filterByArea(area) {
+            document.getElementById('area-filter').value = area;
+            applyFilters();
+        }
+        
+        function applyFilters() {
+            const areaFilter = document.getElementById('area-filter').value;
+            const priorityFilter = document.getElementById('priority-filter').value;
+            const versionFilter = document.getElementById('version-filter').value;
+            
+            if (!allNodes) allNodes = nodes.get();
+            if (!allEdges) allEdges = edges.get();
+            
+            // Filter nodes
+            const visibleNodeIds = new Set();
+            allNodes.forEach(node => {
+                const data = nodeData[node.id];
+                if (!data) return;
+                
+                const matchArea = !areaFilter || data.area === areaFilter;
+                const matchPriority = !priorityFilter || data.prioridad === priorityFilter;
+                const matchVersion = !versionFilter || data.version === versionFilter;
+                
+                if (matchArea && matchPriority && matchVersion) {
+                    visibleNodeIds.add(node.id);
+                }
+            });
+            
+            // Update node visibility
+            const updates = allNodes.map(node => ({
+                id: node.id,
+                hidden: !visibleNodeIds.has(node.id)
+            }));
+            nodes.update(updates);
+            
+            // Update edge visibility
+            const edgeUpdates = allEdges.map(edge => ({
+                id: edge.id,
+                hidden: !visibleNodeIds.has(edge.from) || !visibleNodeIds.has(edge.to)
+            }));
+            edges.update(edgeUpdates);
+            
+            // Update stats
+            const visibleEdges = allEdges.filter(e => 
+                visibleNodeIds.has(e.from) && visibleNodeIds.has(e.to)
+            ).length;
+            
+            document.getElementById('visible-nodes').textContent = visibleNodeIds.size;
+            document.getElementById('visible-edges').textContent = visibleEdges;
+        }
+        
+        function showAncestors() {
+            if (!selectedNodeId) {
+                alert('Selecciona un nodo primero');
+                return;
+            }
+            showAncestorsOf(selectedNodeId);
+        }
+        
+        function showAncestorsOf(nodeId) {
+            const ancestors = subgraphData[nodeId]?.ancestors || [];
+            const visibleIds = new Set([nodeId, ...ancestors]);
+            showSubgraph(visibleIds, 'Dependencias de ' + nodeId);
+        }
+        
+        function showDescendants() {
+            if (!selectedNodeId) {
+                alert('Selecciona un nodo primero');
+                return;
+            }
+            showDescendantsOf(selectedNodeId);
+        }
+        
+        function showDescendantsOf(nodeId) {
+            const descendants = subgraphData[nodeId]?.descendants || [];
+            const visibleIds = new Set([nodeId, ...descendants]);
+            showSubgraph(visibleIds, 'Dependientes de ' + nodeId);
+        }
+        
+        function showNeighborhood() {
+            if (!selectedNodeId) {
+                alert('Selecciona un nodo primero');
+                return;
+            }
+            const ancestors = subgraphData[selectedNodeId]?.ancestors || [];
+            const descendants = subgraphData[selectedNodeId]?.descendants || [];
+            
+            // Get immediate neighbors only (depth 1)
+            const neighbors = new Set([selectedNodeId]);
+            allEdges.forEach(edge => {
+                if (edge.from === selectedNodeId) neighbors.add(edge.to);
+                if (edge.to === selectedNodeId) neighbors.add(edge.from);
+            });
+            
+            showSubgraph(neighbors, 'Vecindario de ' + selectedNodeId);
+        }
+        
+        function showSubgraph(visibleIds, title) {
+            if (!allNodes) allNodes = nodes.get();
+            if (!allEdges) allEdges = edges.get();
+            
+            // Update nodes
+            const updates = allNodes.map(node => ({
+                id: node.id,
+                hidden: !visibleIds.has(node.id)
+            }));
+            nodes.update(updates);
+            
+            // Update edges
+            const edgeUpdates = allEdges.map(edge => ({
+                id: edge.id,
+                hidden: !visibleIds.has(edge.from) || !visibleIds.has(edge.to)
+            }));
+            edges.update(edgeUpdates);
+            
+            // Update stats
+            const visibleEdges = allEdges.filter(e => 
+                visibleIds.has(e.from) && visibleIds.has(e.to)
+            ).length;
+            
+            document.getElementById('visible-nodes').textContent = visibleIds.size;
+            document.getElementById('visible-edges').textContent = visibleEdges;
+            
+            // Fit view
+            network.fit({ animation: { duration: 500 } });
+        }
+        
+        function resetView() {
+            // Clear filters
+            document.getElementById('area-filter').value = '';
+            document.getElementById('priority-filter').value = '';
+            document.getElementById('version-filter').value = '';
+            document.getElementById('node-search').value = '';
+            
+            if (!allNodes) allNodes = nodes.get();
+            if (!allEdges) allEdges = edges.get();
+            
+            // Show all nodes
+            const updates = allNodes.map(node => ({ id: node.id, hidden: false }));
+            nodes.update(updates);
+            
+            // Show all edges
+            const edgeUpdates = allEdges.map(edge => ({ id: edge.id, hidden: false }));
+            edges.update(edgeUpdates);
+            
+            // Update stats
+            document.getElementById('visible-nodes').textContent = allNodes.length;
+            document.getElementById('visible-edges').textContent = allEdges.length;
+            
+            // Deselect
+            network.unselectAll();
+            selectedNodeId = null;
+            updateStats(null);
+            closeNodeInfo();
+            
+            // Fit view
+            network.fit({ animation: { duration: 500 } });
+        }
+        
+        // Add event listeners to filters
+        document.getElementById('area-filter').addEventListener('change', applyFilters);
+        document.getElementById('priority-filter').addEventListener('change', applyFilters);
+        document.getElementById('version-filter').addEventListener('change', applyFilters);
+        
+        // Enter key for search
+        document.getElementById('node-search').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') focusNode();
+        });
+    </script>
+    </body>
+</html>
